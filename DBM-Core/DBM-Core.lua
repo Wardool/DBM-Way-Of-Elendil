@@ -64,9 +64,9 @@ local function currentFullDate()
 end
 
 DBM = {
-	Revision = parseCurseDate("20250719154243"),
+	Revision = parseCurseDate("20250902203141"),
 	DisplayVersion = "10.1.13 - WoE Edition", -- the string that is shown as version
-	ReleaseRevision = releaseDate(2025, 07, 19) -- the date of the latest stable version that is available, optionally pass hours, minutes, and seconds for multiple releases in one day
+	ReleaseRevision = releaseDate(2025, 09, 02) -- the date of the latest stable version that is available, optionally pass hours, minutes, and seconds for multiple releases in one day
 }
 
 local fakeBWVersion = 7558
@@ -3167,7 +3167,9 @@ do
 	end
 
 	function DBM:ZONE_CHANGED_NEW_AREA()
-		SetMapToCurrentZone()
+		if not WorldMapFrame:IsVisible() or IsIndoors() then
+			SetMapToCurrentZone()
+		end
 		timerRequestInProgress = false
 		self:Debug("ZONE_CHANGED_NEW_AREA fired on zoneID: " .. GetCurrentMapAreaID())
 		self:Unschedule(SecondaryLoadCheck)
@@ -3182,7 +3184,9 @@ do
 	end
 
 	function DBM:ZONE_CHANGED_INDOORS()
-		SetMapToCurrentZone()
+		if not WorldMapFrame:IsVisible() or IsIndoors() then
+			SetMapToCurrentZone()
+		end
 		self:Debug("Indoor/SubZone changed on zoneID: " .. GetCurrentMapAreaID() .. " and subZone: " .. GetSubZoneText())
 	end
 	DBM.ZONE_CHANGED = DBM.ZONE_CHANGED_INDOORS
