@@ -6,7 +6,7 @@ mod:SetCreatureID(33432)
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)
 mod:SetHotfixNoticeRev(20220823000000)
 
-mod:RegisterCombat("combat_yell", L.YellPull)
+mod:RegisterCombat("yell", L.YellPull)
 mod:RegisterCombat("yell", L.YellHardPull)
 mod:RegisterKill("yell", L.YellKilled)
 
@@ -20,9 +20,9 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 63666 65026 64529 62997 64616 64570",
 	"SPELL_AURA_REMOVED 63666 65026",
 	"SPELL_SUMMON 63811",
-	"UNIT_SPELLCAST_CHANNEL_STOP boss1 boss2 boss3",
-	"UNIT_SPELLCAST_START boss1",
-	"UNIT_SPELLCAST_SUCCEEDED boss1 boss2 boss3",
+	"UNIT_SPELLCAST_CHANNEL_STOP",
+--	"UNIT_SPELLCAST_START boss1",
+	"UNIT_SPELLCAST_SUCCEEDED",
 	"CHAT_MSG_LOOT",
 	"PARTY_LOOT_METHOD_CHANGED"
 )
@@ -30,8 +30,8 @@ mod:RegisterEventsInCombat(
 --General
 local timerEnrage					= mod:NewBerserkTimer(900)
 local timerP1toP2					= mod:NewTimer(40, "TimeToPhase2", nil, nil, nil, 6) -- From YellPhase2 to IEEU
-local timerP2toP3					= mod:NewTimer(21, "TimeToPhase3", nil, nil, nil, 6) -- From YellPhase3 to IEEU
-local timerP3toP4					= mod:NewTimer(26, "TimeToPhase4", nil, nil, nil, 6) -- From YellPhase4 to IEEU
+local timerP2toP3					= mod:NewTimer(20, "TimeToPhase3", nil, nil, nil, 6) -- From YellPhase3 to IEEU
+local timerP3toP4					= mod:NewTimer(27, "TimeToPhase4", nil, nil, nil, 6) -- From YellPhase4 to IEEU
 
 mod:AddRangeFrameOption("6")
 
@@ -45,9 +45,9 @@ local specWarnPlasmaBlast			= mod:NewSpecialWarningDefensive(64529, nil, nil, ni
 
 local timerProximityMines			= mod:NewCDTimer(35.0, 63027, nil, nil, nil, 3) -- 25 man NM log review (2022/07/10) + VOD review - 35.0
 local timerShockBlast				= mod:NewCastTimer(4, 63631, nil, nil, nil, 2, nil, DBM_COMMON_L.DEADLY_ICON)
-local timerNextShockBlast			= mod:NewNextTimer(35, 63631, nil, nil, nil, 2, nil, DBM_COMMON_L.DEADLY_ICON) -- REVIEW! variance?? (S2 log || S3 HM log 2022/07/17) - 38 || 44.1, 41.6
-local timerNapalmShell				= mod:NewBuffActiveTimer(6, 63666, nil, "Healer", 2, 5, nil, DBM_COMMON_L.IMPORTANT_ICON..DBM_COMMON_L.HEALER_ICON)
-local timerPlasmaBlastCD			= mod:NewCDTimer(31.2, 64529, nil, "Tank", 2, 5, nil, DBM_COMMON_L.TANK_ICON) -- REVIEW! ~13s variance! (S3 HM log 2022/07/17) - 44.2, 31.2 ; 39.6
+local timerNextShockBlast			= mod:NewNextTimer(34, 63631, nil, nil, nil, 2, nil, DBM_COMMON_L.DEADLY_ICON) -- REVIEW! variance?? (S2 log || S3 HM log 2022/07/17) - 38 || 44.1, 41.6
+local timerNapalmShell				= mod:NewBuffActiveTimer(8, 63666, nil, "Healer", 2, 5, nil, DBM_COMMON_L.IMPORTANT_ICON..DBM_COMMON_L.HEALER_ICON)
+local timerPlasmaBlastCD			= mod:NewCDTimer(30, 64529, nil, "Tank", 2, 5, nil, DBM_COMMON_L.TANK_ICON) -- REVIEW! ~13s variance! (S3 HM log 2022/07/17) - 44.2, 31.2 ; 39.6
 
 mod:AddSetIconOption("SetIconOnNapalm", 63666, false, false, {1, 2, 3, 4, 5, 6, 7})
 mod:AddSetIconOption("SetIconOnPlasmaBlast", 64529, false, false, {8})
@@ -240,16 +240,16 @@ end
 
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
---[[if spellId == 63631 then -- Shock Blast. Replaced with UNIT_SPELLCAST_START since 2022/07/2022 log had one instance where this event was not fired
+	if spellId == 63631 then -- Shock Blast.
 		specWarnShockBlast:Show()
 		specWarnShockBlast:Play("runout")
 		timerShockBlast:Start()
 		timerNextShockBlast:Start()
 		if self.Options.RangeFrame then
-			DBM.RangeCheck:SetBossRange(15, self:GetBossUnitByCreatureId(33432))
+			DBM.RangeCheck:SetBossRange(10, self:GetBossUnitByCreatureId(33432))
 			self:Schedule(4.5, ResetRange, self)
-		end]]
-	if args:IsSpellID(64529, 62997) then	-- Plasma Blast
+		end
+	elseif args:IsSpellID(64529, 62997) then	-- Plasma Blast
 		if self:IsTanking("player", "boss1", nil, true) then
 			specWarnPlasmaBlast:Show()
 			specWarnPlasmaBlast:Play("defensive")
@@ -329,7 +329,7 @@ function mod:UNIT_SPELLCAST_CHANNEL_STOP(_, spellName)
 	end
 end
 
-function mod:UNIT_SPELLCAST_START(_, spellName)
+--[[function mod:UNIT_SPELLCAST_START(_, spellName)
 	if spellName == GetSpellInfo(63631) then -- Shock Blast. Used UNIT event instead since I have a log where CLEU missed one SCStart
 		specWarnShockBlast:Show()
 		specWarnShockBlast:Play("runout")
@@ -340,7 +340,7 @@ function mod:UNIT_SPELLCAST_START(_, spellName)
 			self:Schedule(4.5, ResetRange, self)
 		end
 	end
-end
+end]]
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(_, spellName)
 	--[[if spellId == 34098 then--ClearAllDebuffs never fired due to unit not existing

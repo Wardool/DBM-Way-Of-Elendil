@@ -8,12 +8,11 @@ mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)
 mod:RegisterCombat("combat")
 
 mod:RegisterEventsInCombat(
-	"SPELL_CAST_START 61920 63479 61879 61903 63493 62274 63489 62273 61973",
-	"SPELL_CAST_SUCCESS 63490 62269 61869 63481",
+	"SPELL_CAST_START 61920 63479 61879 61903 63493 62274 63489 62273",
+	"SPELL_CAST_SUCCESS 63490 62269 61869 63481 61974",
 	"SPELL_AURA_APPLIED 61903 63493 62269 63490 62277 63967 64637 61888 63486 61887 61912 63494 63483 61915",
 	"SPELL_AURA_REMOVED 64637 61888 63483 61915 61912 63494",
-	"UNIT_DIED",
-	"UNIT_SPELLCAST_SUCCEEDED boss2"
+	"UNIT_DIED"
 )
 
 mod:SetBossHealthInfo(
@@ -46,7 +45,7 @@ mod:AddBoolOption("AlwaysWarnOnOverload", false, "announce", nil, nil, nil, 6348
 -- Runemaster Molgeim
 -- Lightning Blast ... don't know, maybe 63491
 mod:AddTimerLine(L.RunemasterMolgeim)
-local warnRuneofPower			= mod:NewTargetNoFilterAnnounce(64320, 2)
+--local warnRuneofPower			= mod:NewTargetNoFilterAnnounce(64320, 2)
 local warnRuneofDeathIn10Sec	= mod:NewSoonAnnounce(63490, 3)
 local warnRuneofDeath			= mod:NewSpellAnnounce(63490, 2)
 local warnShieldofRunes			= mod:NewSpellAnnounce(62274, 2)
@@ -56,10 +55,10 @@ local specwarnRuneofDeath		= mod:NewSpecialWarningMove(63490, nil, nil, nil, 1, 
 local specWarnRuneofShields		= mod:NewSpecialWarningDispel(62274, "MagicDispeller", nil, nil, 1, 2)
 
 local timerRuneofShields		= mod:NewBuffActiveTimer(15, 62274, nil, nil, nil, 5, nil, DBM_COMMON_L.MAGIC_ICON)
-local timerRuneofDeath			= mod:NewCDTimer(30, 63490, nil, nil, nil, 3)
+local timerRuneofDeath			= mod:NewCDTimer(31, 63490, nil, nil, nil, 3)
 local timerRuneofPowerCast		= mod:NewCastTimer(1.5, 61973, nil, nil, nil, 5, nil, DBM_COMMON_L.TANK_ICON)  -- One log review (2022/07/05) - 60.0
 local timerRuneofPowerCD		= mod:NewCDTimer(60, 61973, nil, nil, nil, 5, nil, DBM_COMMON_L.TANK_ICON)  -- One log review (2022/07/05) - 60.0
-local timerRuneofSummoning		= mod:NewCDTimer(30, 62273, nil, nil, nil, 1)
+local timerRuneofSummoning		= mod:NewCDTimer(31, 62273, nil, nil, nil, 1)
 
 -- Steelbreaker
 -- High Voltage ... don't know what to show here - 63498
@@ -109,11 +108,6 @@ function mod:OnCombatEnd()
 	end
 end
 
-function mod:RuneTarget(targetname)
-	if not targetname then return end
-	warnRuneofPower:Show(targetname)
-end
-
 local function warnStaticDisruptionTargets(self)
 	warnStaticDisruption:Show(table.concat(disruptTargets, "<, >"))
 	table.wipe(disruptTargets)
@@ -134,9 +128,6 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 62273 then			-- Rune of Summoning
 		warnRuneofSummoning:Show()
 		timerRuneofSummoning:Start()
-	elseif spellId == 61973 then	-- Rune of Power (cast success not fired on Warmane, and not correct to check target after cast either)
-		self:BossTargetScanner(32927, "RuneTarget", 0.1, 16, true, true)--Scan only boss unitIDs, scan only hostile targets
-		timerRuneofPowerCast:Start()
 	end
 end
 
@@ -156,6 +147,8 @@ function mod:SPELL_CAST_SUCCESS(args)
 			DBM.RangeCheck:SetBossRange(20, self:GetBossUnitByCreatureId(32857))
 			self:Schedule(6.5, ResetRange, self)
 		end
+	elseif args.spellId == 61974 then	-- Rune of Power
+		timerRuneofPowerCD:Start()
 	end
 end
 
@@ -258,11 +251,5 @@ function mod:UNIT_DIED(args)
 		timerOverload:Cancel()
 		timerOverloadCD:Cancel()
 		timerLightningWhirl:Cancel()
-	end
-end
-
-function mod:UNIT_SPELLCAST_SUCCEEDED(_, spellName)
-	if spellName == GetSpellInfo(61973) then	-- Rune of Power
-		timerRuneofPowerCD:Start()
 	end
 end

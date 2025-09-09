@@ -142,13 +142,13 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
---	HealthInfo				= "Heal for star",
---	FirstPull				= "See your world through my eyes: A universe so vast as to be immeasurable - incomprehensible even to your greatest minds.",
---	YellPull				= "Your actions are illogical. All possible results for this encounter have been calculated. The Pantheon will receive the Observer's message regardless of outcome.",
+	FirstPull				= "See your world through my eyes: A universe so vast as to be immeasurable - incomprehensible even to your greatest minds.",
+	YellPull				= "Your actions are illogical. All possible results for this encounter have been calculated. The Pantheon will receive the Observer's message regardless of outcome.",
 	YellKill				= "I have seen worlds bathed in the Makers' flames, their denizens fading without as much as a whimper. Entire planetary systems born and razed in the time that it takes your mortal hearts to beat once. Yet all throughout, my own heart devoid of emotion... of empathy. I. Have. Felt. Nothing. A million-million lives wasted. Had they all held within them your tenacity? Had they all loved life as you do?",
 	Emote_CollapsingStar	= "%s begins to Summon Collapsing Stars!",
 	Phase2					= "Behold the tools of creation!",
-	CollapsingStar			= "Collapsing Star"
+	CollapsingStar			= "Collapsing Star",
+	PullCheck				= "Time until Algalon transmits distress signal= (%d+) min."
 })
 
 ----------------
@@ -419,7 +419,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	YellPull			= "The time to strike at the head of the beast will soon be upon us! Focus your anger and hatred on his minions!",
+	YellPull1			= "The time to strike at the head of the beast will soon be upon us! Focus your anger and hatred on his minions!",
 	S1TheLucidDream		= "Stage One: The Lucid Dream",
 	Sara				= "Sara",
 	GuardianofYoggSaron	= "Guardian of Yogg-Saron",

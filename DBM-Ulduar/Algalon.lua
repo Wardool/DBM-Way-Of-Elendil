@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision("20220821232003")
 mod:SetCreatureID(32871)
-mod:RegisterCombat("combat")
+mod:RegisterCombat("yell", L.YellPull, L.FirstPull)
 --mod:RegisterKill("yell", L.YellKill) -- fires 24 seconds after fight ends, not accurate enough. Workaround it by using Self Stun UNIT_SPELLCAST_SUCCEEDED, which is fired when he turns friendly and fight is won.
 mod:SetWipeTime(20)
 
@@ -17,8 +17,8 @@ mod:RegisterEventsInCombat(
 	"SPELL_MISSED 65108 64122",
 	"CHAT_MSG_RAID_BOSS_EMOTE",
 	"CHAT_MSG_MONSTER_YELL",
-	"UNIT_SPELLCAST_SUCCEEDED boss1",
-	"UNIT_HEALTH boss1"
+	"UNIT_SPELLCAST_SUCCEEDED",
+	"UNIT_HEALTH"
 )
 
 local warnPhase2				= mod:NewPhaseAnnounce(2, 2, nil, nil, nil, nil, nil, 2)
@@ -32,10 +32,10 @@ local specWarnPhasePunch		= mod:NewSpecialWarningStack(64412, nil, 4, nil, nil, 
 local specWarnBigBang			= mod:NewSpecialWarningSpell(64584, nil, nil, nil, 3, 2)
 local specWarnCosmicSmash		= mod:NewSpecialWarningDodge(64596, nil, nil, nil, 2, 2)
 
-local timerNextBigBang			= mod:NewNextTimer(91.0, 64584, nil, nil, nil, 2) -- REVIEW! no data for 2nd cast onwards (2022/07/05 || 25 man Lord log 2022/08/02 || 25 man FM log 2022/08/07 || 10 man FM log 2022/08/09) - 91.0 || 91.0 || 91.0; 91.1; 91.0 || 91.0; 91.0
+local timerNextBigBang			= mod:NewNextTimer(91.0, 64584, nil, nil, nil, 2)
 local timerBigBangCast			= mod:NewCastTimer(8, 64584, nil, nil, nil, 2, nil, DBM_COMMON_L.DEADLY_ICON)
-local timerNextCollapsingStar	= mod:NewTimer(97.5, "NextCollapsingStar", "Interface\\Icons\\INV_Enchant_EssenceCosmicGreater", nil, nil, 2, DBM_COMMON_L.HEALER_ICON) -- Instead of 15s (retail), this event fired with 97s after the first emote and then 91s difference (S2 || 25 man Lord log 2022/08/02 || 25 man FM log 2022/08/07 || 10 man FM log 2022/08/09) - 91 || 97.5 || 97.5; 97.6, 91.0; 97.5; 97.5; 97.6; 97.6; 97.5; 97.5; 97.5 || 97.5, 91.0; 97.5; 97.5; 97.5; 97.5; 97.5
-local timerCDCosmicSmash		= mod:NewCDTimer(25.5, 64596, nil, nil, nil, 3) -- Log reviewed (2022/07/05 || 25 man FM log 2022/08/07) - 25.5, 25.5, 25.5, 25.5, 25.5, 25.5, 25.6, 25.5 || 25.5, 25.5, 25.6, 25.5, 25.5, 25.5
+local timerNextCollapsingStar	= mod:NewTimer(60, "NextCollapsingStar", "Interface\\Icons\\INV_Enchant_EssenceCosmicGreater", nil, nil, 2, DBM_COMMON_L.HEALER_ICON)
+local timerCDCosmicSmash		= mod:NewCDTimer(25.5, 64596, nil, nil, nil, 3)
 local timerCastCosmicSmash		= mod:NewCastTimer(4.5, 64596)
 local timerPhasePunch			= mod:NewTargetTimer(45, 64412, nil, "Tank", 2, 5, nil, DBM_COMMON_L.TANK_ICON)
 local timerNextPhasePunch		= mod:NewNextTimer(15.5, 64412, nil, "Tank", 2, 5, nil, DBM_COMMON_L.TANK_ICON)
@@ -48,6 +48,8 @@ local star_num = 1
 mod.vb.warned_preP2 = false
 mod.vb.collapsingStartCount = 0
 
+local timerCombatStart		    = mod:NewTimer(8, "Algalon pull", 2457)
+
 function mod:OnCombatStart(delay)
 	self:SetStage(1)
 	stars = {}
@@ -56,11 +58,27 @@ function mod:OnCombatStart(delay)
 	star_num = 1
 	self.vb.warned_preP2 = false
 	self.vb.collapsingStartCount = 0
-	timerNextCollapsingStar:Start(21.9-delay) -- Chose median. 0.3s variance (2022/07/05 || 10 man FM log 2022/08/01 || 25 man Lord log 2022/08/02 || 25 man FM log 2022/08/07 || 10 man FM log 2022/08/09) - 22.0 || 21.9, 22.0 || 22.0 || 22.0, 22.0, 22.0, 22.1, 21.9, 22.0, 22.0, 22.0, 22.0, 22.0 || 22.0, 22.0, 22.0, 22.0, 21.9, 21.9, 21.8, 21.9, 21.9, 22.0, 22.0
-	timerCDCosmicSmash:Start(35-delay) -- Log reviewed (2022/07/05 || 10 man FM log 2022/08/01 || 25 man Lord log 2022/08/02 || 25 man FM log 2022/08/07) - 35 || 35.0, 35.0 || 35.0 || 35.0, 35.0, 34.9, 35.0, 35.0, 35.0, 35.0, 35.0, 35.0, 35.0
-	announcePreBigBang:Schedule(90-delay)
-	timerNextBigBang:Start(100-delay) -- Log reviewed (2022/07/05 || 2022/07/10 || 10 man FM log 2022/08/01 || 25 man Lord log 2022/08/02 || 25 man FM log 2022/08/07 || 10 man FM log 2022/08/09) - 100 || 100 || 100.0, 99.9 || 100 || 99.9, 100.0, 100.0, 100.0, 99.9, 100.0, 100.0, 100.0, 100.0 || 99.9, 100.0, 99.9, 100.0, 100.0, 99.8, 99.9, 100.0, 100.0
-	enrageTimer:Start(360-delay)
+	local text = select(3, GetWorldStateUIInfo(1))
+	local _, _, time = string.find(text, L.PullCheck)
+	if not time then
+        time = 60
+    end
+	time = tonumber(time)
+	if time == 60 then
+		timerCombatStart:Start(26.5-delay)
+		self:ScheduleMethod(26.5-delay, "startTimers")	-- 26 seconds roleplaying
+	else
+		timerCombatStart:Start(-delay)
+		self:ScheduleMethod(8-delay, "startTimers")	-- 8 seconds roleplaying
+	end
+end
+
+function mod:startTimers()
+	timerNextCollapsingStar:Start(18)
+	timerCDCosmicSmash:Start(24.9)
+	announcePreBigBang:Schedule(80)
+	timerNextBigBang:Start(90)
+	enrageTimer:Start(360)
 end
 
 function mod:OnCombatEnd()
@@ -128,7 +146,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 	if msg == L.Emote_CollapsingStar or msg:find(L.Emote_CollapsingStar) then
 		self.vb.collapsingStartCount = self.vb.collapsingStartCount + 1
 		if self.vb.collapsingStartCount > 1 then
-			timerNextCollapsingStar:Start(91)
+			timerNextCollapsingStar:Start(60)
 		else
 			timerNextCollapsingStar:Start()
 		end

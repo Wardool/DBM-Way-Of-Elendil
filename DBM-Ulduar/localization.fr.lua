@@ -130,25 +130,26 @@ L:SetGeneralLocalization({
 })
 
 L:SetWarningLocalization({
-	warnStarLow				= "Effondrement d'étoile est bas"
+	warnStarLow				= "Étoile effondrante sous les 25%"
 })
 
 L:SetTimerLocalization({
-	NextCollapsingStar		= "Prochain Choc cosmique",
+	NextCollapsingStar		= " Effondrement d'étoiles",
 })
 
 L:SetOptionLocalization({
-	NextCollapsingStar		= "Montre un timer pour le prochain choc cosmique",
-	warnStarLow				= "Affiche une alerte spéciale lorsque Effondrement d'étoile est bas (à ~25%)"
+	NextCollapsingStar		= "Montre un timer pour le prochain effondrement d'étoiles",
+	warnStarLow				= "Affiche une alerte spéciale lorsque Effondrement d'étoile est bas en vie (à ~25%)"
 })
 
 L:SetMiscLocalization({
---	FirstPull				= "Voyez votre monde comme je le vois : un univers si vaste qu'il est incommensurable - impossible à appréhender même par vos plus grands esprits.",
---	YellPull				= "Vos actions sont illogiques. Tous les résultats possibles de cette rencontre ont été calculés. Le Panthéon recevra le message de l'Observateur quelle que soit l'issue.",
+	FirstPull				= "Voyez votre monde comme je le vois : un univers si vaste qu'il est incommensurable - impossible à appréhender même par vos plus grands esprits.",
+	YellPull				= "Vos actions sont illogiques. Tous les résultats possibles de cette rencontre ont été calculés. Le Panthéon recevra le message de l'Observateur quelle que soit l'issue.",
 	YellKill				= "J'ai vu des mondes baignés dans les flammes des Faiseurs. Leurs occupants s'évaporer sans même un gémissement. Des systèmes planétaires entiers créés et détruits dans le temps qu'il faut à un cœur mortel pour battre une fois. Et devant tout cela, dans mon propre cœur, pas la moindre émotion... la moindre empathie. Je. Ne. Ressentais. Rien. Mille milliards de vies gâchées. Avaient-elles toutes possédé une telle ténacité ? Aimaient-elles la vie autant que vous ?",
 	Emote_CollapsingStar	= "%s commence à lancer un effondrement d'étoiles !",
 	Phase2					= "Découvrez les outils de la création !",
-	CollapsingStar			= "Effondrement d'étoile"
+	CollapsingStar			= "Effondrement d'étoile",
+	PullCheck				= "Signal de détresse d'Algalon transmis dans= (%d+) min."
 })
 
 ----------------
@@ -247,7 +248,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	YellPhase1			= "Des intrus ! Mortels, vous qui osez me déranger en plein divertissement allez pay -  Attendez, vous -",
+	YellPhase1			= "Des intrus ! Mortels, vous qui osez me déranger en plein divertissement allez pay - Attendez, vous -",
 	YellPhase2			= "Avortons impertinents, vous osez me défier sur mon piédestal ? Je vais vous écraser moi-même !",
 	YellKill			= "Retenez vos coups ! Je me rends !",
 	YellHardModeActive	= "Impossible ! Mon seigneur Thorim, je vais offrir à tes ennemis une mort glaciale !",
@@ -345,7 +346,7 @@ L:SetMiscLocalization({
 	MobPhase2		= "VX-001",
 	MobPhase3		= "Unité de commandement aérien",
 	MobPhase4		= "V-07-TR-0N", -- don't localize
-	YellPull		= "Nous n'avons pas beaucoup de temps, les amis ! Vous allez m'aider à tester ma dernière création en date, la plus grande de toutes. Avant de changer d'avis, n'oubliez pas que que vous me devez bien ça après m'avoir complètement déglingué le XT-002.",
+	YellPull		= "Nous n'avons pas beaucoup de temps, les amis ! Vous allez m'aider à tester ma dernière création en date, la plus grande de toutes. Avant de changer d'avis, n'oubliez pas que vous me devez bien ça après m'avoir complètement déglingué le XT-002.",
 	YellHardPull	= "Initialisation de la séquence d'autodestruction.",
 	YellPhase2		= "MERVEILLEUX ! Résultats parfaitement formidables !",
 	YellPhase3		= "Merci, les amis !",
@@ -416,7 +417,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
-	YellPull1			= "Il sera bientôt temps de frapper la tête de la bête ! Concentrez votre rage et votre haine sur ses laquais !",
+	YellPull1			= "Il sera bientôt temps de frapper la tête de la bête ! Concentrez votre rage et votre haine sur ses laquais !",
 	S1TheLucidDream		= "Phase 1 : Le rêve lucide",
 	Sara				= "Sara",
 	GuardianofYoggSaron	= "Gardien de Yogg-Saron",
