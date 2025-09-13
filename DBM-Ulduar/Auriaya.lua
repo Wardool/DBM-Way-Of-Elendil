@@ -15,7 +15,7 @@ mod:RegisterEventsInCombat(
 )
 
 local warnSwarm			= mod:NewTargetAnnounce(64396, 2)
-local warnFearSoon		= mod:NewSoonAnnounce(64386, 1)
+--local warnFearSoon		= mod:NewSoonAnnounce(64386, 1)
 local warnCatDied		= mod:NewAnnounce("WarnCatDied", 3, 64455, nil, nil, nil, 64455)
 local warnCatDiedOne	= mod:NewAnnounce("WarnCatDiedOne", 3, 64455, nil, nil, nil, 64455)
 
