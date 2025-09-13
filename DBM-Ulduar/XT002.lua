@@ -125,13 +125,13 @@ function mod:SPELL_AURA_REMOVED(args)
 	elseif args.spellId == 63849 then	-- Exposed Heart
 		self:SetStage(1)
 		timerHeart:Stop()
-		timerTympanicTantrumCD:Start(35.6) -- REVIEW! Variance? (S3 FM Log review 2022/07/17 || 25m Lordearon 2022/10/10) -- 35.9 || 35.6
+		timerTympanicTantrumCD:Start(25.6) -- REVIEW! Variance? (S3 FM Log review 2022/07/17 || 25m Lordearon 2022/10/10) -- 35.9 || 35.6
 	end
 end
 
-function mod:SPELL_DAMAGE(_, _, _, destGUID, _, _, spellId)
+function mod:SPELL_DAMAGE(_, _, _, destGUID, _, _, spellId, spellName)
 	if (spellId == 64208 or spellId == 64206) and destGUID == UnitGUID("player") and self:AntiSpam() then
-		specWarnConsumption:Show()
+		specWarnConsumption:Show(spellName)
 		specWarnConsumption:Play("watchfeet")
 	end
 end

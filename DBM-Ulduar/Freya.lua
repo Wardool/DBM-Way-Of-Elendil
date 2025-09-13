@@ -17,7 +17,6 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 62283 62438 62439 62861 62862 62930 62451 62865",
 	"SPELL_AURA_REMOVED 62519 62861 62438 63571 62589",
 	"UNIT_DIED",
-	"UNIT_SPELLCAST_SUCCEEDED boss1",
 	"CHAT_MSG_RAID_BOSS_EMOTE"
 )
 
@@ -61,7 +60,7 @@ local timerNatureBombExplosion	= mod:NewCastTimer(10, 64587, 34539, nil, nil, 2)
 
 -- Hard Mode
 mod:AddTimerLine(DBM_COMMON_L.HEROIC_ICON..DBM_CORE_L.HARD_MODE)
-local warnUnstableBeamSoon		= mod:NewSoonAnnounce(62865, 3) -- Hard mode Sun Beam Elder Brightleaf Alive
+--local warnUnstableBeamSoon		= mod:NewSoonAnnounce(62865, 3) -- Hard mode Sun Beam Elder Brightleaf Alive
 local warnIronRoots				= mod:NewTargetNoFilterAnnounce(62438, 2) -- Hard mode Elder Ironbranch Alive
 
 local yellIronRoots				= mod:NewYell(62438)
@@ -69,8 +68,8 @@ local specWarnGroundTremor		= mod:NewSpecialWarningCast(62859, "SpellCaster", ni
 local specWarnUnstableBeam		= mod:NewSpecialWarningMove(62865, nil, nil, nil, 1, 2)	-- Hard mode Elder Brightleaf Alive
 
 local timerGroundTremorCD		= mod:NewCDTimer(25.5, 62859, nil, nil, nil, 2) -- ~10s variance (25 man HM log 2022/07/17) - 27.4, 25.8, 25.5, 26.5; 26.8, 26.1, 26.2, 25.7, 27.2
-local timerIronRootsCD			= mod:NewCDTimer(12.1, 62438, nil, nil, nil, 3) -- ~7s variance (could be 10s) (2022/07/05 log review || 25 man HM log 2022/07/17) - 12, 16 || 15.9, 16.5, 14.8, 18.7, 13.8, 12.8, 13.4, 19.1; 13.2, 17.9, 12.1, 15.7, 15.0, 15.9, 12.3, 15.4
-local timerUnstableBeamCD		= mod:NewCDTimer(15.6, 62865, nil, nil, nil, 2, nil, nil, true) -- Hard mode Sun Beam. ~5s variance [15-20]. Added "keep" arg (2022/07/05 log review || 25 man HM log 2022/07/17 || 25H Lordaeron 2022/10/30) - 18.7, 16.6 || 15.8, 20.0, 17.3, 18.9, 16.1, 16.6, 15.6 ; 20.4, 17.4, 16.5, 18.3, 16.9, 16.1, 16.3 || 17.6
+local timerIronRootsCD			= mod:NewCDTimer(56, 62438, nil, nil, nil, 3) -- ~7s variance (could be 10s) (2022/07/05 log review || 25 man HM log 2022/07/17) - 12, 16 || 15.9, 16.5, 14.8, 18.7, 13.8, 12.8, 13.4, 19.1; 13.2, 17.9, 12.1, 15.7, 15.0, 15.9, 12.3, 15.4
+--local timerUnstableBeamCD		= mod:NewCDTimer(15.6, 62865, nil, nil, nil, 2, nil, nil, true) -- Hard mode Sun Beam. ~5s variance [15-20]. Added "keep" arg (2022/07/05 log review || 25 man HM log 2022/07/17 || 25H Lordaeron 2022/10/30) - 18.7, 16.6 || 15.8, 20.0, 17.3, 18.9, 16.1, 16.6, 15.6 ; 20.4, 17.4, 16.5, 18.3, 16.9, 16.1, 16.3 || 17.6
 
 mod:AddSetIconOption("SetIconOnRoots", 62438, false, false, {6, 5, 4})
 
@@ -156,9 +155,9 @@ function mod:SPELL_CAST_SUCCESS(args)
 		--if self.vb.phase == 2 then
 			timerIronRootsCD:Start()
 		--end
-	elseif args:IsSpellID(62451, 62865) and self:AntiSpam(5, 2) then -- Unstable Energy (Sun Beam)
-		timerUnstableBeamCD:Start()
-		warnUnstableBeamSoon:Schedule(12)
+	--elseif args:IsSpellID(62451, 62865) and self:AntiSpam(5, 2) then -- Unstable Energy (Sun Beam)
+	--	timerUnstableBeamCD:Start()
+	--	warnUnstableBeamSoon:Schedule(12)
 	end
 end
 
@@ -222,21 +221,15 @@ function mod:UNIT_DIED(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(_, spellName)
-	if spellName == GetSpellInfo(62438) then
-		timerIronRootsCD:Start()
-	end
-end
-
 function mod:CHAT_MSG_MONSTER_YELL(msg)
 	if msg == L.YellPullNormal then -- Yell fires before IEEU, so set HM variable here instead of OnCombatStart
 		self.vb.isHardMode = false
 	elseif msg == L.YellPullHard then
 		self.vb.isHardMode = true
-		timerGroundTremorCD:Start(11) -- 6s variance (could be more, insufficient data). (2022/07/05 10m Lord transcriptor log || 2021 S2 cleu + VOD review || 25 man FM log) - 16 || 11, 13, 17 || 17.5, 11.3
-		timerIronRootsCD:Start(8.5) -- ~6s variance (could be more, insufficient data). (25 man FM log) - 8.5, 14.9
-		timerUnstableBeamCD:Start(10.7) -- REVIEW! ~7s variance [10.7-17.5] (25 man FM log || 25H Lordaeron 2022/10/30_1 elder up) - 17.5, 15.5 || 10.7
-		warnUnstableBeamSoon:Schedule(7.7)
+		timerGroundTremorCD:Start(14) -- 6s variance (could be more, insufficient data). (2022/07/05 10m Lord transcriptor log || 2021 S2 cleu + VOD review || 25 man FM log) - 16 || 11, 13, 17 || 17.5, 11.3
+		timerIronRootsCD:Start(12) -- ~6s variance (could be more, insufficient data). (25 man FM log) - 8.5, 14.9
+	--	timerUnstableBeamCD:Start(10.7) -- REVIEW! ~7s variance [10.7-17.5] (25 man FM log || 25H Lordaeron 2022/10/30_1 elder up) - 17.5, 15.5 || 10.7
+	--	warnUnstableBeamSoon:Schedule(7.7)
 	elseif msg == L.SpawnYell then
 		timerAlliesOfNature:Start()
 		if self.Options.HealthFrame then
@@ -259,5 +252,7 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 		specWarnLifebinder:Show()
 		specWarnLifebinder:Play("targetchange")
 		timerLifebinderCD:Start()
+	elseif strmatch(msg, L.Root) then
+		timerIronRootsCD:Start()
 	end
 end

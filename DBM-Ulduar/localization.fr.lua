@@ -290,7 +290,8 @@ L:SetMiscLocalization({
 	EmoteLGift			= "commence à pousser !", -- Un |cFF00FFFFdon de la Lieuse-de-vie|r commence à pousser !
 	TrashRespawnTimer	= "Respawn des Trashs de Freya",
 	YellPullNormal		= "Le jardin doit être protégé !",
-	YellPullHard		= "Anciens, donnez-moi votre force !"
+	YellPullHard		= "Anciens, donnez-moi votre force !",
+	Root				= "Racines de fer renforcées !"
 })
 
 ----------------------

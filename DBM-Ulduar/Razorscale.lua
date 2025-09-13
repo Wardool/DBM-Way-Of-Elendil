@@ -33,8 +33,8 @@ local yellDevouringFlame			= mod:NewYell(64733)
 
 local timerTurret1					= mod:NewTimer(53, "timerTurret1", 48642, nil, nil, 5, DBM_COMMON_L.IMPORTANT_ICON) -- 25 man log review (2022/07/10)
 local timerTurret2					= mod:NewTimer(73, "timerTurret2", 48642, nil, nil, 5, DBM_COMMON_L.IMPORTANT_ICON) -- 25 man log review (2022/07/10)
-local timerTurret3					= mod:NewTimer(95, "timerTurret3", 48642, nil, nil, 5, DBM_COMMON_L.IMPORTANT_ICON) -- 25 man log review (2022/07/10)
-local timerTurret4					= mod:NewTimer(115, "timerTurret4", 48642, nil, nil, 5, DBM_COMMON_L.IMPORTANT_ICON) -- 25 man log review (2022/07/10)
+local timerTurret3					= mod:NewTimer(93, "timerTurret3", 48642, nil, nil, 5, DBM_COMMON_L.IMPORTANT_ICON) -- 25 man log review (2022/07/10)
+local timerTurret4					= mod:NewTimer(113, "timerTurret4", 48642, nil, nil, 5, DBM_COMMON_L.IMPORTANT_ICON) -- 25 man log review (2022/07/10)
 
 -- Stage Two
 mod:AddTimerLine(DBM_CORE_L.SCENARIO_STAGE:format(2))
@@ -78,8 +78,8 @@ function mod:OnCombatStart(delay)
 		timerTurret1:Start(-delay)
 		timerTurret2:Start(-delay)
 	else
-		warnTurretsReadySoon:Schedule(95-delay)
-		warnTurretsReady:Schedule(115-delay)
+		warnTurretsReadySoon:Schedule(93-delay)
+		warnTurretsReady:Schedule(113-delay)
 		timerTurret1:Start(-delay) -- 53sec
 		timerTurret2:Start(-delay) -- +20
 		timerTurret3:Start(-delay) -- +20
@@ -154,12 +154,12 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 			timerTurret1:Start(23)
 			timerTurret2:Start(43)
 		else
-			warnTurretsReadySoon:Schedule(105)
-			warnTurretsReady:Schedule(115)
+			warnTurretsReadySoon:Schedule(103)
+			warnTurretsReady:Schedule(113)
 			timerTurret1:Start(53)
 			timerTurret2:Start(73)
-			timerTurret3:Start(95)
-			timerTurret4:Start(115)
+			timerTurret3:Start(93)
+			timerTurret4:Start(113)
 		end
 	elseif msg == L.YellGround then
 		timerGrounded:Start()

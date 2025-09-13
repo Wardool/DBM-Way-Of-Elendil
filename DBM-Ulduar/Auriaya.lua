@@ -27,9 +27,9 @@ local specWarnSonic		= mod:NewSpecialWarningMoveTo(64688, nil, nil, nil, 2, 2)
 local enrageTimer		= mod:NewBerserkTimer(600)
 local timerDefender		= mod:NewNextCountTimer(30, 64447, nil, nil, nil, 1) -- First timer is time for boss spellcast, afterwards is time to revive
 local timerFear			= mod:NewCastTimer(64386, nil, nil, nil, 4)
-local timerFearCD		= mod:NewCDTimer(27.7, 64386, nil, nil, nil, 4, nil, nil, true) -- REVIEW! ~9s variance [27.7-36.3]. Added "Keep" arg (25m Frostmourne 2022/09/07 || 25m Lordaeron 2022/10/09 || 25m Lordaeron 2022/10/30) - 33.8, 34.3, 32.6 || 34.5, 36.3, 29.1 || 30.4, 28.9, 27.8, 32.4
-local timerSwarmCD		= mod:NewCDTimer(31.8, 64396, nil, nil, nil, 1, nil, nil, true) -- REVIEW! ~4s variance? Added "Keep" arg (25m Frostmourne 2022/09/07 || 25m Lordaeron 2022/10/09) - 34.5, 32.3 || 31.8
-local timerSonicCD		= mod:NewCDTimer(27.2, 64688, nil, nil, nil, 2, nil, DBM_COMMON_L.DEADLY_ICON, true) -- REVIEW! ~10s variance [27.2-37.2]. Added "Keep" arg (10m Frostmourne 2022/08/09 || 25m Frostmourne 2022/09/07 || 25m Lordaeron 2022/10/09 || 25m Lordaeron 2022/10/30) - 28.7, 35.4, 37.2 || 30.8, 29.5 || 32.9, 33.4 || 35.1, 27.2, 31.3
+local timerFearCD		= mod:NewCDTimer(27.7, 64386, nil, nil, nil, 4, nil, nil, false) -- Prevent timer from going negativ, Timers are too much random after the 1st fear. // pull:37.94, 73.42, 43.00 // pull:37.94, 79.31, 82.34 //
+local timerSwarmCD		= mod:NewCDTimer(31.8, 64396, nil, nil, nil, 1, nil, nil, true)
+local timerSonicCD		= mod:NewCDTimer(26, 64688, nil, nil, nil, 2, nil, DBM_COMMON_L.DEADLY_ICON, false) -- pull:47.95, 24.09, 26.71, 30.02, 25.32, 25.50 // pull:47.95, 24.18, 54.55 //
 local timerSonic		= mod:NewCastTimer(64688, nil, nil, nil, 2)
 
 mod:GroupSpells(64447, 64455) -- Activate Feral Defender, Feral Essence
@@ -39,8 +39,8 @@ mod.vb.catLives = 9
 function mod:OnCombatStart(delay)
 	self.vb.catLives = 9
 	enrageTimer:Start(-delay)
-	timerFearCD:Start(34.9-delay)
-	timerSonicCD:Start(48-delay)
+	timerFearCD:Start(37.90-delay)
+	timerSonicCD:Start(47.9-delay)
 	timerDefender:Start(59.9-delay, self.vb.catLives)
 end
 
@@ -53,7 +53,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnFear:Play("fearsoon")
 		timerFear:Start()
 		timerFearCD:Schedule(2)
-		warnFearSoon:Schedule(34)
+		--warnFearSoon:Schedule(34)
 	elseif args:IsSpellID(64688, 64422) then --Sonic Screech
 		specWarnSonic:Show(TANK)
 		specWarnSonic:Play("gathershare")
