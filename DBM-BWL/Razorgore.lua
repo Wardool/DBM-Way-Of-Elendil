@@ -32,9 +32,8 @@ mod:AddSpeedClearOption("BWL", true)
 
 mod.vb.eggsLeft = 30
 mod.vb.firstEngageTime = nil
-local destroyEggName = DBM:GetSpellInfo(19873)
 
-function mod:OnCombatStart(delay)
+function mod:OnCombatStart()
 	self:SetStage(1)
 	--timerAddsSpawn:Start(-delay)
 	self.vb.eggsLeft = 30
