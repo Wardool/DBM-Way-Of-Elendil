@@ -13,9 +13,9 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 22425",
 	"SPELL_CAST_SUCCESS 23040 19873",
 	"SPELL_AURA_APPLIED 23023",
+	"CHAT_MSG_MONSTER_YELL",
 --	"CHAT_MSG_MONSTER_EMOTE",
-	"UNIT_DIED",
-	"UNIT_SPELLCAST_SUCCEEDED boss1"
+	"UNIT_DIED"
 )
 
 --ability.id = 22425 and type = "begincast" or (ability.id = 23040 or ability.id = 19873) and type = "cast"
@@ -26,7 +26,7 @@ local warnEggsLeft			= mod:NewCountAnnounce(19873, 1)
 
 local specWarnFireballVolley= mod:NewSpecialWarningMoveTo(22425, false, nil, nil, 2, 2)
 
-local timerAddsSpawn		= mod:NewTimer(47, "TimerAddsSpawn", 19879, nil, nil, 1)--Only for start of adds, not adds after the adds.
+--local timerAddsSpawn		= mod:NewTimer(47, "TimerAddsSpawn", 19879, nil, nil, 1)--Only for start of adds, not adds after the adds.
 
 mod:AddSpeedClearOption("BWL", true)
 
@@ -36,7 +36,7 @@ local destroyEggName = DBM:GetSpellInfo(19873)
 
 function mod:OnCombatStart(delay)
 	self:SetStage(1)
-	timerAddsSpawn:Start(-delay)
+	--timerAddsSpawn:Start(-delay)
 	self.vb.eggsLeft = 30
 	if not self.vb.firstEngageTime then
 		self.vb.firstEngageTime = time()
@@ -64,11 +64,6 @@ function mod:SPELL_CAST_SUCCESS(args)
 	if spellId == 23040 and self.vb.phase < 2 then
 		warnPhase2:Show()
 		self:SetStage(2)
-	--This may not be accurate, it depends on how large expanded combat log range is
-	elseif spellId == 19873 then
-		DBM:AddMsg("Destroy Egg SPELL_CAST_SUCCESS unhidden from combat log. Notify Zidras on Discord or GitHub")
---		self.vb.eggsLeft = self.vb.eggsLeft - 1
---		warnEggsLeft:Show(string.format("%d/%d",30-self.vb.eggsLeft,30))
 	end
 end
 
@@ -78,12 +73,6 @@ function mod:SPELL_AURA_APPLIED(args)
 		warnConflagration:CombinedShow(0.3, args.destName)
 	end
 end
-
---[[function mod:CHAT_MSG_MONSTER_EMOTE(msg)
-	if (msg == L.Phase2Emote or msg:find(L.Phase2Emote)) and self.vb.phase < 2 then
-		self:SendSync("Phase2")
-	end
-end]]
 
 function mod:UNIT_DIED(args)
 	local cid = self:GetCIDFromGUID(args.destGUID)
@@ -96,16 +85,9 @@ function mod:UNIT_DIED(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_SUCCEEDED(_, spellName)
-	if spellName == destroyEggName then
+function mod:CHAT_MSG_MONSTER_YELL(msg)
+	if strmatch(msg, L.Eggs1) or strmatch(msg, L.Eggs2) or strmatch(msg, L.Eggs3) then
 		self.vb.eggsLeft = self.vb.eggsLeft - 1
 		warnEggsLeft:Show(string.format("%d/%d",30-self.vb.eggsLeft,30))
 	end
 end
-
---[[function mod:OnSync(msg)
-	if msg == "Phase2" and self.vb.phase < 2 then
-		warnPhase2:Show()
-		self:SetStage(2)
-	end
-end]]

@@ -29,7 +29,7 @@ local yellAdrenalineFades	= mod:NewShortFadesYell(18173)
 
 local timerAdrenalineCD		= mod:NewCDTimer(15.05, 18173, nil, nil, nil, 3) -- REVIEW! variance? (25m Onyxia: [2024-02-04]@[19:03:58]) - "Burning Adrenaline-23620-npc:13020-127 = pull:16.97, 15.05
 local timerAdrenaline		= mod:NewTargetTimer(20, 18173, nil, nil, nil, 3)
-local timerCombatStart		= mod:NewCombatTimer(44.08) -- [IEEU-YELL] - 770.50-726.42
+local timerCombatStart		= mod:NewCombatTimer(40) -- [IEEU-YELL] - 770.50-726.42
 
 mod:AddSetIconOption("SetIconOnDebuffTarget2", 18173, true, false, {8, 7, 6})
 

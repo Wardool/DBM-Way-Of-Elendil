@@ -20,7 +20,10 @@ L:SetOptionLocalization({
 
 L:SetMiscLocalization({
 	Phase2Emote	= "s'enfuit car le contrôle de l'orbe s'affaiblit.",
-	YellPull = "La chambre des œufs est envahie ! Sonnez l'alarme ! Protégez les œufs à tout prix !"
+	YellPull	= "La chambre des œufs est envahie ! Sonnez l'alarme ! Protégez les œufs à tout prix !",
+	Eggs1		= "Non, pas un autre !",
+	Eggs2		= "Imbéciles ! Vous n'avez pas idée de la valeur",
+	Eggs3		= "Vous allez payer pour m'avoir forcé à faire"
 })
 
 -------------------
