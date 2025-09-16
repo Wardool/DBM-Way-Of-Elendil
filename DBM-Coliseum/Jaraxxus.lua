@@ -53,7 +53,7 @@ local timerFlesh				= mod:NewTargetTimer(12, 66237, nil, "Healer", 2, 5, nil, DB
 local timerFleshCD				= mod:NewNextTimer(30, 66237, nil, "Healer", 2, 5, nil, DBM_COMMON_L.HEALER_ICON)
 local timerPortalCD				= mod:NewCDTimer(120, 66269, nil, nil, nil, 1, nil, nil, true)
 local timerVolcanoCD			= mod:NewCDTimer(120, 66258, nil, nil, nil, 1)
-local timerFelLightning			= mod:NewCDTimer(10, 67031, nil, nil, nil, 3, nil, nil, true)
+local timerFelLightning			= mod:NewCDTimer(10, 67031, nil, nil, nil, 3, nil, nil, false)
 
 local enrageTimer				= mod:NewBerserkTimer(600)
 
