@@ -86,7 +86,7 @@ local warnEmpoweredFlames		= mod:NewTargetNoFilterAnnounce(72040, 4)
 local specWarnEmpoweredFlames	= mod:NewSpecialWarningRun(72040, nil, nil, nil, 4, 2)
 local yellEmpoweredFlames		= mod:NewYellMe(72040)
 
-local timerConjureFlamesCD		= mod:NewCDTimer(15.3, 71718, nil, nil, nil, 3, nil, nil, true)
+local timerConjureFlamesCD		= mod:NewCDTimer(15.3, 71718, nil, nil, nil, 3, nil, nil, false)
 --local timerGlitteringSparksCD	= mod:NewCDTimer(15.9, 71807, nil, nil, nil, 2, nil, nil, true)
 
 local soundEmpoweredFlames		= mod:NewSoundYou(72040)
