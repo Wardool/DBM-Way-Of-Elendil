@@ -178,22 +178,23 @@ function DBMExtraGlobal:rebuildSpecTable()
 			["WeaponDependent"] = true,
 		},
 		[251] = {	--Frost DK
+			["Tank"] = IsSpellKnown(48982),
 			["Dps"] = true,
 			["Melee"] = true,
 			["MeleeDps"] = true,
 			["Physical"] = true,
 			["HasInterrupt"] = true,
 			["WeaponDependent"] = true,
-			["Tank"] = IsSpellKnown(50385),
 		},
 		[252] = {	--Unholy DK
+			["Tank"] = IsSpellKnown(51052),
 			["Dps"] = true,
 			["Melee"] = true,
 			["MeleeDps"] = true,
 			["Physical"] = true,
 			["HasInterrupt"] = true,
 			["WeaponDependent"] = true,
-			["Tank"] = IsSpellKnown(51052),
+
 		},
 		[1455] = {	--Initial DK (used in exiles reach tutorial mode). Treated as hybrid. Utility disabled because that'd require checking tutorial progress
 			["Tank"] = true,
