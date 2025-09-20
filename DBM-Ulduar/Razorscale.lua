@@ -3,6 +3,7 @@ local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision("20220710223858")
 mod:SetCreatureID(33186)
+mod:SetMinSyncRevision(20220710223858)
 
 mod:RegisterCombat("combat_yell", L.YellAir)
 

@@ -15,8 +15,6 @@ mod:RegisterEventsInCombat(
 	"SPELL_INTERRUPT 62661",
 	"UNIT_DIED",
 	"CHAT_MSG_RAID_BOSS_EMOTE"
---	"UNIT_SPELLCAST_START boss1",
---	"UNIT_SPELLCAST_SUCCEEDED boss1"
 )
 
 local warnShadowCrash				= mod:NewTargetAnnounce(62660, 4)
@@ -35,11 +33,11 @@ local specWarnSearingFlames			= mod:NewSpecialWarningInterruptCount(62661, "HasI
 local timerEnrage					= mod:NewBerserkTimer(600)
 local timerSearingFlamesCast		= mod:NewCastTimer(2, 62661, nil, nil, nil, 5, nil, DBM_COMMON_L.INTERRUPT_ICON)
 local timerSurgeofDarkness			= mod:NewBuffActiveTimer(10, 62662, nil, "Tank", nil, 5, nil, DBM_COMMON_L.TANK_ICON)
-local timerNextSurgeofDarkness		= mod:NewCDTimer(51.9, 62662, nil, "Tank", nil, 5, nil, DBM_COMMON_L.TANK_ICON) -- REVIEW! 10s variance [50-60; 50-70 from TC]? (25 man NM log 2022/07/10 || S3 HM log 2022/07/21) - 58.0, 51.9 || 55.7, 60.1
+local timerNextSurgeofDarkness		= mod:NewCDTimer(62, 62662, nil, "Tank", nil, 5, nil, DBM_COMMON_L.TANK_ICON) -- pull:71.92, 62.05, 62.02
 local timerSaroniteVapors			= mod:NewNextCountTimer(30, 63322, nil, nil, nil, 5, nil, DBM_COMMON_L.HEALER_ICON) -- Emote not fired if out of range (confirmed as of 2022/07/25). Has variance, but apply 30s regardless
-local timerShadowCrashCD			= mod:NewCDTimer(8.1, 62660, nil, "Ranged", nil, 3) -- 4s variance [8-12] (25 man NM log review 2022/07/10) - 8.8, 10.5, 8.6, 10.6, 10.3, 8.1, 11.8, 9.7, 10.6, 9.8, 14.2, 9.3, 9.1, 8.7, 8.4, 11.5, 8.9
+local timerShadowCrashCD			= mod:NewCDTimer(9, 62660, nil, "Ranged", nil, 3) -- pull:8.30, 10.30, 12.81, 9.79, 11.21, 8.21, 14.30, 11.11, 8.71, 11.61, 10.50, 8.32, 8.39, 8.10, 12.21, 9.30, 9.21, 9.01, 8.50, 18.11
 local timerMarkoftheFaceless		= mod:NewTargetTimer(10, 63276, nil, false, 2, 3, nil, DBM_COMMON_L.IMPORTANT_ICON)
-local timerMarkoftheFacelessCD		= mod:NewCDTimer(35.9, 63276, nil, nil, nil, 3, nil, DBM_COMMON_L.IMPORTANT_ICON) -- 15s variance [35-45] (25 man NM log 2022/07/10 || S3 HM log 2022/07/21) - 35.9, 41.1, 36.6 || 36.3, 37.6, 37.9, 43.9, 43.8, 40.1
+local timerMarkoftheFacelessCD		= mod:NewCDTimer(39, 63276, nil, nil, nil, 3, nil, DBM_COMMON_L.IMPORTANT_ICON) -- pull:45.74, 40.89, 39.44, 41.62, 41.91
 
 mod:AddSetIconOption("SetIconOnShadowCrash", 62660, true, false, {8})
 mod:AddSetIconOption("SetIconOnLifeLeach", 63276, true, false, {7})
@@ -49,7 +47,7 @@ mod:AddArrowOption("CrashArrow", 62660, true)
 mod:AddTimerLine(DBM_COMMON_L.HEROIC_ICON..DBM_CORE_L.HARD_MODE)
 local specWarnAnimus			= mod:NewSpecialWarningSwitch(63145, nil, nil, nil, 1, 2)
 
-local timerHardmode				= mod:NewTimer(212, "hardmodeSpawn", nil, nil, nil, 1) -- S3 VOD review 2022/07/15
+local timerHardmode				= mod:NewTimer(185, "hardmodeSpawn", nil, nil, nil, 1)
 
 mod.vb.interruptCount = 0
 mod.vb.vaporsCount = 0
@@ -63,45 +61,18 @@ local function saroniteVaporsSpawned(self)
 	end
 end
 
---[[function mod:ShadowCrashTarget(targetname, uId)
-	if not targetname then return end
-	if self.Options.SetIconOnShadowCrash then
-		self:SetIcon(targetname, 8, 5)
-	end
-	if targetname == UnitName("player") then
-		specWarnShadowCrash:Show()
-		specWarnShadowCrash:Play("runaway")
-		yellShadowCrash:Yell()
-	elseif self:CheckNearby(11, targetname) then
-		specWarnShadowCrashNear:Show(targetname)
-		specWarnShadowCrashNear:Play("runaway")
-	else
-		warnShadowCrash:Show(targetname)
-	end
-	if uId and self.Options.CrashArrow then
-		local x, y = GetPlayerMapPosition(uId)
-		if x == 0 and y == 0 then
-			SetMapToCurrentZone()
-			x, y = GetPlayerMapPosition(uId)
-		end
-		DBM.Arrow:ShowRunAway(x, y, 13, 5) -- 15yd was too conservative. Try 13yd instead (from personal testing, the hitbox was around ~12.5yd)
-	end
-end]]
-
 function mod:OnCombatStart(delay)
 	self.vb.interruptCount = 0
 	self.vb.vaporsCount = 0
-	timerShadowCrashCD:Start(8.0-delay) -- REVIEW! variance [8-12s?] (25 man NM log 2022/07/10 || S3 HM log 2022/07/21) - 8.0 || 9.6
-	timerMarkoftheFacelessCD:Start(35.1-delay) -- REVIEW! variance 35-45s? (25 man NM log 2022/07/10 || S3 HM log 2022/07/21) - 37.3 || 35.1
-	timerSaroniteVapors:Start(30.0-delay, 1) -- Log reviewed (25 man NM log review 2022/07/10)
+	timerShadowCrashCD:Start(8.0-delay)
+	timerMarkoftheFacelessCD:Start(42-delay)
+	timerSaroniteVapors:Start(30-delay, 1)
 	self:Schedule(30-delay, saroniteVaporsSpawned, self)
 	timerEnrage:Start(-delay)
 	timerHardmode:Start(-delay)
-	timerNextSurgeofDarkness:Start(60.0-delay) -- REVIEW! 10s variance [50-60]? (25 man NM log 2022/07/10 || S3 HM log 2022/07/21) - 60.0 || 60.0
+	timerNextSurgeofDarkness:Start(71-delay)
 end
 
--- Confirmed as of 2022/07/25: CLEU SPELL_CAST_x is randomly failing on Warmane and not firing - https://www.warmane.com/bugtracker/report/112497. Resort to AURA/UNIT_SPELLCAST_x events for now.
--- EDIT 20/09/2022: after several log reviews and troubleshooting, https://www.warmane.com/bugtracker/report/112497 has been fixed serverside. Reinstating CLEU events.
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
 	if spellId == 62661 then	-- Searing Flames
@@ -114,7 +85,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnSearingFlames:Play("kick"..kickCount.."r")
 		timerSearingFlamesCast:Start()
 	elseif spellId == 62662 then
-		if self:IsTanking("player", "boss1", nil, true) then--Player is current target
+		if self:IsTanking("player", "target", nil, true) then--Player is current target
 			specWarnSurgeDarkness:Show()
 			specWarnSurgeDarkness:Play("defensive")
 		end
@@ -219,37 +190,6 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(emote)
 		self:SendSync("SaroniteVaporsSpawned")
 	end
 end
-
---[[function mod:UNIT_SPELLCAST_START(_, spellName)
-	if spellName == GetSpellInfo(62661) then	-- Searing Flames
-		self.vb.interruptCount = self.vb.interruptCount + 1
-		if self.vb.interruptCount == 4 then
-			self.vb.interruptCount = 1
-		end
-		local kickCount = self.vb.interruptCount
-		specWarnSearingFlames:Show(L.name, kickCount)
-		specWarnSearingFlames:Play("kick"..kickCount.."r")
-		timerSearingFlamesCast:Start()
-	elseif spellName == GetSpellInfo(62662) then
-		if self:IsTanking("player", "boss1", nil, true) then--Player is current target
-			specWarnSurgeDarkness:Show()
-			specWarnSurgeDarkness:Play("defensive")
-		end
-		timerNextSurgeofDarkness:Start()
-	end
-end
-
-function mod:UNIT_SPELLCAST_SUCCEEDED(_, spellName)
-	if spellName == GetSpellInfo(62660) then		-- Shadow Crash
-		self:BossTargetScanner(33271, "ShadowCrashTarget", 0.05, 20)
-		timerShadowCrashCD:Start()
-	elseif spellName == GetSpellInfo(63364) then
-		self:Unschedule(saroniteVaporsSpawned)
-		timerSaroniteVapors:Stop()
-		specWarnAnimus:Show()
-		specWarnAnimus:Play("bigmob")
-	end
-end]]
 
 function mod:OnSync(msg)
 	if msg == "SaroniteVaporsSpawned" and self:AntiSpam(3, 1) then

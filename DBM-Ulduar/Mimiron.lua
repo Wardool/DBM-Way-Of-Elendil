@@ -20,7 +20,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 63666 65026 64529 62997 64616 64570",
 	"SPELL_AURA_REMOVED 63666 65026",
 	"SPELL_SUMMON 63811",
-	"UNIT_SPELLCAST_CHANNEL_STOP",
+--	"UNIT_SPELLCAST_CHANNEL_STOP",
 --	"UNIT_SPELLCAST_START boss1",
 	"UNIT_SPELLCAST_SUCCEEDED",
 	"CHAT_MSG_LOOT",
@@ -59,8 +59,8 @@ local specWarnRocketStrike			= mod:NewSpecialWarningDodge(64402, nil, nil, nil, 
 
 local timerSpinUp					= mod:NewCastTimer(4, 63414, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON)
 local timerP3Wx2LaserBarrageCast	= mod:NewCastTimer(10, 63274, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON)
-local timerNextP3Wx2LaserBarrage	= mod:NewNextTimer(45, 63414, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON) -- REVIEW! variance? S2 VOD reviews - 47.5, 45
-local timerRocketStrikeCD			= mod:NewCDTimer(20, 64402, nil, nil, nil, 3)--20-25
+local timerNextP3Wx2LaserBarrage	= mod:NewNextTimer(48, 63414, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON) -- REVIEW! variance? S2 VOD reviews - 47.5, 45
+local timerRocketStrikeCD			= mod:NewCDTimer(24, 64402, nil, nil, nil, 3)--22-38
 
 -- Stage Three
 mod:AddTimerLine(DBM_CORE_L.SCENARIO_STAGE:format(3)..": "..L.MobPhase3)
@@ -80,7 +80,7 @@ mod:AddTimerLine(DBM_COMMON_L.HEROIC_ICON..DBM_CORE_L.HARD_MODE)
 local warnFlamesSoon				= mod:NewSoonAnnounce(64566, 1)
 
 local timerHardmode					= mod:NewTimer(610, "TimerHardmode", 64582, nil, nil, 6, nil, nil, nil, nil, nil, nil, nil, 64582)
-local timerNextFlames				= mod:NewNextTimer(28, 64566, nil, nil, nil, 7, nil, DBM_COMMON_L.IMPORTANT_ICON, nil, 1, 5)
+local timerNextFlames				= mod:NewNextTimer(27, 64566, nil, nil, nil, 7, nil, DBM_COMMON_L.IMPORTANT_ICON, nil, 1, 5)
 
 -- Stage One
 mod:AddTimerLine(DBM_CORE_L.SCENARIO_STAGE:format(1)..": "..L.MobPhase1)
@@ -91,9 +91,9 @@ local timerNextFlameSuppressantP1	= mod:NewCDTimer(60, 64570, nil, nil, nil, 3) 
 mod:AddTimerLine(DBM_CORE_L.SCENARIO_STAGE:format(2)..": "..L.MobPhase2)
 local warnFrostBomb					= mod:NewSpellAnnounce(64623, 3)
 
-local timerFrostBombExplosion		= mod:NewCastTimer(15, 65333, nil, nil, nil, 3)
-local timerNextFrostBomb			= mod:NewNextTimer(30.4, 64623, nil, nil, nil, 3, nil, DBM_COMMON_L.HEROIC_ICON, true) -- REVIEW! variance? Use PEWPEW to add time? Added "keep" arg (VOD review || S3 HM log 2022/07/17 || 25H Lordaeron 2022/10/09) - either gave 46 or 33s || 44.2, 44.4, 47.1 || Stage 2/44.3, 32.6, Stage 4/88.2, 28.8/116.9/145.5, 47.7, 30.4
-local timerNextFlameSuppressantP2	= mod:NewNextTimer(10, 65192, nil, nil, nil, 3) -- 2s (26.4 outlier??) variance (S2 VOD review) - 12, 12, 11, 10 || 12.3, 12.4, 26.4, 11.3, 12.4
+local timerFrostBombExplosion		= mod:NewCastTimer(13, 65333, nil, nil, nil, 3)
+local timerNextFrostBomb			= mod:NewNextTimer(30.4, 64623, nil, nil, nil, 3, nil, DBM_COMMON_L.HEROIC_ICON, false) -- REVIEW! variance? Use PEWPEW to add time? Added "keep" arg (VOD review || S3 HM log 2022/07/17 || 25H Lordaeron 2022/10/09) - either gave 46 or 33s || 44.2, 44.4, 47.1 || Stage 2/44.3, 32.6, Stage 4/88.2, 28.8/116.9/145.5, 47.7, 30.4
+local timerNextFlameSuppressantP2	= mod:NewNextTimer(14, 65192, nil, nil, nil, 3) -- 2s (26.4 outlier??) variance (S2 VOD review) - 12, 12, 11, 10 || 12.3, 12.4, 26.4, 11.3, 12.4
 
 -- Stage Three
 mod:AddTimerLine(DBM_CORE_L.SCENARIO_STAGE:format(3)..": "..L.MobPhase3)
@@ -109,9 +109,9 @@ mod:GroupSpells(64623, 65333) -- Frost Bomb, Frost Bomb Explosion
 local cachedLootmethod, _, masterlooterRaidID
 mod.vb.hardmode = false
 mod.vb.napalmShellIcon = 7
-local spinningUp = DBM:GetSpellInfo(63414)
-local lastSpinUp = 0
-mod.vb.is_spinningUp = false
+--local spinningUp = DBM:GetSpellInfo(63414)
+--local lastSpinUp = 0
+--mod.vb.is_spinningUp = false
 local napalmShellTargets = {}
 
 local function ResetRange(self)
@@ -122,9 +122,9 @@ end
 
 local function Flames(self)	-- Flames -- UNIT_SPELLCAST_SUCCEEDED does not show on etrace
 	timerNextFlames:Start()
-	self:Schedule(28, Flames, self)
-	warnFlamesSoon:Schedule(18)
-	warnFlamesSoon:Schedule(23)
+	self:Schedule(27, Flames, self)
+	warnFlamesSoon:Schedule(17)
+	warnFlamesSoon:Schedule(22)
 end
 
 local function warnNapalmShellTargets(self)
@@ -134,11 +134,9 @@ local function warnNapalmShellTargets(self)
 end
 
 local function show_warning_for_spinup(self)
-	if self.vb.is_spinningUp then
-		specWarnP3Wx2LaserBarrage:Show()
-		specWarnP3Wx2LaserBarrage:Play("watchstep")
-		specWarnP3Wx2LaserBarrage:ScheduleVoice(1, "keepmove")
-	end
+	specWarnP3Wx2LaserBarrage:Show()
+	specWarnP3Wx2LaserBarrage:Play("watchstep")
+	specWarnP3Wx2LaserBarrage:ScheduleVoice(1, "keepmove")
 end
 
 local function NextPhase(self)
@@ -154,7 +152,7 @@ local function NextPhase(self)
 		timerNextFlameSuppressantP1:Stop()
 		timerPlasmaBlastCD:Stop()
 		timerP1toP2:Start()
-		timerNextP3Wx2LaserBarrage:Schedule(40, 31) -- REVIEW! ~3s variance? (25 man NM log 2022/07/10 || S3 HM log 2022/07/17 || Lord 25 NM log 2022/07/31 ) - 34 || 31 || 34
+		timerNextP3Wx2LaserBarrage:Schedule(46, 31) -- REVIEW! ~3s variance? (25 man NM log 2022/07/10 || S3 HM log 2022/07/17 || Lord 25 NM log 2022/07/31 ) - 34 || 31 || 34
 		if self.Options.HealthFrame then
 			DBM.BossHealth:Clear()
 			DBM.BossHealth:AddBoss(33651, L.MobPhase2)
@@ -191,7 +189,7 @@ local function NextPhase(self)
 		timerBombBotSpawn:Cancel()
 		timerP3toP4:Start()
 		timerProximityMines:Start(41) -- 25 man NM log review (2022/07/10) - 26 (phasing) + 15 (timer)
-		timerNextP3Wx2LaserBarrage:Start(56) -- 25 man NM log review (2022/07/10) - 26 (phasing) + 30 (timer)
+		timerNextP3Wx2LaserBarrage:Start(60) -- 25 man NM log review (2022/07/10) - 26 (phasing) + 30 (timer)
 		if self.Options.HealthFrame then
 			DBM.BossHealth:Show(L.name)
 			DBM.BossHealth:AddBoss(33670, L.MobPhase3)
@@ -199,14 +197,14 @@ local function NextPhase(self)
 			DBM.BossHealth:AddBoss(33432, L.MobPhase1)
 		end
 		if self.vb.hardmode then
-			timerNextFrostBomb:Start(28)
+			timerNextFrostBomb:Start(30)
 		end
 	end
 end
 
 function mod:OnCombatStart()
 	self.vb.phase = 0
-	self.vb.is_spinningUp = false
+	--self.vb.is_spinningUp = false
 	self.vb.napalmShellIcon = 7
 	table.wipe(napalmShellTargets)
 	NextPhase(self)
@@ -250,7 +248,7 @@ function mod:SPELL_CAST_START(args)
 			self:Schedule(4.5, ResetRange, self)
 		end
 	elseif args:IsSpellID(64529, 62997) then	-- Plasma Blast
-		if self:IsTanking("player", "boss1", nil, true) then
+		if self:IsTanking("player", "target", nil, true) then
 			specWarnPlasmaBlast:Show()
 			specWarnPlasmaBlast:Play("defensive")
 		end
@@ -272,12 +270,12 @@ function mod:SPELL_CAST_SUCCESS(args)
 	if spellId == 63027 then				-- Proximity Mines
 		timerProximityMines:Start()
 	elseif spellId == 63414 then			-- Spinning UP (before Dark Glare)
-		self.vb.is_spinningUp = true
+		--self.vb.is_spinningUp = true
 		timerSpinUp:Start()
 		timerP3Wx2LaserBarrageCast:Schedule(4)
 		timerNextP3Wx2LaserBarrage:Schedule(14)			-- 4 (cast spinup) + 10 sec (cast dark glare)
 		self:Schedule(0.15, show_warning_for_spinup, self)	-- wait 0.15 and then announce it, otherwise it will sometimes fail
-		lastSpinUp = GetTime()
+		--lastSpinUp = GetTime()
 	elseif spellId == 65192 then	-- Flame Suppressant CD (phase 2)
 		timerNextFlameSuppressantP2:Start()
 	end
@@ -322,12 +320,12 @@ function mod:SPELL_SUMMON(args)
 	end
 end
 
-function mod:UNIT_SPELLCAST_CHANNEL_STOP(_, spellName)
+--[[function mod:UNIT_SPELLCAST_CHANNEL_STOP(_, spellName)
 	if spellName == spinningUp and GetTime() - lastSpinUp < 3.9 then
 		self.vb.is_spinningUp = false
 		self:SendSync("SpinUpFail")
 	end
-end
+end]]
 
 --[[function mod:UNIT_SPELLCAST_START(_, spellName)
 	if spellName == GetSpellInfo(63631) then -- Shock Blast. Used UNIT event instead since I have a log where CLEU missed one SCStart
@@ -387,20 +385,20 @@ end
 function mod:CHAT_MSG_MONSTER_YELL(msg)
 	if msg == L.YellPull or msg:find(L.YellPull) then -- register Normal Mode
 		self.vb.hardmode = false -- set this here instead of CombatStart to prevent possible overwrites
-		timerPlasmaBlastCD:Start(22.0) -- REVIEW! variance? 25 man NM log review (2022/07/10) - 22.0
-		timerNextShockBlast:Start(31.1) -- REVIEW! variance? 25 man NM log review (2022/07/10) - 31.1
+		timerPlasmaBlastCD:Start(26.6)
+		timerNextShockBlast:Start(15)
 		timerEnrage:Start()
 	elseif msg == L.YellHardPull or msg:find(L.YellHardPull) then -- register HARD Mode
 		self.vb.hardmode = true
 		self:SetWipeTime(10)
 		timerHardmode:Start()
-		timerPlasmaBlastCD:Start(26.6) -- REVIEW! variance? (S2 VOD || S3 HM log 2022/07/17) - 29 || 26.6, 26.6
-		timerNextFlameSuppressantP1:Start(75) -- REVIEW! ~5s variance (S2 VOD review || S3 HM log 2022/07/17) - 75 || 80.0 ; 77.3
-		timerProximityMines:Start(11) -- S2 VOD review
-		timerNextFlames:Start(6) -- S2 VOD review
-		self:Schedule(6, Flames, self)
-		warnFlamesSoon:Schedule(1)
-		timerNextShockBlast:Start(35.8) -- REVIEW! variance? (S3 HM log 2022/07/17 || 25H Lordaeron 2022/10/09) - 37.9, 37.7 || 35.8
+		timerPlasmaBlastCD:Start(28) -- REVIEW! variance? (S2 VOD || S3 HM log 2022/07/17) - 29 || 26.6, 26.6
+		timerNextFlameSuppressantP1:Start(80) -- REVIEW! ~5s variance (S2 VOD review || S3 HM log 2022/07/17) - 75 || 80.0 ; 77.3
+		timerProximityMines:Start(14.5) -- S2 VOD review
+		timerNextFlames:Start(11) -- S2 VOD review
+		self:Schedule(10, Flames, self)
+		warnFlamesSoon:Schedule(6)
+		timerNextShockBlast:Start(35.8-16.4) -- REVIEW! variance? (S3 HM log 2022/07/17 || 25H Lordaeron 2022/10/09) - 37.9, 37.7 || 35.8
 		timerEnrage:Start(600) -- REVIEW! 10 or 8 mins? By the yells, it is 10 mins, but wowhead states 8 min enrage timer...
 	elseif msg == L.YellPhase2 or msg:find(L.YellPhase2) then -- register Phase 2
 		NextPhase(self)
@@ -428,13 +426,13 @@ function mod:PARTY_LOOT_METHOD_CHANGED()
 end
 
 function mod:OnSync(event, args)
-	if event == "SpinUpFail" then
+	--[[if event == "SpinUpFail" then
 		self.vb.is_spinningUp = false
 		timerSpinUp:Cancel()
 		timerP3Wx2LaserBarrageCast:Cancel()
 		timerNextP3Wx2LaserBarrage:Cancel()
 		specWarnP3Wx2LaserBarrage:Cancel()
-	elseif event == "LootMsg" and args and self:AntiSpam(2, 1) then
+	else]]if event == "LootMsg" and args and self:AntiSpam(2, 1) then
 		warnLootMagneticCore:Show(args)
 	end
 end
