@@ -19,7 +19,7 @@ mod:RegisterEventsInCombat(
 local enrageTimer					= mod:NewBerserkTimer(600)
 local timerAchieve					= mod:NewAchievementTimer(205, 2937)
 
-mod:AddRangeFrameOption(12, nil, true)
+mod:AddRangeFrameOption(24, nil, true)
 
 -- Stage One
 mod:AddTimerLine(DBM_CORE_L.SCENARIO_STAGE:format(1))
@@ -33,7 +33,7 @@ local specWarnGravityBomb			= mod:NewSpecialWarningMoveAway(64234, nil, nil, nil
 local yellGravityBomb				= mod:NewYell(64234)
 
 local timerTympanicTantrumCast		= mod:NewCastTimer(62776)
-local timerTympanicTantrum			= mod:NewBuffActiveTimer(8, 62776, nil, nil, nil, 5, nil, DBM_COMMON_L.HEALER_ICON)
+local timerTympanicTantrum			= mod:NewBuffActiveTimer(7, 62776, nil, nil, nil, 5, nil, DBM_COMMON_L.HEALER_ICON)
 local timerTympanicTantrumCD		= mod:NewCDTimer(60, 62776, nil, nil, nil, 2, nil, DBM_COMMON_L.HEALER_ICON, nil, 3) -- S3 FM Log review 2022/07/17 - " Tympanic Tantrum-62776-npc:33293 = pull:60.0/Stage 1/60.0, Stage 2/6.6, Stage 1/29.0, 35.9/64.9/71.5, 60.0, 60.0, 60.0, 60.1, 60.0", -- [1]
 
 local timerLightBomb				= mod:NewTargetTimer(9, 65121, nil, nil, nil, 3)
@@ -60,7 +60,7 @@ function mod:OnCombatStart(delay)
 		timerTympanicTantrumCD:Start(60-delay)
 	end
 	if self.Options.RangeFrame then
-		DBM.RangeCheck:Show(12)
+		DBM.RangeCheck:Show(24)
 	end
 end
 
