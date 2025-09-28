@@ -4,11 +4,11 @@ local L		= mod:GetLocalizedStrings()
 local UnitGUID, UnitName, GetSpellInfo = UnitGUID, UnitName, GetSpellInfo
 local UnitInRange, UnitIsUnit, UnitInVehicle, IsInRaid = UnitInRange, UnitIsUnit, UnitInVehicle, DBM.IsInRaid
 
-mod:SetRevision("20250530223932")
+mod:SetRevision("20250924193558")
 mod:SetCreatureID(36597)
 mod:SetUsedIcons(2, 3, 4, 5, 6, 7, 8)
-mod:SetHotfixNoticeRev(20250523112110)
-mod:SetMinSyncRevision(20250530223932)
+mod:SetHotfixNoticeRev(20250924193558)
+mod:SetMinSyncRevision(20250924193558)
 
 mod:RegisterCombat("combat")
 
@@ -238,7 +238,7 @@ end
 local function leftFrostmourne(self)
 	DBM:Debug("Left Frostmourne")
 	DBM:AddSpecialEventToTranscriptorLog("Left Frostmourne")
-	timerHarvestSoulCD:Start(58)
+	timerHarvestSoulCD:Start(55)
 	timerDefileCD:Start(1.5, self.vb.defileCount+1) -- As soon as the group leaves FM
 	warnDefileSoon:Show(self.vb.defileCount+1)
 	warnDefileSoon:Play("scatter")
