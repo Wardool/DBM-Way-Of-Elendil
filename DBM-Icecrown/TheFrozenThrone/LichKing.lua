@@ -4,8 +4,9 @@ local L		= mod:GetLocalizedStrings()
 local UnitGUID, UnitName, GetSpellInfo = UnitGUID, UnitName, GetSpellInfo
 local UnitInRange, UnitIsUnit, UnitInVehicle, IsInRaid = UnitInRange, UnitIsUnit, UnitInVehicle, DBM.IsInRaid
 
-mod:SetRevision("20250924193558")
+mod:SetRevision("20250929215255")
 mod:SetCreatureID(36597)
+mod:SetEncounterID(856)
 mod:SetUsedIcons(2, 3, 4, 5, 6, 7, 8)
 mod:SetHotfixNoticeRev(20250924193558)
 mod:SetMinSyncRevision(20250924193558)
