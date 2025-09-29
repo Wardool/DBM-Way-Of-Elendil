@@ -11689,6 +11689,17 @@ function bossModPrototype:SetCreatureID(...)
 	end
 end
 
+---Used to set Encounter IDs this mod will pass to ENCOUNTER_START/ENCOUNTER_END/BOSS_KILL
+function bossModPrototype:SetEncounterID(...)
+	self.encounterId = ...
+	if select("#", ...) > 1 then
+		self.multiEncounterPullDetection = {...}
+		if self.combatInfo then
+			self.combatInfo.multiEncounterPullDetection = self.multiEncounterPullDetection
+		end
+	end
+end
+
 function bossModPrototype:DisableIEEUCombatDetection()
 	self.noIEEUDetection = true
 	if self.combatInfo then
