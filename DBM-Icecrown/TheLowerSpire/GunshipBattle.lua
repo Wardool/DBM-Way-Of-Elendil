@@ -2,7 +2,7 @@ local mod	= DBM:NewMod("GunshipBattle", "DBM-Icecrown", 1)
 local L		= mod:GetLocalizedStrings()
 
 mod:SetRevision("20250929215255")
-mod:SetEncounterID(847)
+mod:SetEncounterID(847)--No ES fires this combat
 mod:RegisterCombat("combat")
 mod:RegisterKill("yell", L.KillHorde, L.KillAlliance)
 mod:SetCreatureID(36939, 37215, 36948, 37540)
