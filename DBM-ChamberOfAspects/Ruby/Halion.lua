@@ -1,8 +1,9 @@
 local mod	= DBM:NewMod("Halion", "DBM-ChamberOfAspects", 2)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20250530223932")
+mod:SetRevision("20250929220131")
 mod:SetCreatureID(39863)--40142 (twilight form)
+mod:SetEncounterID(887)
 mod:SetUsedIcons(7, 3)
 mod:SetMinSyncRevision(20250530223932)
 
