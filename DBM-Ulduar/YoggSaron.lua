@@ -111,7 +111,7 @@ local warnP3						= mod:NewPhaseAnnounce(3, 2, nil, nil, nil, nil, nil, 2)
 local specWarnLunaticGaze			= mod:NewSpecialWarningLookAway(64163, nil, nil, nil, 1, 2)
 
 local timerLunaticGaze				= mod:NewCastTimer(4, 64163, nil, nil, nil, 2, nil, DBM_COMMON_L.IMPORTANT_ICON) -- Yogg-Saron's Gaze
-local timerNextLunaticGaze			= mod:NewCDTimer(8, 64163, nil, nil, nil, 2, nil, DBM_COMMON_L.IMPORTANT_ICON) -- Yogg-Saron's Gaze, Log reviewed (25 man NM  2022/07/10) - [cast_success: apply 4s cast time correction factor] 12.0, 12.0, 12.1, 12.1, 12.0, 12.0
+local timerNextLunaticGaze			= mod:NewCDTimer(10, 64163, nil, nil, nil, 2, nil, DBM_COMMON_L.IMPORTANT_ICON) -- Yogg-Saron's Gaze, Log reviewed (25 man NM  2022/07/10) - [cast_success: apply 4s cast time correction factor] 12.0, 12.0, 12.1, 12.1, 12.0, 12.0
 
 mod:AddSetIconOption("SetIconOnBeacon", 64465, true, true, {1, 2, 3, 4, 5, 6, 7, 8})
 
@@ -119,7 +119,7 @@ mod:AddSetIconOption("SetIconOnBeacon", 64465, true, true, {1, 2, 3, 4, 5, 6, 7,
 -- mod:AddTimerLine(L.ImmortalGuardian)
 local warnEmpowerSoon				= mod:NewSoonAnnounce(64486, 4)
 
-local timerEmpower					= mod:NewCDTimer(46.0, 64486, nil, nil, nil, 3) -- REVIEW! variance 45-50? (S3 HM log 2022/07/21) - 46.0, 46.0, 47.4, 48.2
+local timerEmpower					= mod:NewCDTimer(45, 64486, nil, nil, nil, 3) -- REVIEW! variance 45-50? (S3 HM log 2022/07/21) - 46.0, 46.0, 47.4, 48.2
 local timerEmpowerDuration			= mod:NewBuffActiveTimer(10, 64486, nil, nil, nil, 3)
 
 mod:GroupSpells(64486, 64465) -- Empowering Shadows, Shadow Beacon
@@ -133,7 +133,7 @@ local warnDeafeningRoarSoon			= mod:NewPreWarnAnnounce(64189, 5, 3)
 local specWarnDeafeningRoar			= mod:NewSpecialWarningSpell(64189, nil, nil, nil, 1, 2)
 
 local timerCastDeafeningRoar		= mod:NewCastTimer(2.3, 64189, nil, nil, nil, 2)
-local timerNextDeafeningRoar		= mod:NewNextTimer(58, 64189, nil, nil, nil, 2) -- (S2 VOD || S3 VOD 2022/07/15 || S3 HM log 2022/07/21) - 58 || 58, 58, 58, 58, 60, 60, 60 || 60.1, 60.1, 60.1
+local timerNextDeafeningRoar		= mod:NewNextTimer(23, 64189, nil, nil, nil, 2) -- (S2 VOD || S3 VOD 2022/07/15 || S3 HM log 2022/07/21) - 58 || 58, 58, 58, 58, 60, 60, 60 || 60.1, 60.1, 60.1
 
 local targetWarningsShown = {}
 local brainLinkTargets = {}
@@ -195,7 +195,7 @@ function mod:SPELL_CAST_START(args)
 		specWarnMadnessOutNow:Schedule(55) -- TO DO: implement brain room check?
 	elseif spellId == 64189 then		--Deafening Roar
 		timerNextDeafeningRoar:Start()
-		warnDeafeningRoarSoon:Schedule(53)
+		warnDeafeningRoarSoon:Schedule(18)
 		timerCastDeafeningRoar:Start()
 		specWarnDeafeningRoar:Show()
 		specWarnDeafeningRoar:Play("silencesoon")
