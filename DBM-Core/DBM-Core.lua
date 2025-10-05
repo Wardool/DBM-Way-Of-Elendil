@@ -64,7 +64,7 @@ local function currentFullDate()
 end
 
 DBM = {
-	Revision = parseCurseDate("20251005130022"),
+	Revision = parseCurseDate("20251005155324"),
 	DisplayVersion = "10.1.13 - WoE Edition", -- the string that is shown as version
 	ReleaseRevision = releaseDate(2025, 10, 05) -- the date of the latest stable version that is available, optionally pass hours, minutes, and seconds for multiple releases in one day
 }
@@ -3976,7 +3976,7 @@ do
 				savedSender = sender
 			end
 			inspopuptext:SetText(L.REQ_INSTANCE_ID_PERMISSION:format(sender, sender))
-			buttonaccept:SetScript("OnClick", function(f) savedSender = nil DBM:Unschedule(autoDecline) accessList[sender] = true syncHandlers["IR"](sender) f:GetParent():Hide() end)
+			buttonaccept:SetScript("OnClick", function(f) savedSender = nil DBM:Unschedule(autoDecline) accessList[sender] = true syncHandlers["DBMv4-IR"](sender) f:GetParent():Hide() end)
 			buttondecline:SetScript("OnClick", function() autoDecline(sender, 1) end)
 			DBM:PlaySound(850)
 			inspopup:Show()
@@ -4123,14 +4123,50 @@ do
 			end
 		end
 
+		local function DifficultyLabel(diff, maxPlayers)
+			-- Map numeric difficulty to human readable label
+			-- Common mapping for this DBM build (classic/wotlk style)
+			if not diff then return "" end
+			local d = tonumber(diff) or diff
+			maxPlayers = tonumber(maxPlayers) or maxPlayers
+			-- Raid cases
+			if maxPlayers and maxPlayers >= 25 then
+				if d == 2 then return "25 Normal" end
+				if d == 4 then return "25 Heroic" end
+			end
+			if maxPlayers and maxPlayers == 10 then
+				if d == 1 then return "10 Normal" end
+				if d == 3 then return "10 Heroic" end
+			end
+			-- We only care about raid difficulties here; ignore 5-man
+			-- Fallbacks using diff numbers often used by GetInstanceInfo in this core
+			if d == 1 then return "Normal" end
+			if d == 2 then return "Normal" end
+			if d == 3 or d == 4 then return "Heroic" end
+			return tostring(diff)
+		end
+
 		function showResults()
+			if not results then return end
 			local resultCount = 0
 			-- you could catch some localized instances by observing IDs if there are multiple players with the same instance ID but a different name ;) (not that useful if you are trying to get a fresh instance)
 			DBM:AddMsg(L.INSTANCE_INFO_RESULTS, false)
 			DBM:AddMsg("---", false)
 			for _, v in pairs(results.data) do
 				resultCount = resultCount + 1
-				DBM:AddMsg(L.INSTANCE_INFO_DETAIL_HEADER:format(v.name, (results.difftext[v.diff] or v.diff)), false)
+				local diffLabel = DifficultyLabel(v.diff, v.maxPlayers)
+				local localized = results.difftext[v.diff]
+				local diffText
+				if diffLabel and diffLabel ~= "" then
+					if localized and localized ~= "" then
+						diffText = localized .. " (" .. diffLabel .. ")"
+					else
+						diffText = diffLabel
+					end
+				else
+					diffText = localized or ""
+				end
+				DBM:AddMsg(L.INSTANCE_INFO_DETAIL_HEADER:format(v.name, diffText), false)
 				for id, r in pairs(v.ids) do
 					if r.haveid then
 						DBM:AddMsg(L.INSTANCE_INFO_DETAIL_INSTANCE:format(id, r.progress, tconcat(r, ", ")), false)
@@ -4184,6 +4220,7 @@ do
 		end
 
 		local function getResponseStats()
+			if not results then return 0, 0, 0, 0 end
 			local numResponses = 0
 			local sent = 0
 			local denied = 0
@@ -4212,6 +4249,7 @@ do
 		end
 
 		function updateInstanceInfo(timeRemaining, dontAddShowResultNowButton)
+			if not results then return end
 			local numResponses, sent, denied = getResponseStats()
 			local dbmUsers = getNumDBMUsers()
 			DBM:AddMsg(L.INSTANCE_INFO_STATUS_UPDATE:format(numResponses, dbmUsers, sent, denied, timeRemaining), false)
