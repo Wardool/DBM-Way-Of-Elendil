@@ -396,9 +396,9 @@ L:SetMiscLocalization({
 	WarderTrap1			= "Qui... va là ?",
 	WarderTrap2			= "Je... m’éveille...",
 	WarderTrap3			= "Le sanctuaire du maître a été dérangé.",
-	FleshreaperTrap1	= "Vite, on va les prendre en embuscade par derrière !",
-	FleshreaperTrap2	= "Vous ne pouvez pas nous échapper !",
-	FleshreaperTrap3	= "Les vivants ? Ici ?!",
+--	FleshreaperTrap1	= "Vite, on va les prendre en embuscade par derrière !",
+--	FleshreaperTrap2	= "Vous ne pouvez pas nous échapper !",
+--	FleshreaperTrap3	= "Les vivants ? Ici ?!",
 	SindragosaEvent		= "Nul n'approche la reine du Givre. Arrêtez-les, vite !",
 	IceTrash			= "Fourbissez vos armes, mes frères d'Argent. Les vrykuls donneront leurs vies pour la reine du Givre."
 })

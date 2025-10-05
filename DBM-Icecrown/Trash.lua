@@ -274,7 +274,7 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 		--self:SendSync("FleshTrap")
 	elseif msg == L.SindragosaEvent and self:LatencyCheck() then
 		self:SendSync("GauntletStart")
-	elseif msg == L.IceTrash then
+	elseif msg == L.IceTrash and self:LatencyCheck() then
 		self:SendSync("StartIceTrash")
 	end
 end
