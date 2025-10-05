@@ -401,5 +401,6 @@ L:SetMiscLocalization({
 	FleshreaperTrap1	= "Quickly! We'll ambush them from behind!",
 	FleshreaperTrap2	= "You... cannot escape us!",
 	FleshreaperTrap3	= "The living... here?!",
-	SindragosaEvent		= "You must not approach the Frost Queen. Quickly, stop them!"
+	SindragosaEvent		= "You must not approach the Frost Queen. Quickly, stop them!",
+	IceTrash			= "Ready your arms, my Argent Brothers. The Vrykul will protect the Frost Queen with their lives."
 })

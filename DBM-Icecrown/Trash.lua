@@ -10,7 +10,7 @@ mod.isTrashMod = true
 
 mod:RegisterEvents(
 	"SPELL_CAST_START 71022 71088 71123 71942",
-	"SPELL_AURA_APPLIED 69483 72865 71127 70451 70432 70645 71785 71298 70475",
+	"SPELL_AURA_APPLIED 69483 72865 71127 70451 70432 70645 71785 71298 70475 70739 70740",
 	"SPELL_AURA_APPLIED_DOSE 71127",
 	"SPELL_AURA_REMOVED 70451 70432 70645 71785 71298",
 	"SPELL_SUMMON 71159",
@@ -71,6 +71,7 @@ local timerChainsofShadow		= mod:NewTargetTimer(10, 70645, nil, false, nil, 3)
 local timerConflag				= mod:NewTargetTimer(10, 71785, nil, false, nil, 3)
 local timerBanish				= mod:NewTargetTimer(6, 71298, nil, false, nil, 3)
 local timerFrostblade			= mod:NewNextTimer(26, 70305, nil, nil, nil, 2)
+local timerRpIceTrash			= mod:NewRPTimer(37.8, "Crok Role Play", nil, nil, nil, 2) -- Roleplay for ice trashs
 
 mod:RemoveOption("HealthFrame")
 --Lower Spire
@@ -156,6 +157,8 @@ function mod:SPELL_AURA_APPLIED(args)
 	elseif spellId == 70475 and not eventProfessorStarted then -- Giant Insect Swarm
 		eventProfessorStarted = true
 		timerProfessorEvent:Start()
+	elseif spellId == 70739 or spellId == 70740 then
+		self:SendSync("FleshTrap") -- Work around for woe, no Yell
 	end
 end
 mod.SPELL_AURA_APPLIED_DOSE = mod.SPELL_AURA_APPLIED
@@ -267,10 +270,12 @@ end
 function mod:CHAT_MSG_MONSTER_YELL(msg)
 	if (msg == L.WarderTrap1 or msg == L.WarderTrap2 or msg == L.WarderTrap3) and self:LatencyCheck() then
 		self:SendSync("WarderTrap")
-	elseif (msg == L.FleshreaperTrap1 or msg == L.FleshreaperTrap2 or msg == L.FleshreaperTrap3) and self:LatencyCheck() then
-		self:SendSync("FleshTrap")
+	--elseif (msg == L.FleshreaperTrap1 or msg == L.FleshreaperTrap2 or msg == L.FleshreaperTrap3) and self:LatencyCheck() then
+		--self:SendSync("FleshTrap")
 	elseif msg == L.SindragosaEvent and self:LatencyCheck() then
 		self:SendSync("GauntletStart")
+	elseif msg == L.IceTrash then
+		self:SendSync("StartIceTrash")
 	end
 end
 
@@ -283,6 +288,8 @@ function mod:OnSync(msg, guid)
 		DBM:AddSpecialEventToTranscriptorLog("Sindra Gauntlet started")
 		specWarnGosaEvent:Show()
 		self.vb.nerubarAlive = 8
+	elseif msg == "StartIceTrash" then
+		timerRpIceTrash:Start()
 	elseif msg == "ValkyrAggro" and guid then
 		valkyrHeraldGUID[guid] = true
 		timerSeveredEssence:Start(8, guid) -- REVIEW! variance [8-10]? On Warmane, based on aggro, touchdown or swing?
