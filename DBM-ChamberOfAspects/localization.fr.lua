@@ -179,11 +179,13 @@ L:SetGeneralLocalization({
 
 L:SetWarningLocalization({
 	TwilightCutterCast	= "Tranchant crépusculaire dans : 5 sec",
-	StopDPS				= "Stoppez le DPS !"
+	StopDPS				= "Stoppez le DPS !",
+	SlowDPS				= "Ralentissez le DPS !" -- Added a warning, most players don't use vocal alerts
 })
 
 L:SetOptionLocalization({
 	StopDPS					= "Afficher une alerte pour arrêter le DPS sur Halion pendant la phase 3 pour la corporéité (L'alerte ne s'affiche que pour les dps)",
+	SlowDPS					= "Afficher une alerte pour ralentir le DPS sur Halion pendant la phase 3 pour la corporéité (L'alerte ne s'affiche que pour les dps)", -- Added a warning, most players don't use vocal alerts
 	TwilightCutterCast		= "Afficher une alerte lorsque $spell:77844 est en cours",
 	AnnounceAlternatePhase	= "Montre une alerte/timer pour la phase dans laquelle vous n'êtes pas",
 	SetIconOnConsumption	= "Placer des icones sur les cibles de $spell:74562 ou $spell:74792"

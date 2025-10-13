@@ -72,6 +72,7 @@ local twilightDivisionName = DBM:GetSpellInfo(75063)
 mod:AddTimerLine(DBM_CORE_L.SCENARIO_STAGE:format(3)..": "..twilightDivisionName)
 local warnPhase3					= mod:NewPhaseAnnounce(3, 2, nil, nil, nil, nil, nil, 2)
 local warningStopDPS				= mod:NewSpecialWarning("StopDPS", nil, nil, nil, nil, nil, nil, nil, 74826)
+local warningSlowDPS				= mod:NewSpecialWarning("SlowDPS", nil, nil, nil, nil, nil, nil, nil, 74826)
 local specWarnCorporeality			= mod:NewSpecialWarningCount(74826, nil, nil, nil, 1, 2)
 
 mod.vb.warned_preP2 = false
@@ -256,6 +257,7 @@ function mod:UPDATE_WORLD_STATES()
 				elseif corporeality == 40 then
 					if self:IsDps() then
 						specWarnCorporeality:Play("dpsslow")
+						warningSlowDPS:Show() -- Added a warning, most players don't use vocal alerts
 					end
 				elseif corporeality == 60 then
 					if self:IsDps() then

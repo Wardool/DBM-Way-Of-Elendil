@@ -177,7 +177,8 @@ L:SetGeneralLocalization({
 
 L:SetWarningLocalization({
 	TwilightCutterCast	= "Casting Twilight Cutter in : 5 sec",
-	StopDPS				= "Stop DPS !"
+	StopDPS				= "Stop DPS !",
+	SlowDPS				= "Slow DPS !"
 })
 
 L:SetTimerLocalization({
@@ -186,6 +187,7 @@ L:SetTimerLocalization({
 
 L:SetOptionLocalization({
 	StopDPS					= "Show warning to stop DPS during phase 3 for corporeality (Warning only shows if you are dps)",
+	SlowDPS					= "Show warning to slow DPS during phase 3 for corporeality (Warning only shows if you are dps)", -- Added a warning, most players don't use vocal alerts
 	TwilightCutterCast		= "Show warning when $spell:74769 is being cast",
 	AnnounceAlternatePhase	= "Show warnings/timers for phase you aren't in as well",
 	SetIconOnConsumption	= "Set icons on $spell:74562 or $spell:74792 targets",
