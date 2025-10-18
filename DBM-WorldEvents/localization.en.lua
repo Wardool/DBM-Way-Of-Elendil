@@ -106,7 +106,8 @@ L:SetMiscLocalization({
 	HorsemanSummon		= "Horseman rise...", -- 22695
 	HorsemanHead		= "Get over here, you idiot!", -- 22415
 	HorsemanSoldiers	= "Soldiers arise, stand and fight! Bring victory at last to this fallen knight!", -- 23861
-	SayCombatEnd		= "This end have I reached before.  What new adventure lies in store?" -- 23455
+	SayCombatEnd		= "This end have I reached before.  What new adventure lies in store?", -- 23455
+	HitHead				= "So eager you are, for my blood to spill. Yet to vanquish me, 'tis my head you must kill!" -- 23383
 })
 
 -----------------------------
