@@ -389,7 +389,7 @@ L:SetGeneralLocalization({
 
 
 L:SetWarningLocalization({
-	WarningGuardianSpawned			= "Un gardien vient d'arriver",
+	WarningGuardianSpawned			= "Un gardien (%d) vient d'arriver",
 	WarningCrusherTentacleSpawned	= "Une Tentacule écraseur vient d'arriver",
 	WarningSanity					= "%d de Santé mentale restant",
 	SpecWarnSanity					= "%d de Santé mentale restant",

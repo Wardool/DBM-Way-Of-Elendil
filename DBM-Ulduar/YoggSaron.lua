@@ -11,16 +11,18 @@ mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 64059 64189 63138 63830 63802",
 	"SPELL_CAST_SUCCESS 64144 64465", --64167 64163",
 	"SPELL_SUMMON 62979",
-	"SPELL_AURA_APPLIED 63802 63830 63881 64126 64125 63138 63894 64775 64163 64465",
+	"SPELL_AURA_APPLIED 63802 63830 63881 64126 64125 63138 63894 64775 64163 64465 63988",
 	"SPELL_AURA_REMOVED 63802 63894 64163 63830 63138 63881 64465",
 	"SPELL_AURA_REMOVED_DOSE 63050",
-	"UNIT_HEALTH"
+	"UNIT_HEALTH",
+	"UNIT_DIED"
 --	"UNIT_SPELLCAST_START boss1"
 )
 
 --General
 local enrageTimer					= mod:NewBerserkTimer(900)
 local timerAchieve					= mod:NewAchievementTimer(420, 3012)
+
 
 -- I have hidden most NPC TimerLines and only kept stage and brain TimerLines to prevent GUI clutter.
 -- Stage One: The Lucid Dream
@@ -32,6 +34,8 @@ local warnFervor					= mod:NewTargetAnnounce(63138, 4)
 local specWarnFervor				= mod:NewSpecialWarningYou(63138, nil, nil, nil, 1, 2)
 
 local timerFervor					= mod:NewTargetTimer(15, 63138, nil, false, 2)
+
+local GuardiansAmount				= mod:NewAddsLeftAnnounce(62979, 1, nil, nil, 1)
 
 mod:AddSetIconOption("SetIconOnFervorTarget", 63138, false, false, {7})
 mod:AddBoolOption("ShowSaraHealth", false)
@@ -141,12 +145,14 @@ local SanityBuff = DBM:GetSpellInfoNew(63050)
 mod.vb.brainLinkIcon = 2
 mod.vb.beaconIcon = 8
 mod.vb.Guardians = 0
+mod.vb.GuardiansLeft = 9
 
 function mod:OnCombatStart()
 	self:SetStage(1)
 	self.vb.brainLinkIcon = 2
 	self.vb.beaconIcon = 8
 	self.vb.Guardians = 0
+	self.vb.GuardiansLeft = 9
 	enrageTimer:Start()
 	timerAchieve:Start()
 	table.wipe(targetWarningsShown)
@@ -192,7 +198,7 @@ function mod:SPELL_CAST_START(args)
 		timerBrainPortal:Schedule(60) -- Log reviewed [60 schedule + 20 timer] (25 man NM log 2022/07/10 || S3 HM log 2022/07/21) - 80.0 || 80.0, 80.1 ; 80.0, 80.0, 80.0
 		warnBrainPortalSoon:Schedule(70)
 		specWarnBrainPortalSoon:Schedule(77)
-		specWarnMadnessOutNow:Schedule(55) -- TO DO: implement brain room check?
+		--specWarnMadnessOutNow:Schedule(55) -- TO DO: implement brain room check?
 	elseif spellId == 64189 then		--Deafening Roar
 		timerNextDeafeningRoar:Start()
 		warnDeafeningRoarSoon:Schedule(18)
@@ -319,6 +325,9 @@ function mod:SPELL_AURA_APPLIED(args)
 		if self.vb.beaconIcon == 0 then
 			self.vb.beaconIcon = 8
 		end
+	elseif spellId == 63988 then
+		local timerLeft = timerMadness:GetRemaining()
+		specWarnMadnessOutNow:Schedule(timerLeft - 5)
 	end
 end
 
@@ -360,6 +369,15 @@ function mod:UNIT_HEALTH(uId)
 	end
 end
 
+function mod:UNIT_DIED(args) -- Assuming players are killing every guardians next to Sara
+	local destGUID = args.destGUID
+	local cid = self:GetCIDFromGUID(destGUID)
+	if (cid == 33136) and self.vb.GuardiansLeft > 1 then
+		self.vb.GuardiansLeft = self.vb.GuardiansLeft - 1
+		GuardiansAmount:Show(self.vb.GuardiansLeft)
+	end
+end
+
 --[[function mod:UNIT_SPELLCAST_START(_, spellName)
 	if spellName == GetSpellInfo(64189) then
 		timerNextDeafeningRoar:Start()
@@ -373,6 +391,8 @@ end]]
 function mod:OnSync(msg)
 	if msg == "Phase3" then
 		self:SetStage(3)
+		timerMadness:Cancel()
+		specWarnMadnessOutNow:Cancel()
 		timerBrainPortal:Cancel()
 		warnBrainPortalSoon:Cancel()
 		timerMaladyCD:Cancel()
