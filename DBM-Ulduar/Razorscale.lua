@@ -1,9 +1,9 @@
 local mod	= DBM:NewMod("Razorscale", "DBM-Ulduar")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20251026111703")
 mod:SetCreatureID(33186)
-mod:SetMinSyncRevision(20220710223858)
+mod:SetMinSyncRevision(20251026111703)
 mod:SetEncounterID(746)
 
 mod:RegisterCombat("combat_yell", L.YellAir)
@@ -75,10 +75,10 @@ function mod:OnCombatStart(delay)
 	enrageTimer:Start(-delay)
 	combattime = GetTime()
 	if self:IsDifficulty("normal10") then -- REVIEW. No log yet to validate this.
-		warnTurretsReadySoon:Schedule(53-delay)
-		warnTurretsReady:Schedule(73-delay)
-		timerTurret1:Start(-delay)
-		timerTurret2:Start(-delay)
+		warnTurretsReadySoon:Schedule(51-delay)
+		warnTurretsReady:Schedule(71-delay)
+		timerTurret1:Start(51)
+		timerTurret2:Start(71)
 	else
 		warnTurretsReadySoon:Schedule(93-delay)
 		warnTurretsReady:Schedule(113-delay)
@@ -151,10 +151,10 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 	if isGrounded and (msg == L.YellAir or msg == L.YellAir2) and GetTime() - combattime > 30 then
 		isGrounded = false -- warmane resets the timers idk why
 		if self:IsDifficulty("normal10") then -- not sure?
-			warnTurretsReadySoon:Schedule(23)
-			warnTurretsReady:Schedule(43)
-			timerTurret1:Start(23)
-			timerTurret2:Start(43)
+			warnTurretsReadySoon:Schedule(51)
+			warnTurretsReady:Schedule(71)
+			timerTurret1:Start(51)
+			timerTurret2:Start(71)
 		else
 			warnTurretsReadySoon:Schedule(103)
 			warnTurretsReady:Schedule(113)

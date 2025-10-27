@@ -325,7 +325,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		if self.vb.beaconIcon == 0 then
 			self.vb.beaconIcon = 8
 		end
-	elseif spellId == 63988 then
+	elseif spellId == 63988 and args:IsPlayer() then -- Salle de l'illusion buff from entering portals
 		local timerLeft = timerMadness:GetRemaining()
 		specWarnMadnessOutNow:Schedule(timerLeft - 5)
 	end

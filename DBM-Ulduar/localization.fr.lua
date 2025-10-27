@@ -53,8 +53,8 @@ L:SetGeneralLocalization({
 })
 
 L:SetWarningLocalization({
-	warnTurretsReadySoon		= "Quatrième tourelle à harpon prête dans 20 Sec",
-	warnTurretsReady			= "Quatrième tourelle à harpon prête"
+	warnTurretsReadySoon		= "Dernière tourelle à harpon prête dans 20 Sec",
+	warnTurretsReady			= "Dernière tourelle à harpon prête"
 })
 
 L:SetTimerLocalization({
