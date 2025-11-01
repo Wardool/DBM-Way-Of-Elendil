@@ -1,11 +1,11 @@
 local mod	= DBM:NewMod("Deathbringer", "DBM-Icecrown", 1)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20251101181236")
 mod:SetCreatureID(37813)
 mod:SetEncounterID(848)
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)
-mod:SetMinSyncRevision(20220905000000)
+mod:SetMinSyncRevision(20251101181236)
 
 mod:RegisterCombat("combat")
 
@@ -44,8 +44,8 @@ local specwarnMark			= mod:NewSpecialWarningYou(72293, nil, 28836, nil, 1, 2)
 local specwarnRuneofBlood	= mod:NewSpecialWarningTaunt(72410, nil, nil, nil, 1, 2)
 local specwarnRuneofBloodYou= mod:NewSpecialWarningYou(72410, "Tank")
 
-local timerRuneofBlood		= mod:NewNextTimer(20, 72410, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.TANK_ICON)
-local timerBoilingBlood		= mod:NewCDTimer(15, 72385, nil, "Healer", nil, 5, nil, DBM_COMMON_L.HEALER_ICON, true)
+local timerRuneofBlood		= mod:NewNextTimer(20.6, 72410, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.TANK_ICON)
+local timerBoilingBlood		= mod:NewCDTimer(16, 72385, nil, "Healer", nil, 5, nil, DBM_COMMON_L.HEALER_ICON, true)
 local timerBloodNova		= mod:NewCDTimer(20, 72378, nil, nil, nil, 2, nil, nil, true) -- "Blood Nova-73058-npc:37813-46 = pull:1.02, 25.02, 20.75, 20.12, 22.46, 20.85" || besoin de + de data
 
 mod:AddRangeFrameOption(12, 72378, "Ranged")
@@ -108,9 +108,9 @@ function mod:OnCombatStart(delay)
 	end
 	timerCallBloodBeast:Start(30-delay)
 	warnAddsSoon:Schedule(20-delay)
-	timerBloodNova:Start(-delay)
-	timerRuneofBlood:Start(19.5-delay)
-	timerBoilingBlood:Start(19-delay)
+	timerBloodNova:Start(17-delay)
+	timerRuneofBlood:Start(19.8-delay)
+	timerBoilingBlood:Start(15.4-delay)
 	self.vb.warned_preFrenzy = false
 	self.vb.boilingBloodIcon = 1
 	self.vb.beastIcon = 8

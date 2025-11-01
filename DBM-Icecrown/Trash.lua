@@ -72,6 +72,7 @@ local timerConflag				= mod:NewTargetTimer(10, 71785, nil, false, nil, 3)
 local timerBanish				= mod:NewTargetTimer(6, 71298, nil, false, nil, 3)
 local timerFrostblade			= mod:NewNextTimer(26, 70305, nil, nil, nil, 2)
 local timerRpIceTrash			= mod:NewRPTimer(37.8, "Crok Role Play", nil, nil, nil, 2) -- Roleplay for ice trashs
+local timerRpIceValkyr			= mod:NewRPTimer(12, "Svalna Role Play", nil, nil, nil, 2) -- Roleplay for ice trashs
 
 mod:RemoveOption("HealthFrame")
 --Lower Spire
@@ -276,6 +277,8 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 		self:SendSync("GauntletStart")
 	elseif msg == L.IceTrash and self:LatencyCheck() then
 		self:SendSync("StartIceTrash")
+	elseif msg == L.IceValkyr and self:LatencyCheck() then
+		self:SendSync("StartIceValkyr")
 	end
 end
 
@@ -290,6 +293,8 @@ function mod:OnSync(msg, guid)
 		self.vb.nerubarAlive = 8
 	elseif msg == "StartIceTrash" then
 		timerRpIceTrash:Start()
+	elseif msg == "StartIceValkyr" then
+		timerRpIceValkyr:Start()
 	elseif msg == "ValkyrAggro" and guid then
 		valkyrHeraldGUID[guid] = true
 		timerSeveredEssence:Start(8, guid) -- REVIEW! variance [8-10]? On Warmane, based on aggro, touchdown or swing?
