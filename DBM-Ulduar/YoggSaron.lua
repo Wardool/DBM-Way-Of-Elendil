@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("YoggSaron", "DBM-Ulduar")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20251101181236")
 mod:SetCreatureID(33288)
 mod:SetEncounterID(756)
 mod:RegisterCombat("yell", L.YellPull1)
@@ -31,7 +31,7 @@ mod:AddTimerLine(L.S1TheLucidDream)
 -- mod:AddTimerLine(L.Sara)
 local warnFervor					= mod:NewTargetAnnounce(63138, 4)
 
-local specWarnFervor				= mod:NewSpecialWarningYou(63138, nil, nil, nil, 1, 2)
+local specWarnFervor				= mod:NewSpecialWarningMove(63138, nil, nil, nil, 1, 2)
 
 local timerFervor					= mod:NewTargetTimer(15, 63138, nil, false, 2)
 
