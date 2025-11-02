@@ -44,9 +44,9 @@ local specwarnMark			= mod:NewSpecialWarningYou(72293, nil, 28836, nil, 1, 2)
 local specwarnRuneofBlood	= mod:NewSpecialWarningTaunt(72410, nil, nil, nil, 1, 2)
 local specwarnRuneofBloodYou= mod:NewSpecialWarningYou(72410, "Tank")
 
-local timerRuneofBlood		= mod:NewNextTimer(20.6, 72410, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.TANK_ICON)
-local timerBoilingBlood		= mod:NewCDTimer(16, 72385, nil, "Healer", nil, 5, nil, DBM_COMMON_L.HEALER_ICON, true)
-local timerBloodNova		= mod:NewCDTimer(20, 72378, nil, nil, nil, 2, nil, nil, true) -- "Blood Nova-73058-npc:37813-46 = pull:1.02, 25.02, 20.75, 20.12, 22.46, 20.85" || besoin de + de data
+local timerRuneofBlood		= mod:NewVarTimer("v20.6-24", 72410, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.TANK_ICON)
+local timerBoilingBlood		= mod:NewVarTimer("v16-19", 72385, nil, "Healer", nil, 5, nil, DBM_COMMON_L.HEALER_ICON, true) -- "Sang bouillonnant-72443-npc:37813-45 = pull:15.41, 15.10, 15.11, 16.81, 16.84, 17.51, 19.02" ; "Sang bouillonnant-72443-npc:37813-46 = pull:15.37, 19.04, 18.28, 19.11, 15.82, 16.63, 18.52"
+local timerBloodNova		= mod:NewVarTimer("v20-25", 72378, nil, nil, nil, 2, nil, nil, true) -- "Blood Nova-73058-npc:37813-46 = pull:1.02, 25.02, 20.75, 20.12, 22.46, 20.85" || besoin de + de data
 
 mod:AddRangeFrameOption(12, 72378, "Ranged")
 mod:AddInfoFrameOption(72370, false)--Off by default, since you can literally just watch the bosses power bar

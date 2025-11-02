@@ -1,6 +1,8 @@
 local mod	= DBM:NewMod("LordMarrowgar", "DBM-Icecrown", 1)
 local L		= mod:GetLocalizedStrings()
 
+local sformat = string.format
+
 mod:SetRevision("20250929220131")
 mod:SetCreatureID(36612)
 mod:SetEncounterID(845)
@@ -57,7 +59,7 @@ end
 
 function mod:OnCombatStart(delay)
 	preWarnWhirlwind:Schedule(40-delay)
-	timerWhirlwindCD:Start(45-delay)
+	timerWhirlwindCD:Start(sformat("v%s-%s", 45-delay, 49-delay))
 	timerBoneSpike:Start(15-delay)
 	berserkTimer:Start(-delay)
 end

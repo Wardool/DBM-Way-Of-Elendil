@@ -1,6 +1,8 @@
 local mod	= DBM:NewMod("Festergut", "DBM-Icecrown", 2)
 local L		= mod:GetLocalizedStrings()
 
+local sformat = string.format
+
 mod:SetRevision("20250929220131")
 mod:SetCreatureID(36626)
 mod:SetEncounterID(849)
@@ -32,11 +34,11 @@ local specWarnInhaled3		= mod:NewSpecialWarning("Stack3", "Tank", nil, nil, nil,
 
 local timerGasSpore			= mod:NewBuffFadesTimer(12, 69279, nil, nil, nil, 3)
 local timerVileGas			= mod:NewBuffFadesTimer(6, 69240, nil, "Ranged", nil, 3)
-local timerGasSporeCD		= mod:NewCDTimer(40, 69279, nil, nil, nil, 3, nil, nil, true)
+local timerGasSporeCD		= mod:NewVarTimer("v40-46", 69279, nil, nil, nil, 3, nil, nil, true)
 local timerPungentBlight	= mod:NewCDTimer(33.5, 69195, nil, nil, nil, 2)
-local timerInhaledBlight	= mod:NewCDTimer(33.5, 69166, nil, nil, nil, 6, nil, nil, true)
+local timerInhaledBlight	= mod:NewVarTimer("v33.5-36", 69166, nil, nil, nil, 6, nil, nil, true)
 local timerGastricBloat		= mod:NewTargetTimer(100, 72219, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.TANK_ICON)	-- 100 Seconds until expired
-local timerGastricBloatCD	= mod:NewCDTimer(12, 72219, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.TANK_ICON) -- REVIEW CD => pull:12.51, 12.33, 12.08, 10.56, 11.86, 11.47, 10.66, 11.31, 11.21, 10.92, 11.42, 10.99, 11.12, 10.22, 12.22 || pull:13.81, 10.92, 12.02, 11.99, 12.41, 11.64, 11.41, 11.92, 11.71, 12.20, 14.07, 11.29
+local timerGastricBloatCD	= mod:NewVarTimer("v10-12", 72219, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.TANK_ICON) -- REVIEW CD => pull:12.51, 12.33, 12.08, 10.56, 11.86, 11.47, 10.66, 11.31, 11.21, 10.92, 11.42, 10.99, 11.12, 10.22, 12.22 || pull:13.81, 10.92, 12.02, 11.99, 12.41, 11.64, 11.41, 11.92, 11.71, 12.20, 14.07, 11.29
 
 local berserkTimer			= mod:NewBerserkTimer(300)
 
@@ -77,9 +79,9 @@ end
 
 function mod:OnCombatStart(delay)
 	berserkTimer:Start(-delay)
-	timerInhaledBlight:Start(28.9-delay)
-	timerGasSporeCD:Start(20-delay)
-	timerGastricBloatCD:Start(-delay)
+	timerInhaledBlight:Start(sformat("v%s-%s", 29.4-delay, 35-delay))
+	timerGasSporeCD:Start(sformat("v%s-%s", 20-delay, 25-delay))
+	timerGastricBloatCD:Start(sformat("v%s-%s", 12.5-delay, 14.8-delay))
 	table.wipe(gasSporeTargets)
 	table.wipe(vileGasTargets)
 	self.vb.gasSporeCast = 0

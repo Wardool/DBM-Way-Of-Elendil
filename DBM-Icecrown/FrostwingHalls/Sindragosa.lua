@@ -205,7 +205,7 @@ function mod:OnCombatStart(delay)
 	self:SetStage(1)
 	berserkTimer:Start(-delay)
 	timerNextAirphase:Start(50-delay)
-	timerNextBlisteringCold:Start(33-delay)
+	timerNextBlisteringCold:Start(34-delay)
 	timerTailSmash:Start(20-delay)
 	timerUnchainedMagic:Start(10-delay)
 	self.vb.warned_P2 = false

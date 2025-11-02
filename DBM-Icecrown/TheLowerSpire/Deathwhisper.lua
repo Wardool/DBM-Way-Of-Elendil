@@ -78,11 +78,11 @@ local specWarnTouchInsignificance	= mod:NewSpecialWarningStack(71204, nil, 3, ni
 local specWarnFrostbolt				= mod:NewSpecialWarningInterrupt(72007, "HasInterrupt", nil, 2, 1, 2)
 local specWarnVengefulShade			= mod:NewSpecialWarning("SpecWarnVengefulShade", true, nil, nil, nil, 1, 2, nil, 71426, 71426)
 
-local timerSummonSpiritCD			= mod:NewCDTimer(11, 71426, nil, true, nil, 3, nil, nil, true)
+local timerSummonSpiritCD			= mod:NewVarTimer("v10.9-13", 71426, nil, true, nil, 3, nil, nil, true)
 local timerFrostboltCast			= mod:NewCastTimer(2, 72007, nil, "HasInterrupt")
 local timerFrostboltVolleyCD		= mod:NewCDTimer(20, 72905, nil, nil, nil, 2)
 local timerTouchInsignificance		= mod:NewTargetTimer(30, 71204, nil, "Tank|Healer", nil, 5)
-local timerTouchInsignificanceCD	= mod:NewCDTimer(7, 71204, nil, "Tank|Healer", nil, 5, nil, nil, true)
+local timerTouchInsignificanceCD	= mod:NewVarTimer("v6.3-7.8", 71204, nil, "Tank|Healer", nil, 5, nil, nil, true)
 
 local soundWarnSpirit				= mod:NewSound(71426)
 
