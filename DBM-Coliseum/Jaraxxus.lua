@@ -258,9 +258,9 @@ function mod:SPELL_AURA_REMOVED(args)
 	end
 end
 
-function mod:SPELL_DAMAGE(_, _, _, destGUID, _, _, spellId)
-	if (spellId == 66877 or spellId == 67070 or spellId == 67071 or spellId == 67072) and destGUID == UnitGUID("player") and self:AntiSpam(3, 1) then	-- Legion Flame
-		specWarnGTFO:Show()
+function mod:SPELL_DAMAGE(_, _, _, destGUID, _, _, spellId, spellName)
+	if (spellId == 66877 or spellId == 67070 or spellId == 67071 or spellId == 67072) and destGUID == UnitGUID("player") then	-- Legion Flame
+		specWarnGTFO:Show(spellName)
 		specWarnGTFO:Play("watchfeet")
 	elseif (spellId == 66496 or spellId == 68716 or spellId == 68717 or spellId == 68718) and destGUID == UnitGUID("player") and self:AntiSpam(3, 1) then	-- Fel Inferno (does not make sense to fire watchfeet for radius AoE)
 		specWarnFelInferno:Show()
