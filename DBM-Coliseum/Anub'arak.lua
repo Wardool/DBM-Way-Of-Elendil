@@ -20,7 +20,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_REMOVED 66013 67700 68509 68510 10278",
 	"CHAT_MSG_MONSTER_YELL",
 	"CHAT_MSG_RAID_BOSS_EMOTE",
-	"UNIT_SPELLCAST_SUCCEEDED boss1"
+	"UNIT_SPELLCAST_SUCCEEDED"
 )
 
 -- General
@@ -38,11 +38,11 @@ local warnFreezingSlash		= mod:NewTargetNoFilterAnnounce(66012, 2, nil, "Tank|He
 local specWarnShadowStrike	= mod:NewSpecialWarningSpell(66134, "Tank", nil, 2, 1) --Don't have a good voice for this. Need a "stun mob now"
 local specWarnPCold			= mod:NewSpecialWarningYou(66013, false, nil, nil, 1, 2)
 
-local timerEmerge			= mod:NewNextTimer(65, 65982, nil, nil, nil, 6, "Interface\\AddOns\\DBM-Core\\textures\\CryptFiendUnBurrow.blp", DBM_COMMON_L.IMPORTANT_ICON, nil, 1) -- Time to Emerge, related to Phase 2, but it's here for better Grouping
+local timerEmerge			= mod:NewNextTimer(58, 65982, nil, nil, nil, 6, "Interface\\AddOns\\DBM-Core\\textures\\CryptFiendUnBurrow.blp", DBM_COMMON_L.IMPORTANT_ICON, nil, 1) -- Time to Emerge, related to Phase 2, but it's here for better Grouping
 local timerAdds				= mod:NewNextTimer(45, 66332, nil, nil, nil, 1, 45419, DBM_COMMON_L.TANK_ICON)
 local timerShadowStrike		= mod:NewNextTimer(30, 66134, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON, nil, 3)
-local timerFreezingSlash	= mod:NewNextTimer(20, 66012, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.TANK_ICON)
-local timerPCold			= mod:NewBuffActiveTimer(15, 66013, nil, nil, nil, 5, nil, DBM_COMMON_L.HEALER_ICON)
+local timerFreezingSlash	= mod:NewNextTimer(15, 66012, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.TANK_ICON)
+local timerPCold			= mod:NewBuffActiveTimer(18, 66013, nil, nil, nil, 5, nil, DBM_COMMON_L.HEALER_ICON)
 
 mod:AddSetIconOption("SetIconsOnPCold", 66013, true, 7, {1, 2, 3, 4, 5})
 mod:AddBoolOption("AnnouncePColdIcons", false, nil, nil, nil, nil, 66013)
@@ -72,43 +72,15 @@ mod:AddBoolOption("RemoveHealthBuffsInP3", false, nil, nil, nil, nil, 66118)
 
 mod.vb.Burrowed = false
 
---"<40.90 19:45:27> [UNIT_SPELLCAST_SUCCEEDED] Anub'arak -Nerubian Burrower- [[boss1:Nerubian Burrower::0:]]", -- [1059]
---[[disabling adds scheduling since we have proper event for this
-local function Adds(self)
-	if self:IsInCombat() then
-		if not self.vb.Burrowed then
-			timerAdds:Start()
-			warnAdds:Schedule(45)
-			self:Schedule(45, Adds, self)
-		end
-	end
-end]]
-
-local function ShadowStrike(self)
-	self:Unschedule(ShadowStrike)
-	if self:IsInCombat() then
-		timerShadowStrike:Cancel()
-		timerShadowStrike:Start()
-		preWarnShadowStrike:Cancel()
-		preWarnShadowStrike:Schedule(25.5)
-		self:Schedule(30, ShadowStrike, self)
-	end
-end
-
 -- Warmane workaround, since emerge boss emote is not being fired
 local function EmergeFix(self)
 	self:SetStage(1)
 	self.vb.Burrowed = false
 	timerEmerge:Cancel()
-	timerAdds:Start(5)
---	warnAdds:Schedule(5)
---	self:Schedule(5, Adds, self)
+	timerAdds:Start(10)
 	warnEmerge:Show()
-	warnSubmergeSoon:Schedule(70)
+	warnSubmergeSoon:Schedule(65)
 	timerSubmerge:Start()
-	if self:IsHeroic() then
-		ShadowStrike(self)
-	end
 end
 
 function mod:AnnouncePcoldIcons(uId, icon)
@@ -134,11 +106,6 @@ function mod:OnCombatStart(delay)
 	timerSubmerge:Start(-delay)
 	enrageTimer:Start(-delay)
 	timerFreezingSlash:Start(15-delay)
-	if self:IsHeroic() then
-		timerShadowStrike:Start()
-		preWarnShadowStrike:Schedule(25.5-delay)
-		self:Schedule(30-delay, ShadowStrike, self)
-	end
 end
 
 function mod:SPELL_CAST_START(args)
@@ -158,8 +125,8 @@ function mod:SPELL_CAST_START(args)
 			mod:ScheduleMethod(0.1, "RemoveBuffs")
 		end
 	elseif args.spellId == 66134 and self:IsHeroic() and self:AntiSpam(2, 1) then	-- Shadow Strike
-		self:Unschedule(ShadowStrike)
-		ShadowStrike(self)
+		--self:Unschedule(ShadowStrike)
+		--ShadowStrike(self)
 		if self.Options.SpecWarn66134spell then
 			specWarnShadowStrike:Show()
 		else
@@ -226,11 +193,11 @@ function mod:CHAT_MSG_MONSTER_YELL(msg) -- Warmane workaround since submerge emo
 		timerAdds:Cancel()
 		warnAdds:Cancel()
 		warnSubmerge:Show()
-		warnEmergeSoon:Schedule(58.5)
+		warnEmergeSoon:Schedule(50)
 		timerEmerge:Start()
 		timerFreezingSlash:Stop()
 		if self:IsHeroic() then
-			self:Unschedule(ShadowStrike)
+			--self:Unschedule(ShadowStrike)
 			timerShadowStrike:Cancel()
 			preWarnShadowStrike:Cancel()
 		end
@@ -239,36 +206,29 @@ function mod:CHAT_MSG_MONSTER_YELL(msg) -- Warmane workaround since submerge emo
 end
 
 function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
-	-- if msg and msg:find(L.Burrow) then
-	--	self:SetStage(2)
-	--	self.vb.Burrowed = true
-	--	timerAdds:Cancel()
-	--	warnAdds:Cancel()
-	--	warnSubmerge:Show()
-	--	warnEmergeSoon:Schedule(58.5)
-	--	timerEmerge:Start()
-	--	timerFreezingSlash:Stop()
-	--	self:Schedule(65, EmergeFix, self)	-- Warmane workaround, since emerge boss emote is not being fired
 	if msg and msg:find(L.Emerge) then
 		self:Unschedule(EmergeFix)		-- Warmane workaround: failsafe if script gets fixed eventually
 		self:SetStage(1)
 		self.vb.Burrowed = false
 		timerEmerge:Cancel()
-		timerAdds:Start(5)
---		warnAdds:Schedule(5)
---		self:Schedule(5, Adds, self)
+		timerAdds:Start(10)
 		warnEmerge:Show()
-		warnSubmergeSoon:Schedule(70)
-		timerSubmerge:Start()
-		if self:IsHeroic() then
-			ShadowStrike(self)
-		end
+		warnSubmergeSoon:Schedule(65)
+		timerSubmerge:Start(75)
+		-- if self:IsHeroic() then
+		-- 	--ShadowStrike(self)
+		-- 	timerShadowStrike:Start()
+		-- end
 	end
 end
 
 function mod:UNIT_SPELLCAST_SUCCEEDED(_, spellName)
-	if spellName == GetSpellInfo(66332) then -- Nerubian Borrower
+	if spellName == GetSpellInfo(66332) and self:AntiSpam(2, 2) then -- Nerubian Borrower
 		warnAdds:Show()
 		timerAdds:Start()
+		if self:IsHeroic() then
+			timerShadowStrike:Start(20)
+			preWarnShadowStrike:Schedule(15)
+		end
 	end
 end

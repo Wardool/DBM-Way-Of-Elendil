@@ -179,7 +179,7 @@ L:SetMiscLocalization({
 --	YellPull				= "Ce terreau sera votre tombeau !",
 	Emerge					= "surgit de la terre",
 	Burrow					= "enfonce dans le sol",
-	YellBurrow				= "Auum na-l ak-k-k-k, isshhh. Debout, mes serviteurs. Dévorez...",
+	YellBurrow				= "Ah, nos invités sont arrivés. Comme l'avait promis le maître.",
 	PcoldIconSet			= "Pcold Icon {rt%d} set on %s",
 	PcoldIconRemoved		= "Pcold Icon removed from %s"
 })
