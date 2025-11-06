@@ -4,8 +4,6 @@ local L		= mod:GetLocalizedStrings()
 local UnitGUID, UnitName, GetSpellInfo = UnitGUID, UnitName, GetSpellInfo
 local UnitInRange, UnitIsUnit, UnitInVehicle, IsInRaid = UnitInRange, UnitIsUnit, UnitInVehicle, DBM.IsInRaid
 
-local sformat = string.format
-
 mod:SetRevision("20251103203736")
 mod:SetCreatureID(36597)
 mod:SetEncounterID(856)
@@ -74,7 +72,7 @@ local specWarnEnrageLow				= mod:NewSpecialWarningSpell(28747, false)
 local timerInfestCD					= mod:NewVarCountTimer("v21.3-24", 70541, nil, "Healer|RaidCooldown", nil, 5, nil, DBM_COMMON_L.HEALER_ICON, true)
 local timerNecroticPlagueCleanse	= mod:NewTimer(5, "TimerNecroticPlagueCleanse", 70337, "Healer", nil, 5, DBM_COMMON_L.HEALER_ICON, nil, nil, nil, nil, nil, nil, 70337)
 local timerNecroticPlagueCD			= mod:NewCDTimer(30, 70337, nil, nil, nil, 3, nil, DBM_COMMON_L.DISEASE_ICON, true)
-local timerEnrageCD					= mod:NewVarCountTimer("dv21-23", 72143, nil, "Tank|RemoveEnrage", nil, 5, nil, DBM_COMMON_L.ENRAGE_ICON)
+local timerEnrageCD					= mod:NewCDCountTimer("d20", 72143, nil, "Tank|RemoveEnrage", nil, 5, nil, DBM_COMMON_L.ENRAGE_ICON)
 local timerShamblingHorror			= mod:NewNextTimer(60, 70372, nil, nil, nil, 1)
 local timerDrudgeGhouls				= mod:NewNextTimer(30, 70358, nil, nil, nil, 1)
 local timerTrapCD					= mod:NewNextTimer(15.5, 73539, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON, nil, 1, 4)
@@ -543,8 +541,8 @@ function mod:SPELL_SUMMON(args)
 		warnShamblingHorror:Show()
 		warnShamblingSoon:Schedule(55)
 		timerShamblingHorror:Start()
-		timerEnrageCD:Start(12.3, shamblingCount, args.destGUID)
-		timerEnrageCD:Schedule(12.3+2, nil, shamblingCount, args.destGUID)
+		timerEnrageCD:Start(14, shamblingCount, args.destGUID)
+		timerEnrageCD:Schedule(14+2, nil, shamblingCount, args.destGUID)
 	end
 end
 
