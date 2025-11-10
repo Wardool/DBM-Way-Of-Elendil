@@ -66,7 +66,7 @@ local specWarnInfest				= mod:NewSpecialWarningCount(70541, nil, nil, nil, 1) --
 local specWarnTrap					= mod:NewSpecialWarningYou(73539, nil, nil, nil, 3, 2, 3) --Heroic Ability
 local yellTrap						= mod:NewYellMe(73539)
 local specWarnTrapNear				= mod:NewSpecialWarningClose(73539, nil, nil, nil, 3, 2, 3) --Heroic Ability
-local specWarnEnrage				= mod:NewSpecialWarningSpell(72143, "Tank")
+local specWarnEnrage				= mod:NewSpecialWarningSpell(72143, "Tank|RemoveEnrage")
 local specWarnEnrageLow				= mod:NewSpecialWarningSpell(28747, false)
 
 local timerInfestCD					= mod:NewVarCountTimer("v21.3-24", 70541, nil, "Healer|RaidCooldown", nil, 5, nil, DBM_COMMON_L.HEALER_ICON, true)
