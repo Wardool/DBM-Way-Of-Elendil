@@ -64,9 +64,9 @@ local function currentFullDate()
 end
 
 DBM = {
-	Revision = parseCurseDate("20251102171328"),
+	Revision = parseCurseDate("20251110222105"),
 	DisplayVersion = "10.1.13 - WoE Edition", -- the string that is shown as version
-	ReleaseRevision = releaseDate(2025, 11, 2) -- the date of the latest stable version that is available, optionally pass hours, minutes, and seconds for multiple releases in one day
+	ReleaseRevision = releaseDate(2025, 11, 10) -- the date of the latest stable version that is available, optionally pass hours, minutes, and seconds for multiple releases in one day
 }
 
 local fakeBWVersion = 7558
@@ -5931,8 +5931,8 @@ do
 	local ingameSoundPath = {
 		[850] = "Sound\\Interface\\uEscapeScreenOpen.wav",
 		[856] = "Sound\\Interface\\uChatScrollButton.wav",
-		[8585] = "Sound\\Creature\\CThun\\CThunYouWillDIe.wav",
-		[8960] = "Sound\\Interface\\levelup2.wav"
+		[8585] = "Sound\\Creature\\CThun\\CThunYouWillDIe.wav"
+		--[8960] = "Sound\\Interface\\levelup2.wav"
 	}
 	local function playSound(self, path, ignoreSFX)
 		if self.Options.SilentMode or path == "" or path == "None" then
