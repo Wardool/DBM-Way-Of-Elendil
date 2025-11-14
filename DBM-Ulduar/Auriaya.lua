@@ -29,7 +29,7 @@ local enrageTimer		= mod:NewBerserkTimer(600)
 local timerDefender		= mod:NewNextCountTimer(30, 64447, nil, nil, nil, 1) -- First timer is time for boss spellcast, afterwards is time to revive
 local timerFear			= mod:NewCastTimer(64386, nil, nil, nil, 4)
 local timerFearCD		= mod:NewCDTimer(27.7, 64386, nil, nil, nil, 4, nil, nil, false) -- Prevent timer from going negativ, Timers are too much random after the 1st fear. // pull:37.94, 73.42, 43.00 // pull:37.94, 79.31, 82.34 //
-local timerSwarmCD		= mod:NewCDTimer(31.8, 64396, nil, nil, nil, 1, nil, nil, true)
+local timerSwarmCD		= mod:NewCDTimer(31.8, 64396, nil, nil, nil, 1, nil, nil, false)
 local timerSonicCD		= mod:NewCDTimer(26, 64688, nil, nil, nil, 2, nil, DBM_COMMON_L.DEADLY_ICON, false) -- pull:47.95, 24.09, 26.71, 30.02, 25.32, 25.50 // pull:47.95, 24.18, 54.55 //
 local timerSonic		= mod:NewCastTimer(64688, nil, nil, nil, 2)
 
