@@ -30,7 +30,7 @@ mod:AddTimerLine(DBM_CORE_L.SCENARIO_STAGE:format(1)..": 100% – 65%")
 local warnPhase2Soon		= mod:NewPrePhaseAnnounce(2)
 local warnWingBuffet		= mod:NewSpellAnnounce(18500, 2, nil, "Tank")
 
-local timerNextFlameBreath	= mod:NewCDTimer(13.3, 18435, nil, "Tank", 2, 5, nil, nil, true) -- Breath she does on ground in frontal cone. REVIEW! ~7s variance [13.3-20]. Added "keep" arg (25N Lordaeron 2022/10/13) - 13.3, 18.8, 16.3, 13.6
+local timerNextFlameBreath	= mod:NewVarTimer("v22-25", 18435, nil, "Tank", 2, 5, nil, nil, true) -- Breath she does on ground in frontal cone. REVIEW! ~7s variance [13.3-20]. Added "keep" arg (25N Lordaeron 2022/10/13) - 13.3, 18.8, 16.3, 13.6
 
 -- Stage Two (65% – 40%)
 mod:AddTimerLine(DBM_CORE_L.SCENARIO_STAGE:format(2)..": 65% – 40%")
@@ -56,6 +56,7 @@ mod:AddTimerLine(DBM_CORE_L.SCENARIO_STAGE:format(3)..": 40% – 0%")
 local warnPhase3			= mod:NewPhaseAnnounce(3)
 
 local specWarnBellowingRoar	= mod:NewSpecialWarningSpell(18431, nil, nil, nil, 2, 2)
+local timerBellowingRoar	= mod:NewVarTimer("v15-22", 18431, nil, nil, nil, 3)
 
 mod.vb.warned_preP2 = false
 mod.vb.warned_preP3 = false
@@ -83,7 +84,7 @@ function mod:OnCombatStart(delay)
 	self.vb.whelpsCount = 0
 	self.vb.warned_preP2 = false
 	self.vb.warned_preP3 = false
-	timerNextFlameBreath:Start(12.1-delay) -- REVIEW! variance? (25N Lordaeron 2022/10/13) - 12.1
+	timerNextFlameBreath:Start(20-delay) -- REVIEW! variance? (25N Lordaeron 2022/10/13) - 12.1
 	timerAchieve:Start(-delay)
 	if self.Options.SoundWTF3 then
 		DBM:PlaySoundFile("Interface\\AddOns\\DBM-Onyxia\\sounds\\dps-very-very-slowly.ogg")
@@ -106,6 +107,7 @@ function mod:SPELL_CAST_START(args)
 	elseif spellId == 18431 then
 		specWarnBellowingRoar:Show()
 		specWarnBellowingRoar:Play("fearsoon")
+		timerBellowingRoar:Start()
 	elseif args:IsSpellID(18500, 69293) then -- Wing Buffet
 		warnWingBuffet:Show()
 	elseif args:IsSpellID(18392, 68926) then -- Fireball
@@ -185,6 +187,7 @@ function mod:OnSync(msg)
 		timerNextDeepBreath:Stop()
 		timerBigAddCD:Stop()
 		warnWhelpsSoon:Cancel()
+		timerNextFlameBreath:Start(24)
 --		preWarnDeepBreath:Cancel()
 		if self.Options.SoundWTF3 then
 			self:Unschedule(DBM.PlaySoundFile, DBM)
