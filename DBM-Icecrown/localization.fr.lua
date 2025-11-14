@@ -25,7 +25,7 @@ L:SetTimerLocalization({
 })
 
 L:SetWarningLocalization({
-	WarnReanimating				= "Les adds revivent",
+	WarnReanimating				= "Les adds reviennent à la vie",
 	WarnAddsSoon				= "Nouveaux adds bientôt",
 	SpecWarnVengefulShade		= "Ombre vengeresse vous attaque - COUREZ",
 	WeaponsStatus				= "Auto-déséquipement activé: %s (%s - %s)"
@@ -35,7 +35,7 @@ L:SetOptionLocalization({
 	WarnAddsSoon				= "Montre une pré-alerte avant que les adds arrivent",
 	WarnReanimating				= "Montre une alerte quand les adds vont revenir à la vie",
 	TimerAdds					= "Montre le timer pour les nouveaux adds",
-	SpecWarnVengefulShade		= "Montre une alerte spéciale quand vous êtes attaquer par une Ombre vengeresse",
+	SpecWarnVengefulShade		= "Montre une alerte spéciale quand vous êtes attaqué par une Ombre vengeresse",
 	WeaponsStatus				= "Alerte spéciale si la fonction de déséquipement n'est pas active au début du combat",
 	ShieldHealthFrame			= "Montre la vie du boss avec une barre de vie pour la $spell:70842",
 	SoundWarnCountingMC			= "Jouer un son à 5 secondes du Contrôle mental",
@@ -45,7 +45,7 @@ L:SetOptionLocalization({
 	CCFree						= "Supprimer $spell:48169 / $spell:48170. Tient compte des résistances des sorts de l'école de l'ombre.",
 	ShortOffensiveProcs			= "+ Supprimer les procs offensifs qui ont une faible durée. Recommandé pour la sécurité du raid sans compromettre les dégâts du raid.",
 	MostOffensiveBuffs			= "+ Supprimer la plupart des buffs offensifs (principalement pour les Casters et les |cFFFF7C0AFarouche Druide|r). Sécurité maximale pour les raids avec une perte de dégâts et la nécessité de s'auto-rebuffer/shapeshift!",
-	EqUneqWeapons				= "Retire/équipe les armes si le $spell:71289 est lancé sur vous. Pour que cela fonctionne, créez un set appellé \"pve\".",
+	EqUneqWeapons				= "Retire/équipe les armes si le $spell:71289 est lancé sur vous. Pour que cela fonctionne, créez un set appelé \"pve\".",
 	EqUneqTimer					= "Retire les armes à CHAQUE fois selon le timer (si votre ping est élevé). L'option de dessus doit être active."
 })
 
@@ -55,7 +55,7 @@ L:SetMiscLocalization({
 --	Fanatic1				= "Membres du culte",
 --	Fanatic2				= "Fanatique déformé",
 --	Fanatic3				= "Fanatique réanimé",
-	setMissing				= "ATTENTION! DBM auto-déséquipement d'arme ne fonctionnera pas tant que vous n'aurez pas créer un set apellé pve",
+	setMissing				= "ATTENTION! DBM auto-déséquipement d'arme ne fonctionnera pas tant que vous n'aurez pas créer un set appelé pve",
 	EqUneqLineDescription	= "Équiper/Déséquiper automatiquement"
 })
 
@@ -147,14 +147,14 @@ L:SetGeneralLocalization({
 })
 
 L:SetWarningLocalization({
-	WarnOozeSpawn				= "Les Limons sont arrivées",
+	WarnOozeSpawn				= "Les Limons sont arrivés",
 	WarnUnstableOoze			= "%s sur >%s< (%s)",
-	SpecWarnLittleOoze			= "Les Limons vous attaque - COUREZ"
+	SpecWarnLittleOoze			= "Le Limon vous cible - COUREZ"
 })
 
 L:SetOptionLocalization({
 	WarnOozeSpawn				= "Montre une alerte pour l'arrivée des Limons",
-	SpecWarnLittleOoze			= "Montre une alerte spéciale quand vous êtes attaquer par des Limons",
+	SpecWarnLittleOoze			= "Montre une alerte spéciale quand vous êtes ciblé par un Limon",
 	TankArrow					= "Afficher la flèche DBM pour le kiter du Grand limon (Expérimental)"
 })
 
@@ -262,7 +262,7 @@ L:SetTimerLocalization({
 
 L:SetOptionLocalization({
 	WarnPortalOpen				= "Prévient via une alerte quand Valithria ouvre des portails.",
-	TimerPortalsOpen			= "Montre une timer pour voir quand Valithria ouvre des portails.",
+	TimerPortalsOpen			= "Montre un timer pour voir quand Valithria ouvre des portails.",
 	TimerPortalsClose			= "Afficher le timer lorsque Portail cauchemardesque est fermé",
 	TimerBlazingSkeleton		= "Afficher le timer pour l'apparition du prochain Squelette flamboyant"
 })
@@ -297,10 +297,10 @@ L:SetOptionLocalization({
 	WarnGroundphaseSoon			= "Montre une pré-alerte pour la phase au sol",
 	TimerNextAirphase			= "Montre un timer pour la prochaine phase dans les airs",
 	TimerNextGroundphase		= "Montre un timer pour la prochaine phase au sol",
-	AnnounceFrostBeaconIcons	= "Annonce les icônes pour les cibles de $spell:70126 dans le chat de raid (requires announce to be enabled and leader/promoted status)",
+	AnnounceFrostBeaconIcons	= "Annonce les icônes pour les cibles de $spell:70126 dans le chat de raid (nécessite l’annonce activée et un statut de chef/assistant de raid)",
 	ClearIconsOnAirphase		= "Retire toutes les icônes avant la phase d'envol",
 	AssignWarnDirectionsCount	= "Attribuez des directions aux cibles $spell:70126 et comptez sur la phase 2",
-	AchievementCheck			= "Annonce les alertes du haut-fait 'Tout ce que vous pouvez rafler' au raid<br/>(nécessite un statut promu)",
+	AchievementCheck			= "Annonce les alertes du haut-fait 'Tout ce que vous pouvez rafler' au raid<br/>(nécessite un statut de chef/assistant de raid)",
 	RangeFrame					= "Montre une fenêtre de distance dynamique (10m/20m) basée sur la dernière capacité de boss utilisée et les debuffs du joueur (Le radar pour $spell:69762 ne s'affiche que sur l'instance héroïque)",
 })
 
@@ -326,7 +326,7 @@ L:SetGeneralLocalization({
 L:SetWarningLocalization({
 	ValkyrWarning			= "%s >%s< %s est saisi !",
 	SpecWarnYouAreValkd		= "Vous avez été saisi",
-	WarnNecroticPlagueJump	= "La Peste nécrotique a sauter sur >%s<",
+	WarnNecroticPlagueJump	= "La Peste nécrotique a sauté sur >%s<",
 	SpecWarnValkyrLow		= "Valkyr sous les 53%"
 })
 
@@ -349,7 +349,7 @@ L:SetOptionLocalization({
 	ShowFrame					= "Affiche une fenêtre des cibles des Val'Kyr",
 	FrameClassColor				= "Utiliser les couleurs de classes dans la fenêtre des cibles de Val'Kyr",
 	FrameUpwards				= "Étendre la fenêtre des cibles Val'Kyr vers le haut",
-	FrameLocked					= "Verouiller la fenêtre des cibles Val'Kyr",
+	FrameLocked					= "Verrouiller la fenêtre des cibles Val'Kyr",
 	RemoveImmunes				= "Enlève les sorts d'immunité avant de sortir de la chambre de Deuillegivre"
 })
 
@@ -382,8 +382,8 @@ L:SetGeneralLocalization({
 
 L:SetWarningLocalization({
 	SpecWarnTrapL		= "Piège Activé! - Gardien lié par la mort libéré",
-	SpecWarnTrapP		= "Piège Activé! - arrivé de Fauche-chair vengeurs",
-	SpecWarnGosaEvent	= "Le défi de Sindragosa commencé !"
+	SpecWarnTrapP		= "Piège Activé! - arrivée de Fauche-chair vengeurs",
+	SpecWarnGosaEvent	= "Le défi de Sindragosa a commencé !"
 })
 
 L:SetOptionLocalization({

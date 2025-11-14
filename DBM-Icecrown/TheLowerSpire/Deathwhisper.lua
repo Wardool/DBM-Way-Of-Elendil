@@ -57,7 +57,7 @@ local warnDominateMind				= mod:NewTargetNoFilterAnnounce(71289, 3)
 local specWarnDeathDecay			= mod:NewSpecialWarningGTFO(71001, nil, nil, nil, 1, 8)
 
 local timerDominateMind				= mod:NewBuffActiveTimer(12, 71289, nil, nil, nil, 5)
-local timerDominateMindCD			= mod:NewCDTimer(40, 71289, nil, nil, nil, 3, nil, nil, true) -- ~7s variance [40-46.7]. Added "keep" arg (10H Lordaeron 2022/09/02 || 25H Lordaeron 2022/09/04 || 25H Lordaeron [2023-07-05]@[19:41:47]) - 42.9, 43.5, Stage 2/17.3, 27.1/44.4, 43.6, 43.9, 43.7, 42.2 || 42.1, 40.1, Stage 2/31.9, 10.0/41.9 || 46.7, Stage 2/21.3, 20.6/42.0
+local timerDominateMindCD			= mod:NewVarTimer("v40-45", 71289, nil, nil, nil, 3, nil, nil, true) -- ~7s variance [40-46.7]. Added "keep" arg (10H Lordaeron 2022/09/02 || 25H Lordaeron 2022/09/04 || 25H Lordaeron [2023-07-05]@[19:41:47]) - 42.9, 43.5, Stage 2/17.3, 27.1/44.4, 43.6, 43.9, 43.7, 42.2 || 42.1, 40.1, Stage 2/31.9, 10.0/41.9 || 46.7, Stage 2/21.3, 20.6/42.0
 
 local soundSpecWarnDominateMind		= mod:NewSound(71289, nil, canShadowmeld or canVanish)
 
