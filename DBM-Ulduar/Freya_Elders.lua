@@ -10,8 +10,7 @@ mod:SetRevision("20220518110528")
 mod:RegisterEvents(
 	"SPELL_CAST_START 62344 62325 62932",
 	"SPELL_AURA_APPLIED 62310 62928",
-	"SPELL_AURA_REMOVED 62310 62928",
-	"UNIT_DIED"
+	"SPELL_AURA_REMOVED 62310 62928"
 )
 
 local specWarnImpale			= mod:NewSpecialWarningTaunt(62928, nil, nil, nil, 1, 2)
@@ -19,8 +18,6 @@ local specWarnFistofStone		= mod:NewSpecialWarningRun(62344, "Tank", nil, nil, 4
 local specWarnGroundTremor		= mod:NewSpecialWarningCast(62932, "SpellCaster", nil, nil, 1, 2)
 
 local timerImpale				= mod:NewTargetTimer(5, 62928, nil, "Healer|Tank", nil, 5)
-
-mod:AddBoolOption("TrashRespawnTimer", true, "timer")
 
 -- Trash: 33430 Guardian Lasher (flower)
 -- 33355 (nymph)
@@ -57,14 +54,5 @@ end
 function mod:SPELL_AURA_REMOVED(args)
 	if args:IsSpellID(62310, 62928) then			-- Impale
 		timerImpale:Stop(args.destName)
-	end
-end
-
-function mod:UNIT_DIED(args)
-	if self.Options.TrashRespawnTimer and not DBT:GetBar(L.TrashRespawnTimer) then
-		local guid = tonumber(args.destGUID:sub(9, 12), 16)
-		if guid == 33430 or guid == 33355 or guid == 33354 then		-- guardian lasher / nymph / tree
-			DBT:CreateBar(7200, L.TrashRespawnTimer)
-		end
 	end
 end
