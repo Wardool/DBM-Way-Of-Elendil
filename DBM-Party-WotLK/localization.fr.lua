@@ -751,7 +751,8 @@ L:SetGeneralLocalization({
 
 L:SetMiscLocalization({
 	YellCombatEnd	= "Joli combat ! Votre prochain défi vient directement des rangs de la Croisade. L'épreuve sera de vous mesurer à l'incroyable virtuosité de ses cavaliers.",
-	Pull 			= "Les Saccage-soleil sont fiers d'annoncer leurs représentants pour ce jugement par l'épée."
+	Pull 			= "Les Saccage-soleil sont fiers d'annoncer leurs représentants pour ce jugement par l'épée.",
+	Pull2			= "Le Concordat argenté est heureux de vous présenter ses compétiteurs pour l'évènement, généralissime."
 })
 
 -------------------

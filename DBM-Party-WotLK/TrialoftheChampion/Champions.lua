@@ -21,7 +21,7 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 66043 68311 67534 67594 68316"
 )
 
-local timerCombatStart		= mod:NewCombatTimer(142)
+local timerCombatStart		= mod:NewCombatTimer(170)
 
 local warnHealingWave		= mod:NewSpellAnnounce(67528, 2)
 local warnPolymorph			= mod:NewTargetNoFilterAnnounce(66043, 2)
@@ -56,7 +56,7 @@ function mod:SPELL_AURA_APPLIED(args)
 end
 
 function mod:CHAT_MSG_MONSTER_YELL(msg)
-	if msg == L.Pull or msg:find(L.Pull) then
+	if msg == L.Pull or msg:find(L.Pull) or msg == L.Pull2 or msg:find(L.Pull2) then
 		timerCombatStart:Start()
 	end
 end
