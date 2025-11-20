@@ -106,7 +106,7 @@ local specWarnValkyrLow				= mod:NewSpecialWarning("SpecWarnValkyrLow", nil, nil
 local timerSoulreaper				= mod:NewTargetTimer(5.1, 69409, nil, "Tank|Healer|TargetedCooldown")
 local timerSoulreaperCD				= mod:NewCDCountTimer(33.1, 69409, nil, "Tank|Healer|TargetedCooldown", nil, 5, nil, DBM_COMMON_L.TANK_ICON)
 local timerDefileCD					= mod:NewCDCountTimer(32.5, 72762, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON, true, 1, 4)
-local timerSummonValkyr				= mod:NewCDCountTimer(45.2, 69037, nil, nil, nil, 1, 71844, DBM_COMMON_L.DAMAGE_ICON, true, 2, 3)
+local timerSummonValkyr				= mod:NewVarCountTimer("v44.8-48.4", 69037, nil, nil, nil, 1, 71844, DBM_COMMON_L.DAMAGE_ICON, true, 2, 3)
 
 local soundDefileOnYou				= mod:NewSoundYou(72762)
 local soundSoulReaperSoon			= mod:NewSoundSoon(69409, nil, "Tank|Healer|TargetedCooldown")

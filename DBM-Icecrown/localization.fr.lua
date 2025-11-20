@@ -147,13 +147,13 @@ L:SetGeneralLocalization({
 })
 
 L:SetWarningLocalization({
-	WarnOozeSpawn				= "Les Limons sont arrivés",
+	WarnOozeSpawn				= "Apparition d'un petit limon",
 	WarnUnstableOoze			= "%s sur >%s< (%s)",
-	SpecWarnLittleOoze			= "Le Limon vous cible - COUREZ"
+	SpecWarnLittleOoze			= "Le limon vous cible - COUREZ"
 })
 
 L:SetOptionLocalization({
-	WarnOozeSpawn				= "Montre une alerte pour l'arrivée des Limons",
+	WarnOozeSpawn				= "Montre une alerte pour l'apparition d'un petit limon",
 	SpecWarnLittleOoze			= "Montre une alerte spéciale quand vous êtes ciblé par un Limon",
 	TankArrow					= "Afficher la flèche DBM pour le kiter du Grand limon (Expérimental)"
 })

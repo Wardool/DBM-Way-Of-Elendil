@@ -73,6 +73,7 @@ local timerBanish				= mod:NewTargetTimer(6, 71298, nil, false, nil, 3)
 local timerFrostblade			= mod:NewNextTimer(26, 70305, nil, nil, nil, 2)
 local timerRpIceTrash			= mod:NewRPTimer(37.8, "Crok Role Play", nil, nil, nil, 2) -- Roleplay for ice trashs
 local timerRpIceValkyr			= mod:NewRPTimer(12, "Svalna Role Play", nil, nil, nil, 2) -- Roleplay for ice trashs
+local timerSindraArrival		= mod:NewRPTimer(15, "Sindra Role Play", nil, nil, nil, 2)
 
 mod:RemoveOption("HealthFrame")
 --Lower Spire
@@ -85,6 +86,7 @@ local valkyrHeraldGUID = {}
 local eventProfessorStarted = false
 mod.vb.nerubarAlive = 16 -- 8 each wave
 mod.vb.frostwardenAlive = 6
+local dragondeath = 0
 
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
@@ -221,6 +223,11 @@ function mod:UNIT_DIED(args)
 		self.vb.frostwardenAlive = self.vb.frostwardenAlive - 1
 		if self.vb.frostwardenAlive == 0 then
 			DBM:AddSpecialEventToTranscriptorLog("Sindra Gauntlet 3rd wave")
+		end
+	elseif (cid == 37533 or cid == 37534) then
+		dragondeath = dragondeath + 1
+		if dragondeath == 2 then
+			timerSindraArrival:Start()
 		end
 	end
 end
