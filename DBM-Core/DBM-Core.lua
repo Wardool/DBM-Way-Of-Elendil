@@ -64,9 +64,9 @@ local function currentFullDate()
 end
 
 DBM = {
-	Revision = parseCurseDate("20251113162907"),
+	Revision = parseCurseDate("20251120193138"),
 	DisplayVersion = "10.1.13 - WoE Edition", -- the string that is shown as version
-	ReleaseRevision = releaseDate(2025, 11, 13) -- YY/MM/DD the date of the latest stable version that is available, optionally pass hours, minutes, and seconds for multiple releases in one day
+	ReleaseRevision = releaseDate(2025, 11, 20) -- YY/MM/DD the date of the latest stable version that is available, optionally pass hours, minutes, and seconds for multiple releases in one day
 }
 
 local fakeBWVersion = 7558
@@ -2883,7 +2883,7 @@ end
 function DBM:LFG_PROPOSAL_SHOW()
 	local timerEnabled = self.Options.ShowQueuePop and not self.Options.DontShowEventTimers
 	if timerEnabled then
-		DBT:CreateBar(40, L.LFG_INVITE, "Interface\\Icons\\Spell_Holy_BorrowedTime")
+		DBT:CreateBar(45, L.LFG_INVITE, "Interface\\Icons\\Spell_Holy_BorrowedTime")
 		fireEvent("DBM_TimerStart", "DBMLFGTimer", L.LFG_INVITE, 40, "Interface\\Icons\\Spell_Holy_BorrowedTime", "extratimer", nil, 0)
 	end
 	fireEvent("DBM_TimerBegin", "DBMLFGTimer", L.LFG_INVITE, 40, "Interface\\Icons\\Spell_Holy_BorrowedTime", "extratimer", nil, 0, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, timerEnabled)
