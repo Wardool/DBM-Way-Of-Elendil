@@ -149,7 +149,7 @@ local specWarnGTFO					= mod:NewSpecialWarningGTFO(68983, nil, nil, nil, 1, 8)
 
 local timerPhaseTransition			= mod:NewTimer(62.5, "PhaseTransition", 72262, nil, nil, 6)
 local timerRagingSpiritCD			= mod:NewNextCountTimer(17, 69200, nil, nil, nil, 1)
-local timerSoulShriekCD				= mod:NewCDTimer(12, 69242, nil, nil, nil, 1)
+local timerSoulShriekCD				= mod:NewVarTimer("v12-14", 69242, nil, nil, nil, 1)
 
 mod:AddRangeFrameOption(8, 72133)
 mod:AddSetIconOption("RagingSpiritIcon", 69200, false, 0, {7})
@@ -447,7 +447,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		end
 	elseif spellId == 69200 then -- Raging Spirit
 		self.vb.ragingSpiritCount = self.vb.ragingSpiritCount + 1
-		timerSoulShriekCD:Start(17)
+		timerSoulShriekCD:Start(14)
 		if args:IsPlayer() then
 			specWarnRagingSpirit:Show()
 			specWarnRagingSpirit:Play("targetyou")
