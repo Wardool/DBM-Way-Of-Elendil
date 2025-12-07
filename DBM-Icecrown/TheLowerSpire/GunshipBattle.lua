@@ -60,7 +60,7 @@ function mod:OnCombatStart(delay)
 	timerAdds:Start(12-delay)
 	warnAddsSoon:Schedule(7-delay)
 	self.vb.firstMage = false
-	timerBelowZeroCD:Start(39-delay) --Approximate, since it depends on cannon damage. Corrected on yell later
+	timerBelowZeroCD:Start(41-delay) --Approximate, since it depends on cannon damage. Corrected on yell later
 end
 
 function mod:CHAT_MSG_MONSTER_YELL(msg)
@@ -80,14 +80,14 @@ function mod:CHAT_MSG_MONSTER_YELL(msg)
 
 	if (msg:find(L.MageAlliance) or msg == L.MageAlliance) and self:IsInCombat() then
 		if not self.vb.firstMage then
-			timerBelowZeroCD:Update(34, 39)
+			timerBelowZeroCD:Update(37, 41)
 			self.vb.firstMage = true
 		else
-			timerBelowZeroCD:Update(30, 35)
+			timerBelowZeroCD:Update(32.5, 35)
 		end
 	elseif (msg:find(L.MageHorde) or msg == L.MageHorde) and self:IsInCombat() then
 		if not self.vb.firstMage then
-			timerBelowZeroCD:Update(34.5, 39)
+			timerBelowZeroCD:Update(37, 41)
 			self.vb.firstMage = true
 		else
 			timerBelowZeroCD:Update(32.5, 35)

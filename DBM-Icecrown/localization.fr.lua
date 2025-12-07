@@ -69,7 +69,7 @@ L:SetGeneralLocalization({
 })
 
 L:SetWarningLocalization({
-	WarnAddsSoon	= "Nouveaux Add Bientôt"
+	WarnAddsSoon	= "Nouveaux Adds Bientôt"
 })
 
 L:SetOptionLocalization({
