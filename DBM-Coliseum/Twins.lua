@@ -43,7 +43,7 @@ local timerLightTouch				= mod:NewTargetTimer(20, 65950, nil, false, 2, 3)
 local timerDarkTouch				= mod:NewTargetTimer(20, 66001, nil, false, 2, 3)
 local timerAchieve					= mod:NewAchievementTimer(180, 3815)
 
-local timerAnubRoleplay				= mod:NewTimer(52, "TimerAnubRoleplay", 43827, nil, nil, 6)
+local timerAnubRoleplay				= mod:NewTimer(53.5, "TimerAnubRoleplay", 43827, nil, nil, 6)
 
 mod:AddBoolOption("SpecialWarnOnDebuff", false, "announce")
 --mod:AddBoolOption("SetIconOnDebuffTarget", false) -- only commented since retail groups to only 1 debuff ID, which is not a very good GUI approach.

@@ -127,12 +127,12 @@ L:SetWarningLocalization({
 
 L:SetTimerLocalization({
 	TimerSpecialSpell			= "Prochaine Capacité Spéciale",
-	TimerAnubRoleplay			= "Pauses de sol en"
+	TimerAnubRoleplay			= "Chute du sol dans :"
 })
 
 L:SetOptionLocalization({
 	TimerSpecialSpell			= "Montre une alerte spéciale pour la prochaine Capacité spéciale",
-	TimerAnubRoleplay			= "Afficher le timer de la durée du roleplay du Le Roi Liche cassant le sol",
+	TimerAnubRoleplay			= "Afficher le timer de la durée du roleplay du Roi Liche avant la chute du sol",
 	WarnSpecialSpellSoon		= "Montre une Pré-Alerte pour la prochaine Capacité spéciale",
 	SpecWarnSpecial				= "Montre une alerte spéciale quand vous devez changer de couleur",
 	SpecWarnSwitchTarget		= "Montre une alerte spéciale quand l'autre boss est en train d'incanter",

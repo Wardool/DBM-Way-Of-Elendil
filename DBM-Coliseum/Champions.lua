@@ -299,11 +299,13 @@ function mod:UNIT_DIED(args)
 		DBM.BossHealth:RemoveBoss(34454)
 	elseif cid == 34458 or cid == 34461 then -- DK
 		timerDeathgripCD:Cancel()
+		self:SetWipeTime(15)
 		DBM.BossHealth:RemoveBoss(34458)
 		DBM.BossHealth:RemoveBoss(34461)
 	elseif cid == 34475 or cid == 34453 then -- Warrior
 		timerBladestormCD:Cancel()
 		preWarnBladestorm:Cancel()
+		self:SetWipeTime(15)
 		DBM.BossHealth:RemoveBoss(34475)
 		DBM.BossHealth:RemoveBoss(34453)
 	elseif cid == 34460 or cid == 34451 then -- Balance Druid
