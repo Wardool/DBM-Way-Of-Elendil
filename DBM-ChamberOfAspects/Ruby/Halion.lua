@@ -38,11 +38,11 @@ local specWarnFieryCombustion		= mod:NewSpecialWarningRun(74562, nil, nil, nil, 
 local yellFieryCombustion			= mod:NewYellMe(74562)
 local specWarnMeteorStrike			= mod:NewSpecialWarningMove(74648, nil, nil, nil, 1, 2)
 
-local timerFieryCombustionCD		= mod:NewNextTimer(25, 74562, nil, nil, nil, 3)
-local timerMeteorCD					= mod:NewNextTimer(38, 74648, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON)
+local timerFieryCombustionCD		= mod:NewVarTimer("v25-27", 74562, nil, nil, nil, 3)
+local timerMeteorCD					= mod:NewVarTimer("v38-39.6", 74648, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON)
 local timerMeteorCast				= mod:NewCastTimer(7, 74648)
-local timerFieryBreathCD			= mod:NewCDTimer(18, 74525, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.TANK_ICON, true)
-local timerTailLashCD				= mod:NewCDTimer(12, 74531, nil, nil, nil, 2)
+local timerFieryBreathCD			= mod:NewVarTimer("v16.5-19", 74525, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.TANK_ICON, true)
+local timerTailLashCD				= mod:NewVarTimer("v11.5-16", 74531, nil, nil, nil, 2)
 
 mod:AddSetIconOption("SetIconOnFireConsumption", 74562, true, false, {7})--Red x for Fire
 
@@ -59,9 +59,9 @@ local specWarnSoulConsumption		= mod:NewSpecialWarningRun(74792, nil, nil, nil, 
 local yellSoulConsumption			= mod:NewYellMe(74792)
 local specWarnTwilightCutter		= mod:NewSpecialWarningSpell(74769, nil, nil, nil, 3, 2)
 
-local timerSoulConsumptionCD		= mod:NewNextTimer(25.5, 74792, nil, nil, nil, 3)
+local timerSoulConsumptionCD		= mod:NewVarTimer("v24-27", 74792, nil, nil, nil, 3)
 --local timerTwilightCutterCast		= mod:NewCastTimer(5, 74769, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON)
-local timerTwilightCutter			= mod:NewBuffActiveTimer(9, 74769, nil, nil, nil, 6)
+local timerTwilightCutter			= mod:NewBuffActiveTimer(9, 74769, nil, nil, nil, 6, nil, DBM_COMMON_L.DEADLY_ICON)
 local timerTwilightCutterCD			= mod:NewNextTimer(15, 74769, nil, nil, nil, 6)
 local timerShadowBreathCD			= mod:NewCDTimer(14.5, 74806, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.TANK_ICON, true)
 
@@ -104,7 +104,7 @@ function mod:OnCombatStart(delay)
 	timerMeteorCD:Start(18-delay)
 	timerFieryCombustionCD:Start(15-delay)
 	timerFieryBreathCD:Start(10-delay)
-	timerTailLashCD:Start(-delay)
+	timerTailLashCD:Start(8-delay)
 end
 
 function mod:OnCombatEnd()
@@ -355,7 +355,7 @@ function mod:OnSync(msg, target)
 		warnPhase2:Show()
 		warnPhase2:Play("ptwo")
 		timerShadowBreathCD:Start()
-		timerSoulConsumptionCD:Start(22.8)
+		timerSoulConsumptionCD:Start("v20-23")
 		timerTwilightCutterCD:Start(40)
 		warningTwilightCutter:Schedule(35)
 
@@ -364,8 +364,8 @@ function mod:OnSync(msg, target)
 		self:SetStage(3)
 		warnPhase3:Show()
 		warnPhase3:Play("pthree")
-		timerMeteorCD:Start(23.2)
-		timerFieryCombustionCD:Start(17.8)
+		timerMeteorCD:Start("v13-23")
+		timerFieryCombustionCD:Start("v12-18")
 		self:Schedule(20, clearKeepTimers, self)
 	elseif msg == "Phase3soon" and not self.vb.warned_preP3 then
 		self.vb.warned_preP3 = true
