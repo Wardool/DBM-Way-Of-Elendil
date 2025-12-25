@@ -571,7 +571,8 @@ end
 
 function mod:CHAT_MSG_MONSTER_YELL(msg)
 	if msg == L.LKPull or msg:find(L.LKPull) then
-		self:SendSync("CombatStart")
+		--self:SendSync("CombatStart")
+		timerCombatStart:Start()
 		if self.Options.ShowFrame then
 			self:CreateFrame()
 		end
@@ -679,9 +680,9 @@ function mod:UNIT_TARGET_UNFILTERED(uId)
 	end
 end]]
 
-function mod:OnSync(msg)
-	if msg == "CombatStart" then
-		timerCombatStart:Start()
+-- function mod:OnSync(msg)
+-- 	if msg == "CombatStart" then
+-- 		timerCombatStart:Start()
 	--elseif msg == "SphereTarget" then
 		--local sphereTarget, sphereGUID = strsplit("\t", target)
 		--if sphereTarget and sphereGUID and not iceSpheresGUIDs[sphereGUID] then
@@ -692,5 +693,5 @@ function mod:OnSync(msg)
 			--	specWarnIceSpheresYou:Play("iceorbmove")
 			--end
 		--end
-	end
-end
+	--end
+--end
