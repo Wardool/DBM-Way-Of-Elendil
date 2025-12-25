@@ -195,7 +195,7 @@ L.OUT_OF_DATE_NAG						= "Votre version de "..L.DBM.." est obsolète et ce modul
 
 L.MOVABLE_BAR							= "Déplacez-moi !"
 
-L.PIZZA_SYNC_INFO						= "|Hplayer:%1$s|h[%1$s]|h vous a envoyé un timer "..L.DBM..": '%2$s'\n|HDBM:cancel:%2$s:nil|h|cff3588ff[Annuler ce timer]|r|h  |HDBM:ignore:%2$s:%1$s|h|cff3588ff[Ignorer les timers de %1$s]|r|h"
+L.PIZZA_SYNC_INFO 						= "|Hplayer:%1$s|h[%1$s]|h vous a envoyé un timer "..L.DBM..": '%2$s'"
 L.PIZZA_CONFIRM_IGNORE					= "Voulez-vous vraiment ignorer les timers "..L.DBM.." de %s pour cette session ?"
 L.PIZZA_ERROR_USAGE						= "Utilisation : /dbm [broadcast] timer <temps> <texte>"
 
