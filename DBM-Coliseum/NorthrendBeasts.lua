@@ -21,7 +21,7 @@ mod:RegisterEvents(
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 66313 66330 67647 67648 67649 66794 67644 67645 67646 66821 66818 66901 67615 67616 67617 66902 67627 67628 67629",
 	"SPELL_CAST_SUCCESS 67641 66883 67642 67643 66824 67612 67613 67614 66879 67624 67625 67626 66689 67650 67651 67652",
-	"SPELL_AURA_APPLIED 67477 66331 67478 67479 67657 66759 67658 67659 66823 67618 67619 67620 66869 66758 66636 68335",
+	"SPELL_AURA_APPLIED 67477 66331 67478 67479 67657 66759 67658 67659 66823 67618 67619 67620 66869 66758 66636 68335 66689 67650 67651 67652",
 	"SPELL_AURA_APPLIED_DOSE 67477 66331 67478 67479 66636",
 	"SPELL_AURA_REMOVED 66869 66758",
 	"SPELL_DAMAGE 66320 67472 67473 67475 66317 66881 67638 67639 67640",
@@ -213,10 +213,6 @@ function mod:SPELL_CAST_SUCCESS(args)
 		timerParalyticBiteCD:Start()
 	elseif args:IsSpellID(66879, 67624, 67625, 67626) then		-- Burning Bite
 		timerBurningBiteCD:Start()
-	elseif args:IsSpellID(66689, 67650, 67651, 67652) then		-- Arctic Breath
-		timerBreath:Start()
-		timerBreathCD:Start()
-		warnBreath:Show()
 	end
 end
 
@@ -253,6 +249,10 @@ function mod:SPELL_AURA_APPLIED(args)
 		timerRisingAnger:Start()
 	elseif spellId == 68335 then	-- Enrage
 		warnEnrageWorm:Show()
+	elseif args:IsSpellID(66689, 67650, 67651, 67652) then		-- Arctic Breath
+		timerBreath:Start()
+		timerBreathCD:Start()
+		warnBreath:Show()
 	end
 end
 
@@ -433,15 +433,15 @@ function mod:INSTANCE_ENCOUNTER_ENGAGE_UNIT()
 				if self:IsHeroic() then
 					timerNextBoss:Start()
 				end
-				timerSubmerge:Start(49.3, bossName) -- REVIEW! 2s delay from visual to submerge (25H Lordaeron 2022/09/03) - 50
-				timerSweepCD:Start(18.6, bossName) -- (2021/10/21 || 25H Lordaeron 2022/09/03 || 10N Lordaeron 2022/10/02 || 25H Lordaeron 2022/10/09) - 22-24s (N/H?) || 24 || 20.0 || 18.6
-				timerParalyticSprayCD:Start(15.5)	-- (2021/10/21 || 25H Lordaeron 2022/09/03 || 25H Lordaeron 2022/09/28 || 10N Lordaeron 2022/10/02 || 25N Lordaeron 2022/10/21) - 18-20s (N/H?) || 22 || 20.2 || 30.3 || 15.5
+				timerSubmerge:Start(47.8, bossName)
+				timerSweepCD:Start(17.8, bossName)
+				timerParalyticSprayCD:Start(21.3)
 			elseif cid == 34799 and not dreadscaleEngaged then -- Dreadscale (mobile on engage)
 				dreadscaleEngaged = true
-				timerSubmerge:Start(bossName)
-				timerSlimePoolCD:Start(15, bossName) -- (25H Lordaeron 2022/09/03) - 15
-				timerMoltenSpewCD:Start(19.2) -- (25H Lordaeron 2022/09/03 || 25H Lordaeron 2022/09/28 || 25N Lordaeron 2022/10/13) - 24 || 23.2 || 19.2
-				timerBurningBiteCD:Start(15.4) -- (25H Lordaeron 2022/09/03 || 25N Lordaeron 2022/10/13) - 19 || 15.4
+				timerSubmerge:Start(45.8,bossName)
+				timerSlimePoolCD:Start(15, bossName)
+				timerMoltenSpewCD:Start(21)
+				timerBurningBiteCD:Start(15)
 			elseif cid == 34797 then -- Icehowl
 				self:SetStage(3)
 				timerBreathCD:Start()
