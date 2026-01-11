@@ -29,7 +29,7 @@ local specWarnColdflame		= mod:NewSpecialWarningGTFO(69146, nil, nil, nil, 1, 8)
 local specWarnWhirlwind		= mod:NewSpecialWarningRun(69076, nil, nil, nil, 4, 2)
 
 local timerBoneSpike		= mod:NewCDTimer(18, 69057, nil, nil, nil, 1, nil, DBM_COMMON_L.DAMAGE_ICON, true)
-local timerWhirlwindCD		= mod:NewCDTimer(90, 69076, nil, nil, nil, 2, nil, DBM_COMMON_L.MYTHIC_ICON)
+local timerWhirlwindCD		= mod:NewVarTimer("v90-95", 69076, nil, nil, nil, 2, nil, DBM_COMMON_L.MYTHIC_ICON)
 local timerWhirlwind		= mod:NewBuffActiveTimer(20, 69076, nil, nil, nil, 6)
 local timerBoned			= mod:NewAchievementTimer(8, 4610, nil, false)
 local timerBoneSpikeUp		= mod:NewCastTimer(69057)
@@ -44,16 +44,28 @@ mod:AddSetIconOption("SetIconOnImpale", 72669, true, 0, {8, 7, 6, 5, 4, 3, 2, 1}
 
 mod.vb.impaleIcon = 8
 
-function mod:GetBoneStormRemaining()
-	local unitIds = { "target", "focus", "mouseover" }
-	for _, unit in ipairs(unitIds) do
-		local _, _, _, _, _, _, expirationTime, _, _, _, spellId = DBM:UnitBuff(unit, 69076)
+function mod:GetBoneStormRemaining(guid)
+	local unitId = DBM:GetUnitIdFromGUID(guid)
+	if unitId then
+		local _, _, _, _, _, _, expirationTime, _, _, _, spellId = DBM:UnitBuff(unitId, 69076)
 		if spellId == 69076 and expirationTime then
 			local remaining = expirationTime - GetTime()
-			if remaining > 0 and remaining < 40 then
+			if remaining > 0 and remaining < 45 then
 				return remaining
 			end
 		end
+	end
+	return nil
+end
+
+function mod:ScanBoneStorm(guid, retries)
+	local remaining = self:GetBoneStormRemaining(guid)
+	if remaining then
+		timerWhirlwind:Start(remaining)
+	elseif retries > 0 then
+		self:Schedule(1, function()
+			self:ScanBoneStorm(guid, retries - 1)
+		end)
 	end
 end
 
@@ -68,15 +80,7 @@ function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 69076 then						-- Bone Storm (Whirlwind)
 		specWarnWhirlwind:Show()
 		specWarnWhirlwind:Play("justrun")
-
-		local delay = self:IsHeroic() and 9 or 4
-		self:Schedule(delay, function()
-			local remaining = mod:GetBoneStormRemaining()
-			if remaining then
-				timerWhirlwind:Start(remaining)
-			end
-		end)
-
+		self:ScanBoneStorm(args.destGUID, 20)
 		if self:IsNormal() then
 			timerBoneSpike:Cancel()
 		end
@@ -91,6 +95,7 @@ function mod:SPELL_AURA_REMOVED(args)
 		end
 	elseif spellId == 69076 then
 		timerWhirlwind:Cancel()
+		self:UnscheduleMethod("ScanBoneStorm") -- in case it is still scheduled
 		if self:IsNormal() then
 			timerBoneSpike:Start(15)					-- He will do Bone Spike Graveyard 15 seconds after whirlwind ends on normal
 		end

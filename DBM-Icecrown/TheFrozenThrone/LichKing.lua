@@ -239,7 +239,7 @@ end
 local function leftFrostmourne(self)
 	DBM:Debug("Left Frostmourne")
 	DBM:AddSpecialEventToTranscriptorLog("Left Frostmourne")
-	timerHarvestSoulCD:Start(55)
+	timerHarvestSoulCD:Start("v55-61")
 	timerDefileCD:Start(1.5, self.vb.defileCount+1) -- As soon as the group leaves FM
 	warnDefileSoon:Show(self.vb.defileCount+1)
 	warnDefileSoon:Play("scatter")
@@ -503,10 +503,10 @@ function mod:SPELL_AURA_APPLIED(args)
 		specWarnGTFO:Show(args.spellName)
 		specWarnGTFO:Play("watchfeet")
 		soundDefileOnYou:Play("Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\defileOnYou.mp3")
-	elseif spellId == 73650 and self:AntiSpam(3, 2) then		-- Restore Soul (Heroic)
-		DBM:AddMsg("Restore Soul SPELL_AURA_APPLIED unhidden from combat log. Notify Zidras on Discord or GitHub")
-		timerHarvestSoulCD:Start(60)
-		timerVileSpirit:Start(10)
+	-- elseif spellId == 73650 and self:AntiSpam(3, 2) then		-- Restore Soul (Heroic)
+	-- 	DBM:AddMsg("Restore Soul SPELL_AURA_APPLIED unhidden from combat log. Notify Zidras on Discord or GitHub")
+	-- 	timerHarvestSoulCD:Start(60)
+	-- 	timerVileSpirit:Start(10)
 	end
 end
 
