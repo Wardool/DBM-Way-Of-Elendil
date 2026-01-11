@@ -249,7 +249,7 @@ function mod:SPELL_AURA_APPLIED(args)
 		timerRisingAnger:Start()
 	elseif spellId == 68335 then	-- Enrage
 		warnEnrageWorm:Show()
-	elseif args:IsSpellID(66689, 67650, 67651, 67652) then		-- Arctic Breath
+	elseif args:IsSpellID(66689, 67650, 67651, 67652) and self:AntiSpam(1, 1) then		-- Arctic Breath
 		timerBreath:Start()
 		timerBreathCD:Start()
 		warnBreath:Show()
