@@ -225,7 +225,23 @@ function mod:SPELL_DAMAGE(sourceGUID, _, _, destGUID, _, _, spellId)
 		DBM.BossHealth:AddBoss(40142, L.TwilightHalion)
 	end
 end
-mod.SPELL_MISSED = mod.SPELL_DAMAGE
+
+function mod:SPELL_MISSED(sourceGUID, _, _, destGUID, _, _, spellId)
+	if spellId == 74792 then -- Consomption d'âmes (Twilight)
+		timerSoulConsumptionCD:Start()
+		soulConsumptionCLEU = true
+		if self:LatencyCheck() then
+			self:SendSync("ShadowCD")
+		end
+	elseif spellId == 74562 then -- Combustion de feu
+		timerFieryCombustionCD:Start()
+		fieryCombustionCLEU = true
+		if self:GetStage(1, 2) and self:LatencyCheck() then
+			self:SendSync("FieryCD")
+		end
+	end
+	self:SPELL_DAMAGE(sourceGUID, nil, nil, destGUID, nil, nil, spellId)
+end
 
 function mod:UNIT_HEALTH(uId)
 	if not self.vb.warned_preP2 and self:GetUnitCreatureId(uId) == 39863 and UnitHealth(uId) / UnitHealthMax(uId) <= 0.79 then
