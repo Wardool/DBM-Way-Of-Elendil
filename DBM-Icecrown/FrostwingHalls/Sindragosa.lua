@@ -444,7 +444,7 @@ function mod:OnSync(msg)
 		self:SetStage(1)
 		timerUnchainedMagic:Start(10)
 		timerTailSmash:Start(19)
-		timerNextBlisteringCold:Start(34)
+		timerNextBlisteringCold:Start("v34-40")
 		self:UnregisterShortTermEvents()
 	end
 end

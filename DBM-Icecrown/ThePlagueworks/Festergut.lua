@@ -109,7 +109,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 	if args:IsSpellID(69278, 71221) then	-- Gas Spore (10 man, 25 man)
 		self.vb.gasSporeCast = self.vb.gasSporeCast + 1
 		if self.vb.gasSporeCast == 3 then
-			timerGasSporeCD:Start(46.5)
+			timerGasSporeCD:Start("v46.5-52")
 			self.vb.gasSporeCast = 0
 		else
 			timerGasSporeCD:Start()
