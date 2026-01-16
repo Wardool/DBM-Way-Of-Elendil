@@ -747,7 +747,8 @@ L:SetGeneralLocalization({
 
 L:SetMiscLocalization({
 	YellCombatEnd	= "Well fought! Your next challenge comes from the Crusade's own ranks. You will be tested against their considerable prowess.",
-	Pull 			= "The Sunreavers are proud to present their representatives in this trial by combat."
+	Pull 			= "The Sunreavers are proud to present their representatives in this trial by combat.",
+	Pull2			= "The Argent Crusade is honored to present its champions for this trial by combat."
 })
 
 ----------------------------------
