@@ -16,8 +16,8 @@ mod:RegisterEvents(
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 66532 66963 66964 66965",
-	"SPELL_CAST_SUCCESS 66228 67106 67107 67108 67901 67902 67903 66258 66197 68123 68124 68125 67051 67050 67049 66237 66528 67029 67030 67031",
-	"SPELL_AURA_APPLIED 67051 67050 67049 66237 66197 68123 68124 68125 66334 67905 67906 67907 66532 66963 66964 66965 66209",
+	"SPELL_CAST_SUCCESS 67901 67902 67903 66258 66197 68123 68124 68125 67051 67050 67049 66237 66528 67029 67030 67031",
+	"SPELL_AURA_APPLIED 67051 67050 67049 66237 66197 68123 68124 68125 66334 67905 67906 67907 66532 66963 66964 66965 66209 66228 67106 67107 67108",
 	"SPELL_AURA_REMOVED 67051 67050 67049 66237 66197 68123 68124 68125 66209",
 	"SPELL_DAMAGE 66877 67070 67071 67072 66496 68716 68717 68718",
 	"SPELL_MISSED 66877 67070 67071 67072 66496 68716 68717 68718",
@@ -49,7 +49,7 @@ local timerToucherJaraxxus		= mod:NewTargetTimer(12, 66209, nil, nil, nil, 5)
 local timerCombatStart			= mod:NewCombatTimer(85)
 local timerFlame				= mod:NewTargetTimer(8, 66197, nil, nil, nil, 3)
 local timerFlameCD				= mod:NewNextTimer(30, 66197, nil, nil, nil, 3)
-local timerNetherPowerCD		= mod:NewNextTimer(45, 67009, nil, "MagicDispeller", nil, 5, nil, DBM_COMMON_L.MAGIC_ICON)
+local timerNetherPowerCD		= mod:NewNextTimer(43, 67009, nil, "MagicDispeller", nil, 5, nil, DBM_COMMON_L.MAGIC_ICON)
 local timerFlesh				= mod:NewTargetTimer(12, 66237, nil, "Healer", 2, 5, nil, DBM_COMMON_L.HEALER_ICON)
 local timerFleshCD				= mod:NewNextTimer(30, 66237, nil, "Healer", 2, 5, nil, DBM_COMMON_L.HEALER_ICON)
 local timerPortalCD				= mod:NewCDTimer(120, 66269, nil, nil, nil, 1, nil, nil, true)
@@ -79,7 +79,7 @@ function mod:OnCombatStart(delay)
 	warnPortalSoon:Schedule(15-delay)
 	timerVolcanoCD:Start(80-delay)
 	warnVolcanoSoon:Schedule(75-delay)
-	timerNetherPowerCD:Start(15-delay)
+	timerNetherPowerCD:Start(22-delay)
 	timerFleshCD:Start(13-delay)
 	timerFlameCD:Start(20-delay)
 	timerFelLightning:Start(-delay)
@@ -153,11 +153,7 @@ function mod:SPELL_CAST_START(args)
 end
 
 function mod:SPELL_CAST_SUCCESS(args)
-	if args:IsSpellID(66228, 67106, 67107, 67108) then			-- Nether Power
-		specWarnNetherPower:Show(args.sourceName)
-		specWarnNetherPower:Play("dispelboss")
-		timerNetherPowerCD:Start()
-	elseif args:IsSpellID(67901, 67902, 67903, 66258) then		-- Infernal Eruption
+	if args:IsSpellID(67901, 67902, 67903, 66258) then		-- Infernal Eruption
 		timerVolcanoCD:Start()
 		warnVolcanoSoon:Schedule(110)
 	--elseif args:IsSpellID(66269, 67898, 67899, 67900) then		-- Nether Portal
@@ -231,7 +227,10 @@ function mod:SPELL_AURA_APPLIED(args)
                 self.vb.toucherIcon = 1
             end
         end
-
+	elseif args:IsSpellID(66228, 67106, 67107, 67108) and self:AntiSpam (30, 4) then			-- Nether Power
+		specWarnNetherPower:Show(args.sourceName)
+		specWarnNetherPower:Play("dispelboss")
+		timerNetherPowerCD:Start()
 	end
 end
 
