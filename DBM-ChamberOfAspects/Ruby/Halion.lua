@@ -75,6 +75,10 @@ local warningStopDPS				= mod:NewSpecialWarning("StopDPS", nil, nil, nil, nil, n
 local warningSlowDPS				= mod:NewSpecialWarning("SlowDPS", nil, nil, nil, nil, nil, nil, nil, 74826)
 local specWarnCorporeality			= mod:NewSpecialWarningCount(74826, nil, nil, nil, 1, 2)
 
+mod:AddBoolOption("CustomGuildWarn", false, "announce")
+local specWarnRebornStop            = mod:NewSpecialWarning("SpecWarnRebornStop", nil, nil, nil, 1, 2, nil, nil, 74826)
+local specWarnRebornSlow            = mod:NewSpecialWarning("SpecWarnRebornSlow", nil, nil, nil, 1, 2, nil, nil, 74826)
+
 mod.vb.warned_preP2 = false
 mod.vb.warned_preP3 = false
 local playerInShadowRealm = false
@@ -260,6 +264,10 @@ function mod:UPDATE_WORLD_STATES()
 			if corporeality > 0 and previousCorporeality ~= corporeality then
 				specWarnCorporeality:Show(corporeality)
 				previousCorporeality = corporeality
+
+				local guildName = GetGuildInfo("player")
+				local isReborn = (guildName == "R E B O R N")
+
 				if corporeality > 60 then -- only voice for >= 70%, 60% is still manageable so default to the selected SA sound
 					if self:IsTank() then
 						specWarnCorporeality:Play("defensive")
@@ -267,13 +275,21 @@ function mod:UPDATE_WORLD_STATES()
 				end
 				if corporeality < 40 then
 					if self:IsDps() then
-						warningStopDPS:Show() -- Added a warning, most players don't use vocal alerts
+						if self.Options.CustomGuildWarn and isReborn then
+							specWarnRebornStop:Show()
+						else
+							warningStopDPS:Show()
+						end
 						specWarnCorporeality:Play("dpsstop")
 					end
 				elseif corporeality == 40 then
 					if self:IsDps() then
 						specWarnCorporeality:Play("dpsslow")
-						warningSlowDPS:Show() -- Added a warning, most players don't use vocal alerts
+						if self.Options.CustomGuildWarn and isReborn then
+							specWarnRebornSlow:Show()
+						else
+							warningSlowDPS:Show()
+						end
 					end
 				elseif corporeality == 60 then
 					if self:IsDps() then

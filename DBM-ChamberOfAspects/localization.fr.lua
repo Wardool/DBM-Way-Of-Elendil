@@ -180,15 +180,20 @@ L:SetGeneralLocalization({
 L:SetWarningLocalization({
 	TwilightCutterCast	= "Tranchant crépusculaire dans : 5 sec",
 	StopDPS				= "Stoppez le DPS !",
-	SlowDPS				= "Ralentissez le DPS !" -- Added a warning, most players don't use vocal alerts
+	SlowDPS				= "Ralentissez le DPS !", -- Added a warning, most players don't use vocal alerts
+	SpecWarnRebornStop  = "STOP LE DPS OU JTE BZ",
+    SpecWarnRebornSlow  = "Ralentis le DPS ou on te soulève"
 })
 
 L:SetOptionLocalization({
 	StopDPS					= "Afficher une alerte pour arrêter le DPS sur Halion pendant la phase 3 pour la corporéité (L'alerte ne s'affiche que pour les dps)",
 	SlowDPS					= "Afficher une alerte pour ralentir le DPS sur Halion pendant la phase 3 pour la corporéité (L'alerte ne s'affiche que pour les dps)", -- Added a warning, most players don't use vocal alerts
+	SpecWarnRebornStop      = "Afficher une alerte spéciale pour arrêter le DPS si vous êtes dans la guilde R E B O R N",
+	SpecWarnRebornSlow      = "Afficher une alerte spéciale pour ralentir le DPS si vous êtes dans la guilde R E B O R N",
 	TwilightCutterCast		= "Afficher une alerte lorsque $spell:77844 est en cours",
 	AnnounceAlternatePhase	= "Montre une alerte/timer pour la phase dans laquelle vous n'êtes pas",
-	SetIconOnConsumption	= "Placer des icones sur les cibles de $spell:74562 ou $spell:74792"
+	SetIconOnConsumption	= "Placer des icones sur les cibles de $spell:74562 ou $spell:74792",
+	CustomGuildWarn         = "Afficher les alertes spéciales guilde (R E B O R N) pour la corporéité"
 })
 
 L:SetMiscLocalization({

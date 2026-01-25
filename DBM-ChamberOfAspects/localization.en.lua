@@ -178,7 +178,9 @@ L:SetGeneralLocalization({
 L:SetWarningLocalization({
 	TwilightCutterCast	= "Casting Twilight Cutter in : 5 sec",
 	StopDPS				= "Stop DPS !",
-	SlowDPS				= "Slow DPS !"
+	SlowDPS				= "Slow DPS !",
+	SpecWarnRebornStop  = "STOP LE DPS OU JTE BZ",
+    SpecWarnRebornSlow  = "Ralentis le DPS ou on te soulève"
 })
 
 L:SetTimerLocalization({
@@ -188,10 +190,13 @@ L:SetTimerLocalization({
 L:SetOptionLocalization({
 	StopDPS					= "Show warning to stop DPS during phase 3 for corporeality (Warning only shows if you are dps)",
 	SlowDPS					= "Show warning to slow DPS during phase 3 for corporeality (Warning only shows if you are dps)", -- Added a warning, most players don't use vocal alerts
+	SpecWarnRebornStop      = "Show special warning to stop DPS if you are in R E B O R N guild",
+	SpecWarnRebornSlow      = "Show special warning to slow DPS if you are in R E B O R N guild",
 	TwilightCutterCast		= "Show warning when $spell:74769 is being cast",
 	AnnounceAlternatePhase	= "Show warnings/timers for phase you aren't in as well",
 	SetIconOnConsumption	= "Set icons on $spell:74562 or $spell:74792 targets",
-	TimerCutterSpawn		= "Show timer until next $spell:74769 is beamed (disables Next and Cast timers)"
+	TimerCutterSpawn		= "Show timer until next $spell:74769 is beamed (disables Next and Cast timers)",
+	CustomGuildWarn         = "Show custom guild warnings (R E B O R N) for corporeality"
 })
 
 L:SetMiscLocalization({
