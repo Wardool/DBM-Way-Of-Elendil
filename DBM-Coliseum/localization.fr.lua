@@ -120,6 +120,7 @@ L:SetWarningLocalization({
 	WarnSpecialSpellSoon		= "Capacité spéciale Bientôt !",
 	SpecWarnSpecial				= "Changement de couleur !",
 	SpecWarnSwitchTarget		= "Changement de cible !",
+	SpecWarnSwitchAll			= "Changez de couleur et de cible !",
 	SpecWarnKickNow				= "Casser Maintenant !",
 	WarningTouchDebuff			= "Toucher sur >%s<",
 	WarningPoweroftheTwins2		= "Puissance des jumelles - plus de soins sur >%s<"
@@ -136,6 +137,7 @@ L:SetOptionLocalization({
 	WarnSpecialSpellSoon		= "Montre une Pré-Alerte pour la prochaine Capacité spéciale",
 	SpecWarnSpecial				= "Montre une alerte spéciale quand vous devez changer de couleur",
 	SpecWarnSwitchTarget		= "Montre une alerte spéciale quand l'autre boss est en train d'incanter",
+	SpecWarnSwitchAll			= "Montre une alerte spéciale quand vous devez changer de couleur et de cible",
 	SpecWarnKickNow				= "Montre une alerte spéciale quand vous devez interrompre l'incantation",
 	SpecialWarnOnDebuff			= "Montre une alerte spéciale quand vous avez un Toucher (pour changer de debuff)",
 	SetIconOnDebuffTarget		= "Met des icônes sur les cibles des Toucher (héroique)",

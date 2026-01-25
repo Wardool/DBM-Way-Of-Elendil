@@ -475,14 +475,14 @@ function mod:UNIT_SPELLCAST_SUCCEEDED(uId, spellName)
 			timerParalyticSprayCD:Stop()
 			timerSlimePoolCD:Stop(acidmaw)
 			timerSweepCD:Stop(acidmaw)
-			timerEmerge:Start(7.5, unitName) -- REVIEW! 3s delay from visual to emerge (25H Lordaeron 2022/09/03) - 8, 7
+			timerEmerge:Start(6, acidmaw) -- FIX: use acidmaw variable instead of unitName
 		elseif npcId == 34799 then -- Dreadscale
 			timerMoltenSpewCD:Stop()
 			timerBurningBiteCD:Stop()
 			timerBurningSprayCD:Stop()
 			timerSlimePoolCD:Stop(dreadscale)
 			timerSweepCD:Stop(dreadscale)
-			timerEmerge:Start(6.5, unitName) -- (25H Lordaeron 2022/09/03) - 7, 6
+			timerEmerge:Start(5, dreadscale) -- FIX: use dreadscale variable instead of unitName
 		end
 	elseif spellName == GetSpellInfo(66947) then -- Emerge
 		local npcId = self:GetUnitCreatureId(uId)

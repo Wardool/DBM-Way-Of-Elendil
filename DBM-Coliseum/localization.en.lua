@@ -125,6 +125,7 @@ L:SetWarningLocalization({
 	WarnSpecialSpellSoon		= "Special ability soon",
 	SpecWarnSpecial				= "Change color",
 	SpecWarnSwitchTarget		= "Switch target",
+	SpecWarnSwitchAll			= "Change color and switch target",
 	SpecWarnKickNow				= "Interrupt now",
 	WarningTouchDebuff			= "Debuff on >%s<",
 	WarningPoweroftheTwins2		= "Power of the Twins - More healing on >%s<"
@@ -141,6 +142,7 @@ L:SetOptionLocalization({
 	WarnSpecialSpellSoon		= "Show pre-warning for next special ability",
 	SpecWarnSpecial				= "Show special warning when you have to change color",
 	SpecWarnSwitchTarget		= "Show special warning when the other Twin is casting",
+	SpecWarnSwitchAll			= "Show special warning when you have to change color and switch target",
 	SpecWarnKickNow				= "Show special warning when you have to interrupt",
 	SpecialWarnOnDebuff			= "Show change color special warning when touch debuffed (to switch debuff)",
 	SetIconOnDebuffTarget		= "Set icons on Touch of Light/Darkness debuff targets (heroic)",

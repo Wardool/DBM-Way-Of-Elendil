@@ -1,7 +1,7 @@
 local mod	= DBM:NewMod("ValkTwins", "DBM-Coliseum")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20260117122532")
 mod:SetCreatureID(34497, 34496)
 mod:SetEncounterID(641)
 mod:SetMinCombatTime(30)
@@ -30,12 +30,13 @@ local warnPoweroftheTwins			= mod:NewAnnounce("WarningPoweroftheTwins2", 4, 6591
 
 local specWarnSpecial				= mod:NewSpecialWarning("SpecWarnSpecial", nil, nil, nil, 1, 14)
 local specWarnSwitch				= mod:NewSpecialWarning("SpecWarnSwitchTarget", nil, nil, nil, 1, 2, nil, nil, 65875)
+local specWarnSwitchAll				= mod:NewSpecialWarning("SpecWarnSwitchAll", nil, nil, nil, 3, 2)
 local specWarnKickNow				= mod:NewSpecialWarning("SpecWarnKickNow", "HasInterrupt", nil, nil, 1, 2, nil, nil, 65875)
 local specWarnPoweroftheTwins		= mod:NewSpecialWarningDefensive(65916, "Tank", nil, 2, 1, 2)
 local specWarnEmpoweredDarkness		= mod:NewSpecialWarningYou(65724)--No voice ideas for this
 local specWarnEmpoweredLight		= mod:NewSpecialWarningYou(65748)--No voice ideas for this
 
-local timerCombatStart				= mod:NewCombatTimer(22)
+local timerCombatStart				= mod:NewCombatTimer(10)
 local enrageTimer					= mod:NewBerserkTimer(360)
 local timerSpecial					= mod:NewTimer(45, "TimerSpecialSpell", "Interface\\Icons\\INV_Enchant_EssenceMagicLarge", nil, nil, 6)
 local timerHeal						= mod:NewCastTimer(15, 65875, nil, nil, nil, 4, nil, DBM_COMMON_L.INTERRUPT_ICON)
@@ -92,15 +93,35 @@ do
 			SpecialAbility(debuff)
 		elseif args:IsSpellID(65875, 67303, 67304, 67305) then		-- Twin's Pact
 			timerHeal:Start()
-			SpecialAbility(true)
-			if self:GetUnitCreatureId("target") == 34497 then	-- if lightbane, then switch to darkbane
+			timerSpecial:Start()
+			warnSpecial:Schedule(40)
+
+			local hasLightBuff = DBM:UnitDebuff("player", lightEssence)
+			local targetingWrongBoss = (self:GetUnitCreatureId("target") == 34497) -- Cible Fjola
+
+			if not hasLightBuff and targetingWrongBoss then
+				specWarnSwitchAll:Show()
+			elseif not hasLightBuff then
+				specWarnSpecial:Show()
+				specWarnSpecial:Play("changecolor")
+			elseif targetingWrongBoss then
 				specWarnSwitch:Show()
 				specWarnSwitch:Play("changetarget")
 			end
 		elseif args:IsSpellID(65876, 67306, 67307, 67308) then	-- Light Pact
 			timerHeal:Start()
-			SpecialAbility(true)
-			if self:GetUnitCreatureId("target") == 34496 then	-- if darkbane, then switch to lightbane
+			timerSpecial:Start()
+			warnSpecial:Schedule(40)
+
+			local hasDarkBuff = DBM:UnitDebuff("player", darkEssence)
+			local targetingWrongBoss = (self:GetUnitCreatureId("target") == 34496) -- Cible Eydis
+
+			if not hasDarkBuff and targetingWrongBoss then
+				specWarnSwitchAll:Show()
+			elseif not hasDarkBuff then
+				specWarnSpecial:Show()
+				specWarnSpecial:Play("changecolor")
+			elseif targetingWrongBoss then
 				specWarnSwitch:Show()
 				specWarnSwitch:Play("changetarget")
 			end
