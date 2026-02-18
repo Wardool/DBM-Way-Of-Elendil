@@ -174,7 +174,7 @@ L:SetWarningLocalization({
 	WarnEmergeSoon			= "Anub'arak Sort du sol dans 10 sec",
 	WarnSubmerge			= "Anub'arak Rentre dans le sol",
 	WarnSubmergeSoon		= "Anub'arak Rentre dans le sol dans 10 sec",
-	warnAdds				= "Les add arrivent"
+	warnAdds				= "Les adds arrivent"
 })
 
 L:SetMiscLocalization({
@@ -191,7 +191,7 @@ L:SetOptionLocalization({
 	WarnEmergeSoon			= "Montre une alerte avant que le boss sorte du sol",
 	WarnSubmerge			= "Montre une alerte quand le boss rentre dans le sol",
 	WarnSubmergeSoon		= "Montre une alerte avant que le boss ne rentre dans le sol",
-	warnAdds				= "Montre une alerte pour l'arrivée des add",
+	warnAdds				= "Montre une alerte pour l'arrivée des adds",
 --	timerAdds				= "Montre le timer avant l'arrivée des nouveaux add",
 --	TimerEmerge				= "Montre le timer pour la sortie du boss",
 --	TimerSubmerge			= "Montre le timer pour la rentrée du boss dans la terre",
