@@ -49,7 +49,7 @@ local specWarnBlisteringCold	= mod:NewSpecialWarningRun(70123, nil, nil, nil, 4,
 local timerNextAirphase			= mod:NewTimer(110, "TimerNextAirphase", 43810, nil, nil, 6)
 local timerNextGroundphase		= mod:NewTimer(44.2, "TimerNextGroundphase", 43810, nil, nil, 6)
 local timerNextFrostBreath		= mod:NewNextTimer(22, 69649, nil, "Tank|Healer", nil, 5, nil, DBM_COMMON_L.TANK_ICON)
-local timerNextBlisteringCold	= mod:NewCDTimer(66, 70123, nil, nil, nil, 2, nil, DBM_COMMON_L.DEADLY_ICON, true, 2)
+local timerNextBlisteringCold	= mod:NewVarTimer("v66-70", 70123, nil, nil, nil, 2, nil, DBM_COMMON_L.DEADLY_ICON, true, 2)
 local timerNextBeacon			= mod:NewNextCountTimer(16, 70126, nil, nil, nil, 3, nil, DBM_COMMON_L.DEADLY_ICON)
 local timerBeaconIncoming		= mod:NewTargetTimer("d7", 70126, nil, nil, nil, 3)
 local timerBlisteringCold		= mod:NewCastTimer(6, 70123, nil, nil, nil, 2)
@@ -184,8 +184,8 @@ local function landingPhaseWorkaround(self, timeOffset)
 	DBM:Debug("UNIT_TARGET boss1 didn't fire. Landing Phase scheduled")
 	self:SetStage(1)
 	timerUnchainedMagic:Start(11-timeOffset)
-	timerTailSmash:Start(19-timeOffset)
-	timerNextBlisteringCold:Start(34-timeOffset)
+	timerTailSmash:Start("v"..(19-timeOffset).."-"..(23-timeOffset))
+	timerNextBlisteringCold:Start("v"..(32.5-timeOffset).."-"..(38-timeOffset))
 	self:UnregisterShortTermEvents()
 end
 
@@ -243,7 +243,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		timerNextBlisteringCold:Start()
 
 		if self.Options.RangeFrame then
-			DBM.RangeCheck:SetBossRange(10, self:GetBossUnitByCreatureId(36853)) -- 10 yd is enough on Way Of Elendil, Sindragosa body area is bigger than warmane.
+			DBM.RangeCheck:SetBossRange(8, self:GetBossUnitByCreatureId(36853)) -- 10 yd is enough on Way Of Elendil, Sindragosa body area is bigger than warmane.
 			self:Schedule(5.5, ResetRange, self)
 		end
 	elseif spellId == 69762 then	-- Unchained Magic
