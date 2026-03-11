@@ -366,7 +366,7 @@ L:SetGeneralLocalization({
 })
 
 L:SetTimerLocalization({
-	hardmodeSpawn = "Arriver d'Animus de saronite"
+	hardmodeSpawn = "Arrivée d'Animus de saronite"
 })
 
 L:SetOptionLocalization({
@@ -394,7 +394,7 @@ L:SetWarningLocalization({
 	WarningSanity					= "%d de Santé mentale restant",
 	SpecWarnSanity					= "%d de Santé mentale restant",
 	SpecWarnGuardianLow				= "Arrêtez d'attaquer ce gardien !",
-	SpecWarnMadnessOutNow			= "Incantation de Susciter la folie fini - SORTEZ",
+	SpecWarnMadnessOutNow			= "Incantation de Susciter la folie finie - SORTEZ",
 	WarnBrainPortalSoon				= "Portail dans 10 sec",
 	SpecWarnBrainPortalSoon			= "Portail bientôt"
 })

@@ -55,7 +55,7 @@ L:SetMiscLocalization({
 --	Fanatic1				= "Membres du culte",
 --	Fanatic2				= "Fanatique déformé",
 --	Fanatic3				= "Fanatique réanimé",
-	setMissing				= "ATTENTION! DBM auto-déséquipement d'arme ne fonctionnera pas tant que vous n'aurez pas créer un set appelé pve",
+	setMissing				= "ATTENTION! DBM auto-déséquipement d'arme ne fonctionnera pas tant que vous n'aurez pas créé un set appelé pve",
 	EqUneqLineDescription	= "Équiper/Déséquiper automatiquement"
 })
 

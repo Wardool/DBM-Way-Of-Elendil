@@ -191,16 +191,16 @@ L:SetGeneralLocalization({
 })
 
 L:SetWarningLocalization({
-	WarnCrystalHandler	= "Eleveur de cristal apparaissent (%d restant)"
+	WarnCrystalHandler	= "Éleveur de cristal apparaît (%d restant)"
 })
 
 L:SetTimerLocalization({
-	timerCrystalHandler	= "Eleveur de cristal apparaissent"
+	timerCrystalHandler	= "Éleveur de cristal apparaît"
 })
 
 L:SetOptionLocalization({
-	WarnCrystalHandler	= "Alerte indiquant Eleveur de cristal apparaissent",
-	timerCrystalHandler	= "Afficher le temps pour le prochain Eleveur de cristal apparaissent"
+	WarnCrystalHandler	= "Alerte indiquant Éleveur de cristal apparaît",
+	timerCrystalHandler	= "Afficher le temps pour le prochain Éleveur de cristal apparaît"
 })
 
 L:SetMiscLocalization({

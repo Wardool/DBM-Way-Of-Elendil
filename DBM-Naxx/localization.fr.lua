@@ -394,6 +394,6 @@ L:SetMiscLocalization({
 	Yell3Phase2	= "Votre fin est proche !", -- 12997
 	YellPhase3	= "Maître, j'ai besoin d'aide !", -- 12998
 	YellGuardians	= "Très bien. Guerriers des terres gelées, relevez-vous ! Je vous ordonne de combattre, de tuer et de mourir pour votre maître ! N'épargnez personne !", -- 12994
-	setMissing	= "ATTENTION! DBM auto-déséquipement d'arme ne fonctionnera pas tant que vous n'aurez pas créer un set apellé pve",
+	setMissing	= "ATTENTION! DBM auto-déséquipement d'arme ne fonctionnera pas tant que vous n'aurez pas créé un set apellé pve",
 	EqUneqLineDescription	= "Équiper/Déséquiper automatiquement"
 })

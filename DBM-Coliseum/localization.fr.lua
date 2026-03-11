@@ -12,7 +12,7 @@ L:SetGeneralLocalization({
 })
 
 L:SetWarningLocalization({
-	WarningSnobold				= "Un Vassal frigbold viens d'arriver sur >%s<"
+	WarningSnobold				= "Un Vassal frigbold vient d'arriver sur >%s<"
 })
 
 L:SetTimerLocalization({
