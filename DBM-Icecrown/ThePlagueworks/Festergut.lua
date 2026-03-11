@@ -3,17 +3,17 @@ local L		= mod:GetLocalizedStrings()
 
 local sformat = string.format
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20260311090725")
 mod:SetCreatureID(36626)
 mod:SetEncounterID(849)
 mod:RegisterCombat("combat")
 mod:SetUsedIcons(1, 2, 3)
-mod:SetHotfixNoticeRev(20230627000000)
-mod:SetMinSyncRevision(20230627000000)
+mod:SetHotfixNoticeRev(20260311090725)
+mod:SetMinSyncRevision(20260311090725)
 
 mod:RegisterEventsInCombat(
 	"SPELL_CAST_START 69195 71219 73031 73032",
-	"SPELL_CAST_SUCCESS 69278 71221",
+	"SPELL_CAST_SUCCESS 69278 71221 69240 71218 73019 73020",
 	"SPELL_AURA_APPLIED 69279 69166 71912 72219 72551 72552 72553 69240 71218 73019 73020 69291 72101 72102 72103 19753",
 	"SPELL_AURA_APPLIED_DOSE 69166 71912 72219 72551 72552 72553 69291 72101 72102 72103",
 	"SPELL_AURA_REMOVED 69279"
@@ -29,6 +29,7 @@ local specWarnGasSpore		= mod:NewSpecialWarningYou(69279, nil, nil, nil, 1, 2)
 local yellGasSpore			= mod:NewYellMe(69279)
 local specWarnVileGas		= mod:NewSpecialWarningYou(69240, nil, nil, nil, 1, 2)
 local yellVileGas			= mod:NewYellMe(69240)
+local timerVileGasCD		= mod:NewVarTimer("v35-45", 69240, nil, "Ranged", nil, 3, nil, nil, true) -- "Gaz abominable-73020-npc:36626-864 = pull:57.44, 0.00, 0.00, 35.95, 0.00, 0.00, 41.66, 0.00, 0.00", pull:52.21, 0.00, 0.00, 45.06, 0.00, 0.00, 34.94, 0.00, 0.00" , pull:57.45, 0.00, 0.00, 43.13, 0.00, 0.00, 37.23, 0.00, 0.00", pull:51.76, 0.00, 0.00, 41.42, 0.00, 0.00, 40.42, 0.00, 0.00",
 local specWarnGastricBloat	= mod:NewSpecialWarningStack(72219, nil, 9, nil, nil, 1, 6)
 local specWarnInhaled3		= mod:NewSpecialWarning("Stack3", "Tank", nil, nil, nil, nil, nil, nil, 69166)
 
@@ -82,6 +83,7 @@ function mod:OnCombatStart(delay)
 	timerInhaledBlight:Start(sformat("v%s-%s", 29.4-delay, 35-delay))
 	timerGasSporeCD:Start(sformat("v%s-%s", 20-delay, 25-delay))
 	timerGastricBloatCD:Start(sformat("v%s-%s", 12.5-delay, 14.8-delay))
+	timerVileGasCD:Start(sformat("v%s-%s", 52-delay, 57-delay))
 	table.wipe(gasSporeTargets)
 	table.wipe(vileGasTargets)
 	self.vb.gasSporeCast = 0
@@ -114,6 +116,8 @@ function mod:SPELL_CAST_SUCCESS(args)
 		else
 			timerGasSporeCD:Start()
 		end
+	elseif args:IsSpellID(69240, 71218, 73019, 73020) and self:AntiSpam(2, 2)  then	-- Vile Gas
+		timerVileGasCD:Start()
 	end
 end
 
