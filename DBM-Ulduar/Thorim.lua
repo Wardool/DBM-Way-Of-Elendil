@@ -1,11 +1,12 @@
 local mod	= DBM:NewMod("Thorim", "DBM-Ulduar")
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20250929220132")
 mod:SetCreatureID(32865)
 mod:SetEncounterID(752)
 mod:SetUsedIcons(7)
 mod:SetHotfixNoticeRev(20230927000000)
+mod:SetMinSyncRevision(20250929220132)
 
 mod:RegisterCombat("yell", L.YellPhase1) -- [2023-09-24]@[21:34:20]: do not use combat_yell, for some reason on Warmane, PRD triggered combat start on arena adds engage
 mod:RegisterKill("yell", L.YellKill)
