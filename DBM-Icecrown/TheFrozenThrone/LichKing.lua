@@ -4,6 +4,8 @@ local L		= mod:GetLocalizedStrings()
 local UnitGUID, UnitName, GetSpellInfo = UnitGUID, UnitName, GetSpellInfo
 local UnitInRange, UnitIsUnit, UnitInVehicle, IsInRaid = UnitInRange, UnitIsUnit, UnitInVehicle, DBM.IsInRaid
 
+local shamblingHorrorName = L.ShamblingHorror
+
 mod:SetRevision("20251103203736")
 mod:SetCreatureID(36597)
 mod:SetEncounterID(856)
@@ -61,7 +63,7 @@ local warnNecroticPlagueJump		= mod:NewAnnounce("WarnNecroticPlagueJump", 4, 703
 local warnInfest					= mod:NewCountAnnounce(70541, 3, nil, "Healer|RaidCooldown") --Phase 1 & 2 Ability
 local warnTrapCast					= mod:NewTargetDistanceAnnounce(73539, 4, nil, nil, nil, nil, nil, nil, true) --Phase 1 Heroic Ability
 
-local specWarnNecroticPlague		= mod:NewSpecialWarningMoveAway(70337, nil, nil, nil, 1, 2) --Phase 1+ Ability
+local specWarnNecroticPlague		= mod:NewSpecialWarningMoveTo(70337, nil, nil, nil, 1, 2) --Phase 1+ Ability
 local specWarnInfest				= mod:NewSpecialWarningCount(70541, nil, nil, nil, 1) --Phase 1+ Ability
 local specWarnTrap					= mod:NewSpecialWarningYou(73539, nil, nil, nil, 3, 2, 3) --Heroic Ability
 local yellTrap						= mod:NewYellMe(73539)
@@ -422,7 +424,7 @@ function mod:SPELL_CAST_SUCCESS(args)
 		timerNecroticPlagueCD:Start()
 		timerNecroticPlagueCleanse:Start()
 		if args:IsPlayer() then
-			specWarnNecroticPlague:Show()
+			specWarnNecroticPlague:Show(shamblingHorrorName)
 			soundNecroticOnYou:Play("Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\necroticOnYou.mp3")
 		end
 		if self.Options.NecroticPlagueIcon then
@@ -607,7 +609,7 @@ function mod:UNIT_AURA_UNFILTERED(uId)
 		warnNecroticPlagueJump:Show(name)
 		timerNecroticPlagueCleanse:Restart()
 		if name == UnitName("player") and not mod:IsTank() then
-			specWarnNecroticPlague:Show()
+			specWarnNecroticPlague:Show(shamblingHorrorName)
 			soundNecroticOnYou:Play("Interface\\AddOns\\DBM-Core\\sounds\\RaidAbilities\\necroticOnYou.mp3")
 		end
 		if self.Options.NecroticPlagueIcon then

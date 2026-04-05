@@ -354,6 +354,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
+	ShamblingHorror     	= "Horreur titubante",
 	LKPull					= "Voici donc qu’arrive la fameuse justice de la Lumière ? Dois-je déposer Deuillegivre et me jeter à tes pieds en implorant pitié, Fordring ?",
 	LKRoleplay				= "Est-ce vraiment la justice qui vous anime ? Je me demande…",
 	ValkGrabbedIcon			= "Gardes de l'ombre val'kyr {rt%d} a pris %s",

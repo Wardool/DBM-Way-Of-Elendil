@@ -356,6 +356,7 @@ L:SetOptionLocalization({
 })
 
 L:SetMiscLocalization({
+	ShamblingHorror     	= "Shambling Horror",
 	LKPull					= "So the Light's vaunted justice has finally arrived? Shall I lay down Frostmourne and throw myself at your mercy, Fordring?",
 	LKRoleplay				= "Is it truly righteousness that drives you? I wonder...",
 	ValkGrabbedIcon			= "Valkyr Shadowguard {rt%d} grabbed %s",
