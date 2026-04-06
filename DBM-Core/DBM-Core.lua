@@ -1963,7 +1963,7 @@ do
 				--Initiate backups that at least have latest version, in case the main elect doesn't have icons enabled
 				for i = 2, 3 do--Allow top 3 revisions in raid to set icons, instead of just top one
 					local electedBackup = iconSeter[i]
-					if updateNotificationDisplayed == 0 and electedBackup and playerName == electedBackup:sub(elected:find(" ") + 1) then
+					if updateNotificationDisplayed == 0 and electedBackup and playerName == electedBackup:sub(electedBackup:find(" ") + 1) then
 						private.enableIcons = true
 						DBM:Debug("You have been elected as one of 2 backup icon setters in raid that have assist/lead", 2)
 					end
