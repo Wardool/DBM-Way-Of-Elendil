@@ -61,7 +61,47 @@ mod:AddSetIconOption("SetIconOnDarkFallen", 71340, true, 0, {1, 2, 3})
 
 local essence = DBM:GetSpellInfoNew(70867)
 local pactTargets = {}
+local swarmingFallbackTarget
+local playerClass = select(2, UnitClass("player"))
 mod.vb.pactIcons = 1
+
+local dodgeSpells = {
+	MAGE = 45438, -- Ice Block
+	ROGUE = 31224, -- Cloak of Shadows
+	DEATHKNIGHT = 48707, -- Anti-Magic Shell
+	PALADIN = 642 -- Divine Shield
+}
+local dodgeSpellId = dodgeSpells[playerClass]
+local specWarnUseDodgeSpell			= mod:NewSpecialWarning("SpecWarnUseDodgeSpell", nil, nil, nil, 3, 2)
+
+local function warnUseDodgeSpell()
+	if not dodgeSpellId or not IsSpellKnown(dodgeSpellId) or GetSpellCooldown(dodgeSpellId) ~= 0 then
+		return
+	end
+	specWarnUseDodgeSpell:Show(DBM:GetSpellInfo(dodgeSpellId))
+	specWarnUseDodgeSpell:Play("defensive")
+end
+
+function mod:SwarmingShadowsTarget(targetname)
+	targetname = targetname or swarmingFallbackTarget
+	if not targetname then
+		return
+	end
+	if targetname == UnitName("player") then
+		specWarnSwarmingShadows:Show()
+		specWarnSwarmingShadows:Play("runout")
+		specWarnSwarmingShadows:ScheduleVoice(1.5, "keepmove")
+		if self:AntiSpam(3, 1) then
+			warnUseDodgeSpell()
+		end
+	else
+		warnSwarmingShadows:Show(targetname)
+	end
+	if self.Options.SwarmingShadowsIcon then
+		self:SetIcon(targetname, 4, 6)
+	end
+	swarmingFallbackTarget = nil
+end
 
 local function warnPactTargets(self)
 	warnPactDarkfallen:Show(table.concat(pactTargets, "<, >"))
@@ -227,19 +267,10 @@ mod.SPELL_MISSED = mod.SPELL_DAMAGE
 
 function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, target)
 	if msg:match(L.SwarmingShadows) and target then
-		target = DBM:GetUnitFullName(target)
+		swarmingFallbackTarget = DBM:GetUnitFullName(target)
 		timerNextSwarmingShadows:Start()
 		warnSwarmingShadowsSoon:Schedule(25.5)
 		warnSwarmingShadowsSoon:ScheduleVoice(25.5, "flamessoon")
-		if target == UnitName("player") then
-			specWarnSwarmingShadows:Show()
-			specWarnSwarmingShadows:Play("runout")
-			specWarnSwarmingShadows:ScheduleVoice(1.5, "keepmove")
-		else
-			warnSwarmingShadows:Show(target)
-		end
-		if self.Options.SwarmingShadowsIcon then
-			self:SetIcon(target, 4, 6)
-		end
+		self:ScheduleMethod(0.01, "BossTargetScanner", self.creatureId, "SwarmingShadowsTarget", 0.02, 8)
 	end
 end

@@ -235,6 +235,14 @@ L:SetGeneralLocalization({
 	name = "Reine de sang Lana'thel"
 })
 
+L:SetWarningLocalization({
+	SpecWarnUseDodgeSpell	= "Lancez %s maintenant !"
+})
+
+L:SetOptionLocalization({
+	SpecWarnUseDodgeSpell	= "Affiche une alerte spéciale pour utiliser votre immunité quand $spell:71266 vous cible et qu'elle est disponible"
+})
+
 L:SetMiscLocalization({
 	SwarmingShadows			= "Les ombres s'amassent et grouillent autour |2 (%S+)!",
 	YellFrenzy				= "J'ai faim!"

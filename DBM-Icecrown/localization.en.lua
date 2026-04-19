@@ -237,6 +237,14 @@ L:SetGeneralLocalization({
 	name = "Blood-Queen Lana'thel"
 })
 
+L:SetWarningLocalization({
+	SpecWarnUseDodgeSpell	= "Use %s now!"
+})
+
+L:SetOptionLocalization({
+	SpecWarnUseDodgeSpell	= "Show a special warning to use your immunity when $spell:71266 targets you and it is available"
+})
+
 L:SetMiscLocalization({
 	SwarmingShadows			= "Shadows amass and swarm around (%S+)!",
 	YellFrenzy				= "I'm hungry!" -- Player did not bite; not to be confused with BQL Berserk (This ends NOW!)
