@@ -3,6 +3,16 @@ local _, private = ...
 local L = DBM_CORE_L
 
 local LibStub = _G["LibStub"]
+local GetGuildInfo = GetGuildInfo
+local rebornGuildName = "R E B O R N"
+
+local function GetMinimapIcon()
+	local guildName = GetGuildInfo("player")
+	if guildName == rebornGuildName then
+		return "Interface\\AddOns\\DBM-Core\\textures\\woe"
+	end
+	return "Interface\\AddOns\\DBM-Core\\textures\\dbm_airhorn"
+end
 
 if not LibStub("LibDataBroker-1.1", true) or not LibStub("LibDBIcon-1.0") then
 	function DBM:ToggleMinimapButton() end -- NOOP
@@ -12,9 +22,13 @@ end
 local dataBroker = LibStub("LibDataBroker-1.1"):NewDataObject("DBM", {
 	type	= "launcher",
 	label	= "DBM",
-	icon	= "Interface\\AddOns\\DBM-Core\\textures\\woe" -- old icon: "Interface\\Icons\\INV_Helmet_87"
+	icon	= GetMinimapIcon()
 })
 private.dataBroker = dataBroker
+
+local function RefreshMinimapIcon()
+	dataBroker.icon = GetMinimapIcon()
+end
 
 function dataBroker.OnClick(self, button) -- self, button
 	if IsShiftKeyDown() then return end
@@ -37,6 +51,13 @@ end
 
 do
 	local LibDBIcon = LibStub("LibDBIcon-1.0")
+	local refreshFrame = CreateFrame("Frame")
+
+	refreshFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+	refreshFrame:RegisterEvent("GUILD_ROSTER_UPDATE")
+	refreshFrame:SetScript("OnEvent", function()
+		RefreshMinimapIcon()
+	end)
 
 	function DBM:ToggleMinimapButton()
 		DBM_MinimapIcon.hide = not DBM_MinimapIcon.hide

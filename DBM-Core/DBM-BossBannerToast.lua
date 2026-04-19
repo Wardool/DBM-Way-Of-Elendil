@@ -13,6 +13,7 @@ local max, tonumber = max, tonumber
 local CreateFrame = CreateFrame
 local GetCurrentMapAreaID = GetCurrentMapAreaID
 local GetCurrentMapContinent = GetCurrentMapContinent
+local GetGuildInfo = GetGuildInfo
 local GetItemInfo = GetItemInfo
 local GetLocale = GetLocale
 local GetLootSlotInfo = GetLootSlotInfo
@@ -267,6 +268,8 @@ end
 ------------------------------------------------------------------
 local TopBannerMgr = {}
 local TopBannerQueue = {}
+local bossBannerAtlasTextures = {}
+local rebornGuildName = "R E B O R N"
 
 local function TopBannerManager_Show(frame, data, isExclusiveQueued)
 	local banner = {frame = frame, data = data}
@@ -343,15 +346,31 @@ local AtlasInfo = {
 --	}, -- Interface/LevelUp/BossBanner
 }
 
-local function SetAtlas(textureObject, atlasName, useAtlasSize)
+local function GetBossBannerTexture()
+	local guildName = GetGuildInfo("player")
+	local bannerTexture = guildName == rebornGuildName and "BossBanner1" or "BossBanner"
+	return "Interface\\AddOns\\DBM-Core\\textures\\BossBannerToast\\" .. bannerTexture
+end
+
+local function ApplyAtlas(textureObject, atlasName, useAtlasSize)
 	local atlas = AtlasInfo[atlasName]
 	if textureObject and atlas then
-		textureObject:SetTexture("Interface\\AddOns\\DBM-Core\\textures\\BossBannerToast\\BossBanner") -- hardcode texture, since there is only one required for this Toast
+		textureObject:SetTexture(GetBossBannerTexture())
 		textureObject:SetTexCoord(atlas[3], atlas[4], atlas[5], atlas[6])
 		if useAtlasSize then
 			textureObject:SetSize(atlas[1], atlas[2])
 		end
 		return textureObject
+	end
+end
+
+local function SetAtlas(textureObject, atlasName, useAtlasSize)
+	if textureObject and AtlasInfo[atlasName] then
+		bossBannerAtlasTextures[textureObject] = {
+			atlasName = atlasName,
+			useAtlasSize = useAtlasSize
+		}
+		return ApplyAtlas(textureObject, atlasName, useAtlasSize)
 	end
 end
 
@@ -1452,6 +1471,7 @@ function BossBanner:ClearEncounterCache()
 end
 
 function BossBanner:UpdateStyle()
+	self:UpdateTexture()
 	if not DBM.Options.OverrideBBFont then return end
 	BBfont = DBM.Options.BBFont == "standardFont" and standardFont or DBM.Options.BBFont
 	Title:SetFont(BBfont, 30 + DBM.Options.BBFontSize, DBM.Options.BBFontStyle)
@@ -1482,6 +1502,22 @@ function BossBanner:UpdateStyle()
 			lootFrame.PlayerName:SetShadowOffset(0, 0)
 		end
 	end
+end
+
+function BossBanner:UpdateTexture()
+	for textureObject, atlasData in pairs(bossBannerAtlasTextures) do
+		ApplyAtlas(textureObject, atlasData.atlasName, atlasData.useAtlasSize)
+	end
+end
+
+do
+	local refreshFrame = CreateFrame("Frame")
+
+	refreshFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+	refreshFrame:RegisterEvent("GUILD_ROSTER_UPDATE")
+	refreshFrame:SetScript("OnEvent", function()
+		BossBanner:UpdateTexture()
+	end)
 end
 
 function BossBanner:Test(mode)
