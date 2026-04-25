@@ -12,16 +12,10 @@ mod:RegisterEventsInCombat(
 	"UNIT_DIED"
 )
 
-local berserkTimer			= mod:NewBerserkTimer(119)
-
 local function clearBossBannerCache()
 	if BossBanner and BossBanner.ClearEncounterCache then
 		BossBanner:ClearEncounterCache()
 	end
-end
-
-function mod:OnCombatStart(delay)
-	berserkTimer:Start(119 - delay)
 end
 
 function mod:OnCombatEnd()

@@ -21,7 +21,7 @@ mod:RegisterEventsInCombat(
 local specWarnHolyLight		= mod:NewSpecialWarningInterrupt(68011, nil, nil, nil, 2, 2)
 local specWarnKillValkyr	= mod:NewSpecialWarning("SpecWarnKillValkyr", nil, nil, nil, 2, 2, nil, nil, 73326)
 local warnValkyrRemaining	= mod:NewAnnounce("WarnValkyrRemaining", 2, 73326)
-local berserkTimer			= mod:NewBerserkTimer(119)
+local berserkTimer			= mod:NewBerserkTimer(180)
 
 mod.vb.valkyrCount = 0
 
@@ -33,7 +33,7 @@ end
 
 function mod:OnCombatStart(delay)
 	self.vb.valkyrCount = 0
-	berserkTimer:Start(119 - delay)
+	berserkTimer:Start(180 - delay)
 	specWarnKillValkyr:Show()
 	specWarnKillValkyr:Play("killmob")
 end

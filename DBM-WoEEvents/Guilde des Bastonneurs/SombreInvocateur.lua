@@ -8,12 +8,16 @@ mod:SetReCombatTime(10)
 mod:RegisterCombat("combat")
 mod:DisableRegenDetection()
 
+mod:RegisterEvents(
+	"SPELL_AURA_APPLIED 50161"
+)
+
 mod:RegisterEventsInCombat(
 	"UNIT_DIED"
 )
 
 local specWarnGhostLight	= mod:NewSpecialWarning("SpecWarnGhostLight", nil, nil, nil, 2, 2)
-local berserkTimer			= mod:NewBerserkTimer(119)
+local berserkTimer			= mod:NewBerserkTimer(180)
 
 local function clearBossBannerCache()
 	if BossBanner and BossBanner.ClearEncounterCache then
@@ -22,13 +26,19 @@ local function clearBossBannerCache()
 end
 
 function mod:OnCombatStart(delay)
-	berserkTimer:Start(119 - delay)
+	berserkTimer:Start(180 - delay)
 	specWarnGhostLight:Show()
 	specWarnGhostLight:Play("justrun")
 end
 
 function mod:OnCombatEnd()
 	clearBossBannerCache()
+end
+
+function mod:SPELL_AURA_APPLIED(args)
+	if args.spellId == 50161 and self:GetCIDFromGUID(args.destGUID) == 50345 and not self:IsInCombat() then
+		DBM:StartCombat(self, 0, "SPELL_AURA_APPLIED 50161")
+	end
 end
 
 function mod:UNIT_DIED(args)
