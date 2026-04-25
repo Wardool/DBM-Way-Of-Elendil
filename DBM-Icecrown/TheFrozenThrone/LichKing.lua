@@ -362,9 +362,9 @@ function mod:SPELL_CAST_START(args)
 		warnShamblingEnrage:Show(args.sourceName)
 		specWarnEnrage:Show()
 		timerEnrageCD:Stop(shamblingCount, args.sourceGUID) -- Stop/Unschedule required for multi arg timers, instead of Restart/Cancel - Core bug with mismatched args
-		timerEnrageCD:Unschedule(nil, shamblingCount, args.sourceGUID)
-		timerEnrageCD:Start(nil, shamblingCount, args.sourceGUID)
-		timerEnrageCD:Schedule(25, nil, shamblingCount, args.sourceGUID)
+		timerEnrageCD:Unschedule("v20-24.6", shamblingCount, args.sourceGUID)
+		timerEnrageCD:Start("v20-24.6", shamblingCount, args.sourceGUID)
+		timerEnrageCD:Schedule(25, "v20-24.6", shamblingCount, args.sourceGUID)
 	elseif spellId == 72262 then -- Quake (phase transition end)
 		self.vb.ragingSpiritCount = 0
 		warnQuake:Show()
@@ -543,8 +543,8 @@ function mod:SPELL_SUMMON(args)
 		warnShamblingHorror:Show()
 		warnShamblingSoon:Schedule(55)
 		timerShamblingHorror:Start()
-		timerEnrageCD:Start(14, shamblingCount, args.destGUID)
-		timerEnrageCD:Schedule(14+2, nil, shamblingCount, args.destGUID)
+		timerEnrageCD:Start("v15-18", shamblingCount, args.destGUID)
+		timerEnrageCD:Schedule(18, "v20-24.6", shamblingCount, args.destGUID)
 	end
 end
 
@@ -593,7 +593,7 @@ function mod:UNIT_DIED(args)
 	if cid == 37698 then--Shambling Horror
 		local shamblingCount = DBM:tIndexOf(shamblingHorrorsGUIDs, args.sourceGUID)
 		timerEnrageCD:Stop(shamblingCount, args.sourceGUID)
-		timerEnrageCD:Unschedule(nil, shamblingCount, args.sourceGUID)
+		timerEnrageCD:Unschedule("v20-24.6", shamblingCount, args.sourceGUID)
 	elseif cid == 36701 then -- Raging Spirit
 		timerSoulShriekCD:Cancel(args.sourceGUID)
 	end
