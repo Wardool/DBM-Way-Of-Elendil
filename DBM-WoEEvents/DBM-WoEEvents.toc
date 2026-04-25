@@ -1,0 +1,52 @@
+﻿## Interface: 30300
+## Title:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0WoE Events|r
+## Title-frFR:|cffffe00a<|r|cffff7d0aDBM|r|cffffe00a>|r |cff69ccf0Événements WoE|r
+## LoadOnDemand: 1
+## RequiredDeps: DBM-Core
+## SavedVariables: DBMWoEEvents_AllSavedVars
+## SavedVariablesPerCharacter: DBMWoEEvents_SavedStats
+## X-DBM-Mod: 1
+## X-DBM-Mod-Type: OTHER
+## X-DBM-Mod-Category: WOTLK
+## X-DBM-StatTypes: normal
+## X-DBM-Mod-World-Boss: 1
+## X-DBM-Mod-SubCategories: Guilde des Bastonneurs
+## X-DBM-Mod-Name: WoE Events
+## X-DBM-Mod-Name-frFR: Événements WoE
+## X-DBM-Mod-Sort: 151
+## X-DBM-Mod-MapID:322
+## X-DBM-Mod-LoadCID:50367,50300,50302,50303,50304,50306,50307,50309,50311,50312,50313,50314,50315,50316,50317,50318,50319,50321,50323,50326,50327,50328,50329,50330,50331,50332,50333,50334,50335,50337,50338,50340,50341,50342,50345,50348,50349,50350,50351,50352,50353,50354,50355,50363,50419,50369,51102
+## X-DBM-Mod-LoadZone:The Ring of Valor
+## X-DBM-Mod-LoadZone-frFR:L'arène des valeureux,L’arène des Valeureux
+localization.en.lua
+localization.fr.lua
+Guilde des Bastonneurs\Huretripe.lua
+Guilde des Bastonneurs\Sanoriak.lua
+Guilde des Bastonneurs\Balafre.lua
+Guilde des Bastonneurs\Akama.lua
+Guilde des Bastonneurs\Givre.lua
+Guilde des Bastonneurs\Kirrawk.lua
+Guilde des Bastonneurs\Chen.lua
+Guilde des Bastonneurs\Kulaka.lua
+Guilde des Bastonneurs\Blat.lua
+Guilde des Bastonneurs\Uck.lua
+Guilde des Bastonneurs\Ixx.lua
+Guilde des Bastonneurs\Mazhareen.lua
+Guilde des Bastonneurs\Fjoll.lua
+Guilde des Bastonneurs\Crochet.lua
+Guilde des Bastonneurs\Dominika.lua
+Guilde des Bastonneurs\Boulette.lua
+Guilde des Bastonneurs\BigBaddaBoom.lua
+Guilde des Bastonneurs\Hummock.lua
+Guilde des Bastonneurs\GnomesLepreux.lua
+Guilde des Bastonneurs\Milhouse.lua
+Guilde des Bastonneurs\YukkanIzu.lua
+Guilde des Bastonneurs\Proboskus.lua
+Guilde des Bastonneurs\PrinceTheraldis.lua
+Guilde des Bastonneurs\Hoxoos.lua
+Guilde des Bastonneurs\MaxBoBouloche.lua
+Guilde des Bastonneurs\SombreInvocateur.lua
+Guilde des Bastonneurs\Combatron.lua
+Guilde des Bastonneurs\Ahooru.lua
+Guilde des Bastonneurs\Kreator.lua
+Guilde des Bastonneurs\ArenaController.lua
