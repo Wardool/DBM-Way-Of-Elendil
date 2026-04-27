@@ -7,7 +7,8 @@ L:SetGeneralLocalization({
 })
 
 L:SetWarningLocalization({
-	WarnNextBoss = "Prochain boss : %s (15 sec)"
+	WarnNextBoss = "Prochain boss : %s (15 sec)",
+	SpecWarnVote = "VOTEZ"
 })
 
 L:SetTimerLocalization({
@@ -16,6 +17,7 @@ L:SetTimerLocalization({
 
 L:SetOptionLocalization({
 	WarnNextBoss = "Afficher une annonce du prochain boss",
+	SpecWarnVote = "Afficher une alerte spéciale \"VOTEZ\" quand les paris s'ouvrent",
 	TimerNextBoss = "Afficher le timer du prochain boss (15 sec)"
 })
 

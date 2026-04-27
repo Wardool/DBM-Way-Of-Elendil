@@ -42,9 +42,15 @@ function mod:OnCombatEnd()
 	clearBossBannerCache()
 end
 
+function mod:CheckPlayerCombatStart()
+	if self:IsInCombat() and UnitAffectingCombat("player") then
+		DBM:StartCombat(self, 0, "SPELL_AURA_APPLIED 40733 delayed player combat check")
+	end
+end
+
 function mod:SPELL_AURA_APPLIED(args)
-	if args.spellId == 40733 and self:GetCIDFromGUID(args.destGUID) == 50355 and not self:IsInCombat() then
-		DBM:StartCombat(self, 0, "SPELL_AURA_APPLIED 40733")
+	if args.spellId == 40733 and self:GetCIDFromGUID(args.destGUID) == 50355 then
+		self:ScheduleMethod(2, "CheckPlayerCombatStart")
 	end
 end
 

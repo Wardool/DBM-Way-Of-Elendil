@@ -16,9 +16,9 @@ mod:RegisterEventsInCombat(
 
 local warnHaste					= mod:NewSpellAnnounce(43317, 2)
 
-local specWarnDisturbingCry		= mod:NewSpecialWarningCast(71022, "Caster", nil, nil, 1, 2)
+local specWarnDisturbingCry		= mod:NewSpecialWarningCast(71022, "SpellCaster", nil, nil, 1, 2)
 
-local timerDisturbingCryCD		= mod:NewCDTimer(10, 71022, nil, "Caster", nil, 4)
+local timerDisturbingCryCD		= mod:NewCDTimer(10, 71022, nil, "SpellCaster", nil, 4)
 local timerHasteCD				= mod:NewCDTimer(17, 43317, nil, nil, nil, 2)
 local berserkTimer				= mod:NewBerserkTimer(119)
 

@@ -5,10 +5,12 @@ mod:SetRevision("202604230002")
 mod.noStatistics = true
 
 mod:RegisterEvents(
-	"CHAT_MSG_RAID_BOSS_EMOTE"
+	"CHAT_MSG_RAID_BOSS_EMOTE",
+	"CHAT_MSG_MONSTER_SAY"
 )
 
 local warnNextBoss	= mod:NewAnnounce("WarnNextBoss", 2)
+local specWarnVote	= mod:NewSpecialWarning("SpecWarnVote", false, nil, nil, 2, 2)
 local timerNextBoss	= mod:NewTimer(15, "TimerNextBoss")
 
 function mod:OnInitialize()
@@ -26,4 +28,10 @@ function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 	end
 	warnNextBoss:Show(nextBoss)
 	timerNextBoss:Start(nextBoss)
+end
+
+function mod:CHAT_MSG_MONSTER_SAY(msg)
+	if msg == "Les paris sont ouverts ! Vous avez 20 secondes." then
+		specWarnVote:Show()
+	end
 end
