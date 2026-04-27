@@ -3,10 +3,11 @@ local L		= mod:GetLocalizedStrings()
 
 local UnitGUID = UnitGUID
 
-mod:SetRevision("20250106224658")
+mod:SetRevision("20260425140425")
 mod:SetModelID(37007)
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)
 mod.isTrashMod = true
+mod:SetMinSyncRevision(20260425140425)
 
 mod:RegisterEvents(
 	"SPELL_CAST_START 71022 71088 71123 71942",
