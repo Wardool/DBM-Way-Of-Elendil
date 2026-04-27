@@ -316,9 +316,11 @@ do
 		return string.format("%02x%02x%02x", r*255, g*255, b*255)
 	end
 
+	local warningColorLabel = L.WarningColorLabel or "Warning color"
+	local specialWarningColorLabel = L.SpecialWarningColorLabel or "Special warning color"
 	local tcolors = {
-		{ text = "|cff"..RGBPercToHex(DBT.Options.StartColorR or 1, DBT.Options.StartColorG or 1, DBT.Options.StartColorB or 1)..L.CBTGeneric.."|r", value = 0 },
-		{ text = "|cff"..RGBPercToHex(DBT.Options.StartColorAR or 1, DBT.Options.StartColorAG or 1, DBT.Options.StartColorAB or 1)..L.CBTAdd.."|r", value = 1 },
+		{ text = "|cff"..RGBPercToHex(DBT.Options.StartColorR or 1, DBT.Options.StartColorG or 1, DBT.Options.StartColorB or 1)..(L.WarningColorGeneric or "Warning color (Generic)").."|r", value = 0 },
+		{ text = "|cff"..RGBPercToHex(DBT.Options.StartColorAR or 1, DBT.Options.StartColorAG or 1, DBT.Options.StartColorAB or 1)..(L.WarningColorAdd or "Warning color (Adds)").."|r", value = 1 },
 		{ text = "|cff"..RGBPercToHex(DBT.Options.StartColorAER or 1, DBT.Options.StartColorAEG or 1, DBT.Options.StartColorAEB or 1)..L.CBTAOE.."|r", value = 2 },
 		{ text = "|cff"..RGBPercToHex(DBT.Options.StartColorDR or 1, DBT.Options.StartColorDG or 1, DBT.Options.StartColorDB or 1)..L.CBTTargeted.."|r", value = 3 },
 		{ text = "|cff"..RGBPercToHex(DBT.Options.StartColorIR or 1, DBT.Options.StartColorIG or 1, DBT.Options.StartColorIB or 1)..L.CBTInterrupt.."|r", value = 4 },
@@ -332,8 +334,33 @@ do
 		{ text = L.CVoiceTwo, value = 2 },
 		{ text = L.CVoiceThree, value = 3 }
 	})
+	local swcolors = {
+		{ text = "|cff"..RGBPercToHex(DBM.Options.SpecialWarningFlashCol1[1], DBM.Options.SpecialWarningFlashCol1[2], DBM.Options.SpecialWarningFlashCol1[3])..specialWarningColorLabel.." 1|r", value = 1 },
+		{ text = "|cff"..RGBPercToHex(DBM.Options.SpecialWarningFlashCol2[1], DBM.Options.SpecialWarningFlashCol2[2], DBM.Options.SpecialWarningFlashCol2[3])..specialWarningColorLabel.." 2|r", value = 2 },
+		{ text = "|cff"..RGBPercToHex(DBM.Options.SpecialWarningFlashCol3[1], DBM.Options.SpecialWarningFlashCol3[2], DBM.Options.SpecialWarningFlashCol3[3])..specialWarningColorLabel.." 3|r", value = 3 },
+		{ text = "|cff"..RGBPercToHex(DBM.Options.SpecialWarningFlashCol4[1], DBM.Options.SpecialWarningFlashCol4[2], DBM.Options.SpecialWarningFlashCol4[3])..specialWarningColorLabel.." 4|r", value = 4 },
+		{ text = "|cff"..RGBPercToHex(DBM.Options.SpecialWarningFlashCol5[1], DBM.Options.SpecialWarningFlashCol5[2], DBM.Options.SpecialWarningFlashCol5[3])..specialWarningColorLabel.." 5|r", value = 5 },
+	}
+	local warnColor1 = DBM.Options.WarningColors[1] or DBM.Options.WarningColors[2]
+	local warnColor2 = DBM.Options.WarningColors[2] or warnColor1
+	local warnColor3 = DBM.Options.WarningColors[3] or warnColor1
+	local warnColor4 = DBM.Options.WarningColors[4] or warnColor1
+	local warnColor5 = DBM.Options.WarningColors[5] or warnColor1
+	local warnColor6 = DBM.Options.WarningColors[6] or warnColor1
+	local warnColor7 = DBM.Options.WarningColors[7] or warnColor1
+	local warnColor8 = DBM.Options.WarningColors[8] or warnColor1
+	local acolors = {
+		{ text = "|cff"..RGBPercToHex(warnColor1.r, warnColor1.g, warnColor1.b)..warningColorLabel.." 1|r", value = 1 },
+		{ text = "|cff"..RGBPercToHex(warnColor2.r, warnColor2.g, warnColor2.b)..warningColorLabel.." 2|r", value = 2 },
+		{ text = "|cff"..RGBPercToHex(warnColor3.r, warnColor3.g, warnColor3.b)..warningColorLabel.." 3|r", value = 3 },
+		{ text = "|cff"..RGBPercToHex(warnColor4.r, warnColor4.g, warnColor4.b)..warningColorLabel.." 4|r", value = 4 },
+		{ text = "|cff"..RGBPercToHex(warnColor5.r, warnColor5.g, warnColor5.b)..warningColorLabel.." 5|r", value = 5 },
+		{ text = "|cff"..RGBPercToHex(warnColor6.r, warnColor6.g, warnColor6.b)..warningColorLabel.." 6|r", value = 6 },
+		{ text = "|cff"..RGBPercToHex(warnColor7.r, warnColor7.g, warnColor7.b)..warningColorLabel.." 7|r", value = 7 },
+		{ text = "|cff"..RGBPercToHex(warnColor8.r, warnColor8.g, warnColor8.b)..warningColorLabel.." 8|r", value = 8 },
+	}
 
-	function PanelPrototype:CreateCheckButton(name, autoplace, textLeft, dbmvar, dbtvar, mod, modvar, globalvar, isTimer)
+	function PanelPrototype:CreateCheckButton(name, autoplace, textLeft, dbmvar, dbtvar, mod, modvar, globalvar, isTimer, isAnnounce)
 		if not name then
 			return
 		end
@@ -364,7 +391,7 @@ do
 			button.SetPointOld(...)
 		end
 		local desc, noteSpellName = parseDescription(name, true)
-		local frame, frame2, textPad
+		local frame, frame2, frame3, textPad
 		if modvar then -- Special warning, has modvar for sound and note
 			if isTimer then
 				frame = self:CreateDropdown(nil, tcolors, mod, modvar .. "TColor", function(value)
@@ -381,27 +408,44 @@ do
 				frame:SetPoint("LEFT", button, "RIGHT", -20, 2)
 				frame2:SetPoint("LEFT", frame, "RIGHT", 18, 0)
 				textPad = 37
+			elseif isAnnounce then
+				frame = self:CreateDropdown(nil, acolors, mod, modvar .. "AColor", function(value)
+					mod.Options[modvar .. "AColor"] = value
+				end, 22, 25, button)
+				frame:ClearAllPoints()
+				frame:SetPoint("LEFT", button, "RIGHT", -20, 2)
+				textPad = 37
 			else
 				frame = self:CreateDropdown(nil, sounds, mod, modvar .. "SWSound", function(value)
 					mod.Options[modvar .. "SWSound"] = value
 					DBM:PlaySpecialWarningSound(value, true)
 				end, 22, 25, button)
+				frame2 = self:CreateDropdown(nil, swcolors, mod, modvar .. "SWColor", function(value)
+					mod.Options[modvar .. "SWColor"] = value
+				end, 22, 25, button)
 				frame:ClearAllPoints()
 				frame:SetPoint("LEFT", button, "RIGHT", -20, 2)
+				frame2:SetPoint("LEFT", frame, "RIGHT", 18, 0)
+				textPad = 37
 				if mod.Options[modvar .. "SWNote"] then -- Mod has note, insert note hack
-					frame2 = CreateFrame("Button", "DBM_GUI_Option_" .. self:GetNewID(), self.frame, "UIPanelButtonTemplate")
-					frame2:SetPoint("LEFT", frame, "RIGHT", 35, 0)
-					frame2:SetSize(25, 25)
-					frame2:SetText("|TInterface/FriendsFrame/UI-FriendsFrame-Note.blp:14:0:2:-1|t")
-					frame2.mytype = "button"
-					frame2:SetScript("OnClick", function(self)
+					frame3 = CreateFrame("Button", "DBM_GUI_Option_" .. self:GetNewID(), self.frame, "UIPanelButtonTemplate")
+					frame3:SetPoint("LEFT", frame2, "RIGHT", 35, 0)
+					frame3:SetSize(25, 25)
+					frame3:SetText("|TInterface/FriendsFrame/UI-FriendsFrame-Note.blp:14:0:2:-1|t")
+					frame3.mytype = "button"
+					frame3:SetScript("OnClick", function(self)
 						DBM:ShowNoteEditor(mod, modvar, noteSpellName)
 					end)
 					textPad = 2
 				end
 			end
 			frame.myheight = 0
-			frame2.myheight = 0
+			if frame2 then
+				frame2.myheight = 0
+			end
+			if frame3 then
+				frame3.myheight = 0
+			end
 		end
 		local buttonText
 		if desc then -- Switch all checkbutton frame to SimpleHTML frame (auto wrap)
@@ -473,18 +517,18 @@ do
 		end
 		button.textObj = buttonText
 		button.text = desc or CL.UNKNOWN
-		button.widthPad = frame and frame:GetWidth() + frame2:GetWidth() or 0
+		button.widthPad = frame and (frame:GetWidth() + (frame2 and frame2:GetWidth() or 0) + (frame3 and frame3:GetWidth() or 0)) or 0
 		buttonText:SetWidth(self.frame:GetWidth() - button.widthPad)
 		buttonText.GetContentHeight = function()
 			return select(4, buttonText:GetBoundsRect()) or 25
 		end
 		if textLeft then
 			buttonText:ClearAllPoints()
-			buttonText:SetPoint("RIGHT", frame2 or frame or button, "LEFT")
+			buttonText:SetPoint("RIGHT", frame3 or frame2 or frame or button, "LEFT")
 			buttonText:SetJustifyH("p", "RIGHT")
 		else
 			buttonText:SetJustifyH("p", "LEFT")
-			buttonText:SetPoint("TOPLEFT", frame2 or frame or button, "TOPRIGHT", textPad or 0, -4)
+			buttonText:SetPoint("TOPLEFT", frame3 or frame2 or frame or button, "TOPRIGHT", textPad or 0, -4)
 		end
 		buttonText:SetText(button.text)
 		button.myheight = mmax(buttonText:GetContentHeight() + 12, 25)

@@ -296,6 +296,8 @@ local function addOptions(mod, catpanel, v)
 		elseif type(mod.Options[v]) == "boolean" then
 			if mod.Options[v .. "TColor"] then
 				catbutton = catpanel:CreateCheckButton(mod.localization.options[v], true, nil, nil, nil, mod, v, nil, true)
+			elseif mod.Options[v .. "AColor"] then
+				catbutton = catpanel:CreateCheckButton(mod.localization.options[v], true, nil, nil, nil, mod, v, nil, nil, true)
 			elseif mod.Options[v .. "SWSound"] then
 				catbutton = catpanel:CreateCheckButton(mod.localization.options[v], true, nil, nil, nil, mod, v)
 			else

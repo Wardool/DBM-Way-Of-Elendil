@@ -64,9 +64,9 @@ local function currentFullDate()
 end
 
 DBM = {
-	Revision = parseCurseDate("20260419135230"),
+	Revision = parseCurseDate("20260427211002"),
 	DisplayVersion = "10.1.13 - WoE Edition", -- the string that is shown as version
-	ReleaseRevision = releaseDate(2026, 04, 19) -- YY/MM/DD the date of the latest stable version that is available, optionally pass hours, minutes, and seconds for multiple releases in one day
+	ReleaseRevision = releaseDate(2026, 04, 27) -- YY/MM/DD the date of the latest stable version that is available, optionally pass hours, minutes, and seconds for multiple releases in one day
 }
 
 local fakeBWVersion = 7558
@@ -117,6 +117,10 @@ DBM.DefaultOptions = {
 		{r = 0.95, g = 0.95, b = 0.00}, -- Color 2 - #F2F200 - Yellow
 		{r = 1.00, g = 0.50, b = 0.00}, -- Color 3 - #FF8000 - Orange
 		{r = 1.00, g = 0.10, b = 0.10}, -- Color 4 - #FF1A1A - Red
+		{r = 0.10, g = 0.90, b = 0.10}, -- Color 5 - #1AE61A - Green
+		{r = 0.70, g = 0.30, b = 0.95}, -- Color 6 - #B34CF2 - Violet
+		{r = 1.00, g = 0.55, b = 0.00}, -- Color 7 - #FF8C00 - Amber
+		{r = 0.00, g = 0.75, b = 1.00}, -- Color 8 - #00BFFF - Deep Sky Blue
 	},
 	RaidWarningSound = "Sound\\Doodad\\BellTollNightElf.wav",
 	SpecialWarningSound = "Sound\\Spells\\PVPFlagTaken.wav",
@@ -2436,6 +2440,15 @@ function DBM:LoadModOptions(modId, inCombat, first, profileName, profileID)
 			--check new option
 			for option, optionValue in pairs(mod.DefaultOptions) do
 				if savedOptions[id][profileNum][option] == nil then
+					-- Keep legacy behavior for existing profiles:
+					-- initialize new SWColor options from SWSound when possible.
+					if option:find("SWColor$") then
+						local soundOption = option:gsub("SWColor$", "SWSound")
+						local soundValue = savedOptions[id][profileNum][soundOption]
+						if type(soundValue) == "number" and soundValue >= 1 and soundValue <= 5 then
+							optionValue = soundValue
+						end
+					end
 					if type(optionValue) == "table" then
 						optionValue = optionValue.value
 					elseif type(optionValue) == "string" then
@@ -8202,7 +8215,12 @@ do
 			if DBM.Options.DontShowBossAnnounces then return end	-- don't show the announces if the spam filter option is set
 			if DBM.Options.DontShowTargetAnnouncements and (self.announceType == "target" or self.announceType == "targetdistance" or self.announceType == "targetcount" or self.announceType == "targetcountdistance") and not self.noFilter then return end--don't show announces that are generic target announces
 			local argTable = {...}
-			local colorCode = ("|cff%.2x%.2x%.2x"):format(self.color.r * 255, self.color.g * 255, self.color.b * 255)
+			local announceColor = self.color
+			local colorId = self.option and self.mod.Options[self.option.."AColor"] or nil
+			if type(colorId) == "number" and DBM.Options.WarningColors[colorId] then
+				announceColor = DBM.Options.WarningColors[colorId]
+			end
+			local colorCode = ("|cff%.2x%.2x%.2x"):format(announceColor.r * 255, announceColor.g * 255, announceColor.b * 255)
 			if #self.combinedtext > 0 then
 				--Throttle spam.
 				if DBM.Options.WarningAlphabetical then
@@ -8230,8 +8248,8 @@ do
 			)
 			self.combinedcount = 0
 			self.combinedtext = {}
-			if not cachedColorFunctions[self.color] then
-				local color = self.color -- upvalue for the function to colorize names, accessing self in the colorize closure is not safe as the color of the announce object might change (it would also prevent the announce from being garbage-collected but announce objects are never destroyed)
+			if not cachedColorFunctions[announceColor] then
+				local color = announceColor -- upvalue for the function to colorize names, accessing self in the colorize closure is not safe as the color of the announce object might change (it would also prevent the announce from being garbage-collected but announce objects are never destroyed)
 				cachedColorFunctions[color] = function(cap)
 					cap = cap:sub(2, -2)
 					local noStrip = cap:match("noStrip ")
@@ -8255,7 +8273,7 @@ do
 					return cap
 				end
 			end
-			text = text:gsub(">.-<", cachedColorFunctions[self.color])
+			text = text:gsub(">.-<", cachedColorFunctions[announceColor])
 			DBM:AddWarning(text)
 			if DBM.Options.ShowWarningsInChat then
 				if not DBM.Options.WarningIconChat then
@@ -8394,6 +8412,10 @@ do
 			obj.option = text
 			self:AddBoolOption(obj.option, optionDefault, "announce", nil, nil, nil, spellID)
 		end
+		if obj.option then
+			self.DefaultOptions[obj.option.."AColor"] = color or 1
+			self.Options[obj.option.."AColor"] = color or 1
+		end
 		tinsert(self.announces, obj)
 		return obj
 	end
@@ -8457,6 +8479,10 @@ do
 			else
 				self.localization.options[obj.option] = L.AUTO_ANNOUNCE_OPTIONS[announceType]:format(spellId)
 			end
+		end
+		if obj.option then
+			self.DefaultOptions[obj.option.."AColor"] = color or 1
+			self.Options[obj.option.."AColor"] = color or 1
 		end
 		tinsert(self.announces, obj)
 		return obj
@@ -9106,6 +9132,7 @@ do
 	local specialWarningPrototype = {}
 	local mt = {__index = specialWarningPrototype}
 
+	local classColorR, classColorG, classColorB = 1, 0.7, 0
 	local function classColoringFunction(cap)
 		cap = cap:sub(2, -2)
 		local noStrip = cap:match("noStrip ")
@@ -9118,9 +9145,9 @@ do
 					local playerColor = RAID_CLASS_COLORS[playerClass]
 					if playerColor then
 						if playerIcon > 0 and playerIcon <= 8 then
-							cap = ("|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_%d:0|t"):format(playerIcon) .. ("|r|cff%.2x%.2x%.2x%s|r|cff%.2x%.2x%.2x"):format(playerColor.r * 255, playerColor.g * 255, playerColor.b * 255, cap, DBM.Options.SpecialWarningFontCol[1] * 255, DBM.Options.SpecialWarningFontCol[2] * 255, DBM.Options.SpecialWarningFontCol[3] * 255)
+							cap = ("|TInterface\\TargetingFrame\\UI-RaidTargetingIcon_%d:0|t"):format(playerIcon) .. ("|r|cff%.2x%.2x%.2x%s|r|cff%.2x%.2x%.2x"):format(playerColor.r * 255, playerColor.g * 255, playerColor.b * 255, cap, classColorR * 255, classColorG * 255, classColorB * 255)
 						else
-							cap = ("|r|cff%.2x%.2x%.2x%s|r|cff%.2x%.2x%.2x"):format(playerColor.r * 255, playerColor.g * 255, playerColor.b * 255, cap, DBM.Options.SpecialWarningFontCol[1] * 255, DBM.Options.SpecialWarningFontCol[2] * 255, DBM.Options.SpecialWarningFontCol[3] * 255)
+							cap = ("|r|cff%.2x%.2x%.2x%s|r|cff%.2x%.2x%.2x"):format(playerColor.r * 255, playerColor.g * 255, playerColor.b * 255, cap, classColorR * 255, classColorG * 255, classColorB * 255)
 						end
 					end
 				end
@@ -9245,6 +9272,13 @@ do
 			--Lastly, we check if it's a tank warning and filter if not in tank spec. This is done because tank warnings on by default and handled fluidly by spec, not option setting
 			if self.announceType == "taunt" and DBM.Options.FilterTankSpec and not self.mod:IsTank() then return end--Don't tell non tanks to taunt, ever.
 			local argTable = {...}
+			local warningColorNumber = self.option and self.mod.Options[self.option .. "SWColor"] or self.flash
+			if type(warningColorNumber) ~= "number" or warningColorNumber < 1 or warningColorNumber > 5 then
+				warningColorNumber = self.flash
+			end
+			local warningColor = DBM.Options["SpecialWarningFlashCol"..warningColorNumber] or DBM.Options.SpecialWarningFontCol
+			classColorR, classColorG, classColorB = warningColor[1], warningColor[2], warningColor[3]
+			local warningColorCode = ("|cff%.2x%.2x%.2x"):format(warningColor[1] * 255, warningColor[2] * 255, warningColor[3] * 255)
 			-- add a default parameter for move away warnings
 			if self.announceType == "gtfo" then
 				if DBM:UnitBuff("player", 27827) then return end--Don't tell a priest in spirit of redemption form to GTFO, they can't, and they don't take damage from it anyhow
@@ -9324,10 +9358,10 @@ do
 				if self.announceType and not self.announceType:find("switch") then
 					text = text:gsub(">.-<", classColoringFunction)
 				end
+				text = warningColorCode .. text .. "|r"
 				DBM:AddSpecialWarning(text)
 				if DBM.Options.ShowSWarningsInChat then
-					local colorCode = ("|cff%.2x%.2x%.2x"):format(DBM.Options.SpecialWarningFontCol[1] * 255, DBM.Options.SpecialWarningFontCol[2] * 255, DBM.Options.SpecialWarningFontCol[3] * 255)
-					self.mod:AddMsg(colorCode.."["..L.MOVE_SPECIAL_WARNING_TEXT.."] "..text.."|r", nil)
+					self.mod:AddMsg(warningColorCode.."["..L.MOVE_SPECIAL_WARNING_TEXT.."] "..text.."|r", nil)
 				end
 			end
 			self.combinedcount = 0
@@ -9877,7 +9911,9 @@ do
 		if moving then
 			return
 		end
-		self:AddSpecialWarning(L.MOVE_SPECIAL_WARNING_TEXT)
+		local textColor = number and self.Options["SpecialWarningFlashCol"..number] or self.Options.SpecialWarningFontCol
+		local textColorCode = ("|cff%.2x%.2x%.2x"):format(textColor[1] * 255, textColor[2] * 255, textColor[3] * 255)
+		self:AddSpecialWarning(textColorCode..L.MOVE_SPECIAL_WARNING_TEXT.."|r")
 		frame:SetFrameStrata("TOOLTIP")
 		self:Unschedule(testWarningEnd)
 		self:Schedule(self.Options.SpecialWarningDuration2 * 1.3, testWarningEnd)
@@ -11233,12 +11269,14 @@ function bossModPrototype:AddSpecialWarningOption(name, default, defaultSound, c
 	cat = cat or "misc"
 	self.DefaultOptions[name] = (default == nil) or default
 	self.DefaultOptions[name.."SWSound"] = defaultSound or 1
+	self.DefaultOptions[name.."SWColor"] = defaultSound or 1
 	self.DefaultOptions[name.."SWNote"] = true
 	if default and type(default) == "string" then
 		default = self:GetRoleFlagValue(default)
 	end
 	self.Options[name] = (default == nil) or default
 	self.Options[name.."SWSound"] = defaultSound or 1
+	self.Options[name.."SWColor"] = defaultSound or 1
 	self.Options[name.."SWNote"] = true
 	if spellId then
 		self:GroupSpells(spellId, name)

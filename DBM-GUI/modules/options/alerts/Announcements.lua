@@ -181,24 +181,44 @@ local color1 = raidwarncolors:CreateColorSelect(64)
 local color2 = raidwarncolors:CreateColorSelect(64)
 local color3 = raidwarncolors:CreateColorSelect(64)
 local color4 = raidwarncolors:CreateColorSelect(64)
+local color5 = raidwarncolors:CreateColorSelect(64)
+local color6 = raidwarncolors:CreateColorSelect(64)
+local color7 = raidwarncolors:CreateColorSelect(64)
+local color8 = raidwarncolors:CreateColorSelect(64)
 local color1text = raidwarncolors:CreateText(L.RaidWarnColor_1, 64, nil, nil, "CENTER", 0)
 local color2text = raidwarncolors:CreateText(L.RaidWarnColor_2, 64, nil, nil, "CENTER", 0)
 local color3text = raidwarncolors:CreateText(L.RaidWarnColor_3, 64, nil, nil, "CENTER", 0)
 local color4text = raidwarncolors:CreateText(L.RaidWarnColor_4, 64, nil, nil, "CENTER", 0)
+local color5text = raidwarncolors:CreateText(L.RaidWarnColor_5, 64, nil, nil, "CENTER", 0)
+local color6text = raidwarncolors:CreateText(L.RaidWarnColor_6, 64, nil, nil, "CENTER", 0)
+local color7text = raidwarncolors:CreateText(L.RaidWarnColor_7, 64, nil, nil, "CENTER", 0)
+local color8text = raidwarncolors:CreateText(L.RaidWarnColor_8, 64, nil, nil, "CENTER", 0)
 local color1reset = raidwarncolors:CreateButton(L.Reset, 60, 10, nil, GameFontNormalSmall)
 local color2reset = raidwarncolors:CreateButton(L.Reset, 60, 10, nil, GameFontNormalSmall)
 local color3reset = raidwarncolors:CreateButton(L.Reset, 60, 10, nil, GameFontNormalSmall)
 local color4reset = raidwarncolors:CreateButton(L.Reset, 60, 10, nil, GameFontNormalSmall)
+local color5reset = raidwarncolors:CreateButton(L.Reset, 60, 10, nil, GameFontNormalSmall)
+local color6reset = raidwarncolors:CreateButton(L.Reset, 60, 10, nil, GameFontNormalSmall)
+local color7reset = raidwarncolors:CreateButton(L.Reset, 60, 10, nil, GameFontNormalSmall)
+local color8reset = raidwarncolors:CreateButton(L.Reset, 60, 10, nil, GameFontNormalSmall)
 
-color1.myheight = 100
+color1.myheight = 220
 color2.myheight = 0
 color3.myheight = 0
 color4.myheight = 0
+color5.myheight = 0
+color6.myheight = 0
+color7.myheight = 0
+color8.myheight = 0
 
 color1:SetPoint("TOPLEFT", 30, -10)
 color2:SetPoint("TOPLEFT", color1, "TOPRIGHT", 30, 0)
 color3:SetPoint("TOPLEFT", color2, "TOPRIGHT", 30, 0)
 color4:SetPoint("TOPLEFT", color3, "TOPRIGHT", 30, 0)
+color5:SetPoint("TOPLEFT", color1, "BOTTOMLEFT", 0, -55)
+color6:SetPoint("TOPLEFT", color5, "TOPRIGHT", 30, 0)
+color7:SetPoint("TOPLEFT", color6, "TOPRIGHT", 30, 0)
+color8:SetPoint("TOPLEFT", color7, "TOPRIGHT", 30, 0)
 
 local function UpdateColor(self)
 	local r, g, b = self:GetColorRGB()
@@ -229,6 +249,10 @@ UpdateColorFrames(color1, color1text, color1reset, 1)
 UpdateColorFrames(color2, color2text, color2reset, 2)
 UpdateColorFrames(color3, color3text, color3reset, 3)
 UpdateColorFrames(color4, color4text, color4reset, 4)
+UpdateColorFrames(color5, color5text, color5reset, 5)
+UpdateColorFrames(color6, color6text, color6reset, 6)
+UpdateColorFrames(color7, color7text, color7reset, 7)
+UpdateColorFrames(color8, color8text, color8reset, 8)
 
 local infotext = raidwarncolors:CreateText(L.InfoRaidWarning, nil, false, GameFontNormalSmall, "LEFT", 0)
 infotext:SetPoint("BOTTOMLEFT", raidwarncolors.frame, "BOTTOMLEFT", 10, 10)
