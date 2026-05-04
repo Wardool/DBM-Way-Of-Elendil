@@ -50,7 +50,7 @@ end
 
 function mod:SPELL_AURA_APPLIED(args)
 	if args.spellId == 40733 and self:GetCIDFromGUID(args.destGUID) == 50355 then
-		self:ScheduleMethod(2, "CheckPlayerCombatStart")
+		self:Schedule(1, self.CheckPlayerCombatStart, self)
 	end
 end
 
