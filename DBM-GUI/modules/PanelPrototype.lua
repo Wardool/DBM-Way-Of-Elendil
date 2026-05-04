@@ -391,7 +391,7 @@ do
 			button.SetPointOld(...)
 		end
 		local desc, noteSpellName = parseDescription(name, true)
-		local frame, frame2, frame3, textPad
+		local frame, frame2, frame3, frame4, textPad
 		if modvar then -- Special warning, has modvar for sound and note
 			if isTimer then
 				frame = self:CreateDropdown(nil, tcolors, mod, modvar .. "TColor", function(value)
@@ -427,13 +427,32 @@ do
 				frame:SetPoint("LEFT", button, "RIGHT", -20, 2)
 				frame2:SetPoint("LEFT", frame, "RIGHT", 18, 0)
 				textPad = 37
+				-- Per-spell flash toggle for this special warning line only.
+				frame3 = CreateFrame("CheckButton", "DBM_GUI_Option_" .. self:GetNewID(), self.frame, "UICheckButtonTemplate")
+				frame3:SetPoint("LEFT", frame2, "RIGHT", 32, 0)
+				frame3:SetSize(28, 28)
+				frame3.mytype = "button"
+				frame3:SetScript("OnShow", function(self)
+					self:SetChecked(mod.Options[modvar .. "SWFlash"])
+				end)
+				frame3:SetScript("OnClick", function(self)
+					mod.Options[modvar .. "SWFlash"] = self:GetChecked() and true or false
+				end)
+				frame3:SetScript("OnEnter", function(self)
+					GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+					GameTooltip:SetText(L.SpecWarn_Flash or "Flash", NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+					GameTooltip:Show()
+				end)
+				frame3:SetScript("OnLeave", function()
+					GameTooltip:Hide()
+				end)
 				if mod.Options[modvar .. "SWNote"] then -- Mod has note, insert note hack
-					frame3 = CreateFrame("Button", "DBM_GUI_Option_" .. self:GetNewID(), self.frame, "UIPanelButtonTemplate")
-					frame3:SetPoint("LEFT", frame2, "RIGHT", 35, 0)
-					frame3:SetSize(25, 25)
-					frame3:SetText("|TInterface/FriendsFrame/UI-FriendsFrame-Note.blp:14:0:2:-1|t")
-					frame3.mytype = "button"
-					frame3:SetScript("OnClick", function(self)
+					frame4 = CreateFrame("Button", "DBM_GUI_Option_" .. self:GetNewID(), self.frame, "UIPanelButtonTemplate")
+					frame4:SetPoint("LEFT", frame3, "RIGHT", 12, 0)
+					frame4:SetSize(25, 25)
+					frame4:SetText("|TInterface/FriendsFrame/UI-FriendsFrame-Note.blp:14:0:2:-1|t")
+					frame4.mytype = "button"
+					frame4:SetScript("OnClick", function(self)
 						DBM:ShowNoteEditor(mod, modvar, noteSpellName)
 					end)
 					textPad = 2
@@ -445,6 +464,9 @@ do
 			end
 			if frame3 then
 				frame3.myheight = 0
+			end
+			if frame4 then
+				frame4.myheight = 0
 			end
 		end
 		local buttonText
@@ -517,18 +539,18 @@ do
 		end
 		button.textObj = buttonText
 		button.text = desc or CL.UNKNOWN
-		button.widthPad = frame and (frame:GetWidth() + (frame2 and frame2:GetWidth() or 0) + (frame3 and frame3:GetWidth() or 0)) or 0
+		button.widthPad = frame and (frame:GetWidth() + (frame2 and frame2:GetWidth() or 0) + (frame3 and frame3:GetWidth() or 0) + (frame4 and frame4:GetWidth() or 0)) or 0
 		buttonText:SetWidth(self.frame:GetWidth() - button.widthPad)
 		buttonText.GetContentHeight = function()
 			return select(4, buttonText:GetBoundsRect()) or 25
 		end
 		if textLeft then
 			buttonText:ClearAllPoints()
-			buttonText:SetPoint("RIGHT", frame3 or frame2 or frame or button, "LEFT")
+			buttonText:SetPoint("RIGHT", frame4 or frame3 or frame2 or frame or button, "LEFT")
 			buttonText:SetJustifyH("p", "RIGHT")
 		else
 			buttonText:SetJustifyH("p", "LEFT")
-			buttonText:SetPoint("TOPLEFT", frame3 or frame2 or frame or button, "TOPRIGHT", textPad or 0, -4)
+			buttonText:SetPoint("TOPLEFT", frame4 or frame3 or frame2 or frame or button, "TOPRIGHT", textPad or 0, -4)
 		end
 		buttonText:SetText(button.text)
 		button.myheight = mmax(buttonText:GetContentHeight() + 12, 25)
