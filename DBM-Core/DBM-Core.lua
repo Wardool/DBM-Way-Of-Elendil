@@ -64,9 +64,9 @@ local function currentFullDate()
 end
 
 DBM = {
-	Revision = parseCurseDate("20260427211002"),
+	Revision = parseCurseDate("20260504181426"),
 	DisplayVersion = "10.1.13 - WoE Edition", -- the string that is shown as version
-	ReleaseRevision = releaseDate(2026, 04, 27) -- YY/MM/DD the date of the latest stable version that is available, optionally pass hours, minutes, and seconds for multiple releases in one day
+	ReleaseRevision = releaseDate(2026, 05, 04) -- YY/MM/DD the date of the latest stable version that is available, optionally pass hours, minutes, and seconds for multiple releases in one day
 }
 
 local fakeBWVersion = 7558
@@ -305,6 +305,7 @@ DBM.DefaultOptions = {
 	SpecialWarningFlashCount3 = 3,
 	SpecialWarningFlashCount4 = 2,
 	SpecialWarningFlashCount5 = 3,
+	SpecialWarningSpellFlashCount = 1,
 --	SpecialWarningVibrate1 = false,
 --	SpecialWarningVibrate2 = false,
 --	SpecialWarningVibrate3 = true,
@@ -9367,15 +9368,22 @@ do
 			self.combinedcount = 0
 			self.combinedtext = {}
 			if not UnitIsDeadOrGhost("player") then
+				local spellFlashEnabled = self.option and self.mod.Options[self.option .. "SWFlash"]
+				local spellFlashCount = tonumber(DBM.Options.SpecialWarningSpellFlashCount) or 1
+				if spellFlashCount < 1 then spellFlashCount = 1 end
+				if spellFlashCount > 10 then spellFlashCount = 10 end
+				spellFlashCount = floor(spellFlashCount)
 				if noteHasName then
-					if not DBM.Options.DontShowSpecialWarningFlash and DBM.Options.SpecialWarningFlash5 then--Not included in above if statement on purpose. we don't want to trigger else rule if noteHasName is true but SpecialWarningFlash5 is false
-						local repeatCount = DBM.Options.SpecialWarningFlashCount5 or 1
+					local globalFlashEnabled = not DBM.Options.DontShowSpecialWarningFlash and DBM.Options.SpecialWarningFlash5
+					if spellFlashEnabled or globalFlashEnabled then
+						local repeatCount = spellFlashEnabled and spellFlashCount or (DBM.Options.SpecialWarningFlashCount5 or 1)
 						DBM.Flash:Show(DBM.Options.SpecialWarningFlashCol5[1],DBM.Options.SpecialWarningFlashCol5[2], DBM.Options.SpecialWarningFlashCol5[3], DBM.Options.SpecialWarningFlashDura5, DBM.Options.SpecialWarningFlashAlph5, repeatCount-1)
 					end
 				else
 					local number = self.flash
-					if not DBM.Options.DontShowSpecialWarningFlash and DBM.Options["SpecialWarningFlash"..number] then
-						local repeatCount = DBM.Options["SpecialWarningFlashCount"..number] or 1
+					local globalFlashEnabled = not DBM.Options.DontShowSpecialWarningFlash and DBM.Options["SpecialWarningFlash"..number]
+					if spellFlashEnabled or globalFlashEnabled then
+						local repeatCount = spellFlashEnabled and spellFlashCount or (DBM.Options["SpecialWarningFlashCount"..number] or 1)
 						local flashcolor = DBM.Options["SpecialWarningFlashCol"..number]
 						DBM.Flash:Show(flashcolor[1], flashcolor[2], flashcolor[3], DBM.Options["SpecialWarningFlashDura"..number], DBM.Options["SpecialWarningFlashAlph"..number], repeatCount-1)
 					end
@@ -11270,6 +11278,7 @@ function bossModPrototype:AddSpecialWarningOption(name, default, defaultSound, c
 	self.DefaultOptions[name] = (default == nil) or default
 	self.DefaultOptions[name.."SWSound"] = defaultSound or 1
 	self.DefaultOptions[name.."SWColor"] = defaultSound or 1
+	self.DefaultOptions[name.."SWFlash"] = false
 	self.DefaultOptions[name.."SWNote"] = true
 	if default and type(default) == "string" then
 		default = self:GetRoleFlagValue(default)
@@ -11277,6 +11286,7 @@ function bossModPrototype:AddSpecialWarningOption(name, default, defaultSound, c
 	self.Options[name] = (default == nil) or default
 	self.Options[name.."SWSound"] = defaultSound or 1
 	self.Options[name.."SWColor"] = defaultSound or 1
+	self.Options[name.."SWFlash"] = false
 	self.Options[name.."SWNote"] = true
 	if spellId then
 		self:GroupSpells(spellId, name)
