@@ -35,8 +35,12 @@ local L = DBM_GUI_L
 local CL = DBM_CORE_L
 
 DBM_GUI = {
-	tabs	= {},
-	panels	= {}
+	tabs			= {},
+	panels			= {},
+	TAB_OPTIONS		= 1,
+	TAB_RAIDS		= 2,
+	TAB_DUNGEONS	= 3,
+	TAB_OTHER		= 4
 }
 
 local next, type, pairs, strsplit, tonumber, tostring, ipairs, tinsert, tsort, mfloor, slower = next, type, pairs, strsplit, tonumber, tostring, ipairs, table.insert, table.sort, math.floor, string.lower
@@ -599,10 +603,13 @@ do
 
 			-- Start import/export
 			local fullname = DBM.Options.PerCharacterSettings and playerName.."-"..realmName or "Global"
+			local savedVarsName = addon.modId:gsub("-", "") .. "_AllSavedVars"
+			local modList = DBM.ModLists[addon.modId]
 			local function actuallyImport(importTable)
 				local profileID = playerLevel > 9 and DBM_UseDualProfile and GetSpecializationGroup() or 0
-				for _, id in ipairs(DBM.ModLists[addon.modId]) do
-					_G[addon.modId:gsub("-", "") .. "_AllSavedVars"][fullname][id][profileID] = importTable[id]
+				local savedVars = _G[savedVarsName]
+				for _, id in ipairs(modList) do
+					savedVars[fullname][id][profileID] = importTable[id]
 					DBM:GetModByName(id).Options = importTable[id]
 				end
 				DBM:AddMsg("Profile imported.")
@@ -614,8 +621,9 @@ do
 			local exportProfile = importExportProfilesArea:CreateButton(L.ButtonExportProfile, 120, 20, function()
 				local exportProfile = {}
 				local profileID = playerLevel > 9 and DBM_UseDualProfile and GetSpecializationGroup() or 0
-				for _, id in ipairs(DBM.ModLists[addon.modId]) do
-					exportProfile[id] = _G[addon.modId:gsub("-", "") .. "_AllSavedVars"][fullname][id][profileID]
+				local savedVars = _G[savedVarsName]
+				for _, id in ipairs(modList) do
+					exportProfile[id] = savedVars[fullname][id][profileID]
 				end
 				DBM_GUI:CreateExportProfile(exportProfile)
 			end)
@@ -624,9 +632,9 @@ do
 			local importProfile = importExportProfilesArea:CreateButton(L.ButtonImportProfile, 120, 20, function()
 				DBM_GUI:CreateImportProfile(function(importTable)
 					local errors = {}
-					for id, table in pairs(importTable) do
+					for id, optionTable in pairs(importTable) do
 						-- Check if sound packs are missing
-						for settingName, settingValue in pairs(table) do
+						for settingName, settingValue in pairs(optionTable) do
 							local ending = settingName:sub(-6):lower()
 							if ending == "cvoice" or ending == "wsound" then -- CVoice or SWSound (s is ignored so we only have to sub once)
 								if type(settingValue) == "string" and settingValue:lower() ~= "none" and not DBM:ValidateSound(settingValue, true, true) then
@@ -795,18 +803,29 @@ do
 	local expansions = {
 		"CLASSIC", "BC", "WOTLK"
 	}
+	local function GetMainTabForAddon(addon)
+		if addon.type == "RAID" then
+			return DBM_GUI.TAB_RAIDS
+		end
+		if addon.type == "PARTY" then
+			return DBM_GUI.TAB_DUNGEONS
+		end
+		return DBM_GUI.TAB_OTHER
+	end
 
 	function DBM_GUI:UpdateModList()
 		for _, addon in ipairs(DBM.AddOns) do
+			local mainTab = GetMainTabForAddon(addon)
 			local cat = addon.category:upper()
-			if not category[cat] then
+			local catKey = tostring(mainTab) .. ":" .. cat
+			if not category[catKey] then
 				-- Create a Panel for "Wrath of the Lich King", "The Burning Crusade", "Classic" or "Other"
-				category[cat] = DBM_GUI:CreateNewPanel(_G["EXPANSION_NAME" .. (DBM:tIndexOf(expansions, cat) or 99) - 1] or L.TabCategory_OTHER, nil, cat == expansions[GetExpansionLevel() + 1])
+				category[catKey] = DBM_GUI:CreateNewPanel(_G["EXPANSION_NAME" .. (DBM:tIndexOf(expansions, cat) or 99) - 1] or L.TabCategory_OTHER, mainTab, cat == expansions[GetExpansionLevel() + 1])
 			end
 
 			if not addon.panel then
 				-- Create a Panel for "Naxxramas" "Eye of Eternity" ...
-				addon.panel = category[cat]:CreateNewPanel(addon.name or "Error: No-modId")
+				addon.panel = category[catKey]:CreateNewPanel(addon.name or "Error: No-modId")
 
 				if not IsAddOnLoaded(addon.modId) then
 					local button = addon.panel:CreateButton(L.Button_LoadMod, 200, 30)

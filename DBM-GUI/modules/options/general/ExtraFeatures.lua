@@ -25,13 +25,8 @@ bossLoggingFilters:CreateCheckButton(L.RecordOnlyBosses, true, nil, "RecordOnlyB
 bossLoggingFilters:CreateCheckButton(L.DoNotLogLFG, true, nil, "DoNotLogLFG")
 
 local bossLoggingContent		= extraFeaturesPanel:CreateArea(L.Area_AutoLoggingContent)
-bossLoggingContent:CreateCheckButton(L.LogCurrentMythicRaids, true, nil, "LogCurrentMythicRaids")
 bossLoggingContent:CreateCheckButton(L.LogCurrentRaids, true, nil, "LogCurrentRaids")
-bossLoggingContent:CreateCheckButton(L.LogTWRaids, true, nil, "LogTWRaids")
 bossLoggingContent:CreateCheckButton(L.LogTrivialRaids, true, nil, "LogTrivialRaids")
-bossLoggingContent:CreateCheckButton(L.LogCurrentMPlus, true, nil, "LogCurrentMPlus")
-bossLoggingContent:CreateCheckButton(L.LogCurrentMythicZero, true, nil, "LogCurrentMythicZero")
-bossLoggingContent:CreateCheckButton(L.LogTWDungeons, true, nil, "LogTWDungeons")
 bossLoggingContent:CreateCheckButton(L.LogCurrentHeroic, true, nil, "LogCurrentHeroic")
 bossLoggingContent:CreateCheckButton(L.LogCurrentNormal, true, nil, "LogCurrentNormal")
 bossLoggingContent:CreateCheckButton(L.LogTrivialDungeons, true, nil, "LogTrivialDungeons")

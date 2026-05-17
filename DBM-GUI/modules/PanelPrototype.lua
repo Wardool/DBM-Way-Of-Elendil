@@ -396,7 +396,7 @@ do
 			if isTimer then
 				frame = self:CreateDropdown(nil, tcolors, mod, modvar .. "TColor", function(value)
 					mod.Options[modvar .. "TColor"] = value
-				end, 22, 25, button)
+				end, 22, 25, button, L.DropdownTimerColor or "Bar color")
 				frame2 = self:CreateDropdown(nil, cvoice, mod, modvar .. "CVoice", function(value)
 					mod.Options[modvar.."CVoice"] = value
 					if type(value) == "string" then
@@ -404,14 +404,14 @@ do
 					elseif value > 0 then
 						DBM:PlayCountSound(1, value == 3 and DBM.Options.CountdownVoice3 or value == 2 and DBM.Options.CountdownVoice2 or DBM.Options.CountdownVoice)
 					end
-				end, 22, 25, button)
+				end, 22, 25, button, L.DropdownCountVoice or "Count voice")
 				frame:SetPoint("LEFT", button, "RIGHT", -20, 2)
 				frame2:SetPoint("LEFT", frame, "RIGHT", 18, 0)
 				textPad = 37
 			elseif isAnnounce then
 				frame = self:CreateDropdown(nil, acolors, mod, modvar .. "AColor", function(value)
 					mod.Options[modvar .. "AColor"] = value
-				end, 22, 25, button)
+				end, 22, 25, button, L.DropdownWarningColor or "Warning color")
 				frame:ClearAllPoints()
 				frame:SetPoint("LEFT", button, "RIGHT", -20, 2)
 				textPad = 37
@@ -419,10 +419,10 @@ do
 				frame = self:CreateDropdown(nil, sounds, mod, modvar .. "SWSound", function(value)
 					mod.Options[modvar .. "SWSound"] = value
 					DBM:PlaySpecialWarningSound(value, true)
-				end, 22, 25, button)
+				end, 22, 25, button, L.DropdownAnnounceSound or "Announce sound")
 				frame2 = self:CreateDropdown(nil, swcolors, mod, modvar .. "SWColor", function(value)
 					mod.Options[modvar .. "SWColor"] = value
-				end, 22, 25, button)
+				end, 22, 25, button, L.DropdownSpecWarningColor or "Special warning color")
 				frame:ClearAllPoints()
 				frame:SetPoint("LEFT", button, "RIGHT", -20, 2)
 				frame2:SetPoint("LEFT", frame, "RIGHT", 18, 0)
@@ -448,14 +448,14 @@ do
 				end)
 				if mod.Options[modvar .. "SWNote"] then -- Mod has note, insert note hack
 					frame4 = CreateFrame("Button", "DBM_GUI_Option_" .. self:GetNewID(), self.frame, "UIPanelButtonTemplate")
-					frame4:SetPoint("LEFT", frame3, "RIGHT", 12, 0)
+					frame4:SetPoint("LEFT", frame3, "RIGHT", 0, 0)
 					frame4:SetSize(25, 25)
 					frame4:SetText("|TInterface/FriendsFrame/UI-FriendsFrame-Note.blp:14:0:2:-1|t")
 					frame4.mytype = "button"
 					frame4:SetScript("OnClick", function(self)
 						DBM:ShowNoteEditor(mod, modvar, noteSpellName)
 					end)
-					textPad = 2
+					textPad = 4
 				end
 			end
 			frame.myheight = 0
@@ -693,9 +693,11 @@ function DBM_GUI:CreateNewPanel(frameName, frameType, showSub, _, displayName)
 	panel.showSub = showSub or showSub == nil
 	panel:Hide()
 	if frameType == "option" then
-		frameType = 2
+		frameType = DBM_GUI.TAB_OPTIONS
 	end
-	self.tabs[frameType or 1]:CreateCategory(panel, self and self.frame and self.frame.ID)
+	frameType = frameType or (self and self.frame and self.frame.tabIndex) or DBM_GUI.TAB_RAIDS
+	panel.tabIndex = frameType
+	self.tabs[frameType]:CreateCategory(panel, self and self.frame and self.frame.ID)
 	PanelPrototype:SetLastObj(panel)
 	tinsert(self.panels, {
 		frame	= panel,

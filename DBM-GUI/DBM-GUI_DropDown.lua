@@ -38,10 +38,11 @@
 local L = DBM_GUI_L
 
 local pairs, next, type, ipairs, setmetatable, mfloor, mmax = pairs, next, type, ipairs, setmetatable, math.floor, math.max
-local CreateFrame, GameFontNormalSmall = CreateFrame, GameFontNormalSmall
+local CreateFrame, GameFontNormalSmall, GameTooltip = CreateFrame, GameFontNormalSmall, GameTooltip
 local DBM = DBM
 
 local defaultFont, defaultFontSize = GameFontHighlightSmall:GetFont()
+local STATIC_LABEL_DROPDOWN_WIDTH = 80
 
 local function replaceSpellLinks(id)
 	local spellId = tonumber(id)
@@ -163,7 +164,7 @@ for i = 1, 10 do
 		if self:GetParent().dropdown.callfunc then
 			self:GetParent().dropdown.callfunc(self.entry.value)
 		end
-		_G[self:GetParent().dropdown:GetName() .. "Text"]:SetText(self.entry.text)
+		_G[self:GetParent().dropdown:GetName() .. "Text"]:SetText(self:GetParent().dropdown.staticLabel or self.entry.text)
 	end)
 	function button:Reset()
 		_G[self:GetName() .. "NormalText"]:SetFont(defaultFont, defaultFontSize)
@@ -251,7 +252,7 @@ function dropdownPrototype:SetSelectedValue(selected)
 		local text = _G[self:GetName() .. "Text"]
 		for _, v in next, self.values do
 			if v.value ~= nil and v.value == selected or v.text == selected then
-				text:SetText(v.text)
+				text:SetText(self.staticLabel or v.text)
 				self.value = v.value
 				self.text = v.text
 			end
@@ -259,7 +260,21 @@ function dropdownPrototype:SetSelectedValue(selected)
 	end
 end
 
-function DBM_GUI:CreateDropdown(title, values, vartype, var, callfunc, width, height, parent)
+local function GetSelectedDisplayText(dropdown)
+	if dropdown.text and dropdown.text ~= "" then
+		return dropdown.text
+	end
+	if dropdown.value ~= nil and dropdown.values and type(dropdown.values) == "table" then
+		for _, v in next, dropdown.values do
+			if v.value ~= nil and v.value == dropdown.value then
+				return v.text or tostring(v.value)
+			end
+		end
+	end
+	return nil
+end
+
+function DBM_GUI:CreateDropdown(title, values, vartype, var, callfunc, width, height, parent, staticLabel)
 	-- Check Values
 	if type(values) == "table" then
 		for _, entry in next, values do
@@ -285,8 +300,11 @@ function DBM_GUI:CreateDropdown(title, values, vartype, var, callfunc, width, he
 	dropdown.width = width
 	dropdown.values = values
 	dropdown.callfunc = callfunc
+	dropdown.staticLabel = staticLabel
 	local dropdownText = _G[dropdown:GetName() .. "Text"]
-	if not width then
+	if staticLabel and staticLabel ~= "" then
+		width = STATIC_LABEL_DROPDOWN_WIDTH
+	elseif not width then
 		width = 120 -- minimum size
 		if title ~= L.FontType and title ~= L.FontStyle and title ~= L.FontShadow then --Force font menus to always be fixed 120 width
 			for _, v in ipairs(values) do
@@ -300,9 +318,26 @@ function DBM_GUI:CreateDropdown(title, values, vartype, var, callfunc, width, he
 	dropdownText:SetWidth(width + 30)
 	dropdownText:SetJustifyH("LEFT")
 	dropdownText:SetPoint("LEFT", dropdown:GetName() .. "Left", 30, 2)
+	if staticLabel then
+		dropdownText:SetText(staticLabel)
+	end
 	_G[dropdown:GetName() .. "Middle"]:SetWidth(width + 30)
 	local dropdownButton = _G[dropdown:GetName() .. "Button"]
 	dropdownButton:SetScript("OnMouseDown", nil)
+	dropdownButton:SetScript("OnEnter", function(self)
+		local owner = self:GetParent()
+		local selectedText = GetSelectedDisplayText(owner)
+		if not selectedText or selectedText == "" then
+			return
+		end
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		GameTooltip:ClearLines()
+		GameTooltip:AddLine(selectedText, 1, 0.82, 0, true)
+		GameTooltip:Show()
+	end)
+	dropdownButton:SetScript("OnLeave", function()
+		GameTooltip:Hide()
+	end)
 	dropdownButton:SetScript("OnClick", function(self)
 		DBM:PlaySound(856) -- UChatScrollButton
 		if tabFrame1:IsShown() then

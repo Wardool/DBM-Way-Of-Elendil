@@ -12,8 +12,9 @@ L.Website							= "Visit us on discord at |cFF73C2FBhttps://discord.gg/CyVWDWS|r
 L.WebsiteButton						= "Website"
 
 L.OTabBosses						= "Boss Options"--Deprecated and will be deleted once tabs no longer use this
-L.OTabRaids							= "Raid"--Raids & PVP
-L.OTabDungeons						= "Party/Solo"--1-5 person content (Dungeons, MoP Scenarios, World Events, Brawlers, Proving Grounds, Visions, Torghast, etc)
+L.OTabRaids							= "Raids"--Raids & PVP
+L.OTabDungeons						= "Dungeons"--1-5 person content
+L.OTabOther							= "Other"
 L.OTabPlugins						= "Core Plugins"
 L.OTabOptions						= "Core Options"
 L.OTabAbout							= "About"
@@ -357,6 +358,12 @@ L.SpecialWarningColorLabel			= "Special warning color"
 L.CVoiceOne							= "Count Voice 1"
 L.CVoiceTwo							= "Count Voice 2"
 L.CVoiceThree						= "Count Voice 3"
+L.DropdownAlertColor				= "Alert color"
+L.DropdownCountVoice				= "Count voice"
+L.DropdownAnnounceSound			    = "Announce sound"
+L.DropdownTimerColor				= "Bar color"
+L.DropdownWarningColor				= "Warning color"
+L.DropdownSpecWarningColor			= "Special warning color"
 
 -- Panel: Timers
 L.Panel_Appearance					= "Bar Appearance"

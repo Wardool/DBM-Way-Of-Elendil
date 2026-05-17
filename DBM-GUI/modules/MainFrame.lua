@@ -3,6 +3,8 @@ local CL	= DBM_CORE_L
 
 local DBM = DBM
 local CreateFrame = CreateFrame
+local GetCursorPosition = GetCursorPosition
+local RESIZE_DRAG_THRESHOLD_SQ = 81 -- 9px * 9px
 
 local frame = _G["DBM_GUI_OptionsFrame"]
 table.insert(_G["UISpecialFrames"], frame:GetName())
@@ -56,11 +58,18 @@ frame:SetScript("OnDragStop", function(self)
 	DBM.Options.GUIX = x
 	DBM.Options.GUIY = y
 end)
-frame:SetScript("OnSizeChanged", function(self)
-	self:UpdateMenuFrame(_G[self:GetName().."BossMods"])
+local function refreshCurrentView(self)
+	self:UpdateMenuFrame()
 	if DBM_GUI.currentViewing then
 		self:DisplayFrame(DBM_GUI.currentViewing)
 	end
+end
+frame:SetScript("OnSizeChanged", function(self)
+	-- During live resize drag, defer expensive panel reflow until mouse up.
+	if self.resizingByHandle then
+		return
+	end
+	refreshCurrentView(self)
 end)
 frame:SetScript("OnMouseUp", function(self)
 	self:StopMovingOrSizing()
@@ -103,14 +112,36 @@ local function createFrameSizer(window, position)
 	end
 	handle:EnableMouse()
 
-	handle:SetScript("OnMouseDown", function()
-		frame:StartSizing(position)
+	handle:SetScript("OnMouseDown", function(self)
+		self.startCursorX, self.startCursorY = GetCursorPosition()
+		self.sizingStarted = false
+		self:SetScript("OnUpdate", function(updateSelf)
+			if updateSelf.sizingStarted then
+				return
+			end
+			local cursorX, cursorY = GetCursorPosition()
+			local dx = cursorX - updateSelf.startCursorX
+			local dy = cursorY - updateSelf.startCursorY
+			if (dx * dx + dy * dy) >= RESIZE_DRAG_THRESHOLD_SQ then
+				updateSelf.sizingStarted = true
+				frame.resizingByHandle = true
+				frame:StartSizing(position)
+			end
+		end)
 	end)
 
-	handle:SetScript("OnMouseUp", function()
-		frame:StopMovingOrSizing()
-		DBM.Options.GUIWidth = frame:GetWidth()
-		DBM.Options.GUIHeight = frame:GetHeight()
+	handle:SetScript("OnMouseUp", function(self)
+		self:SetScript("OnUpdate", nil)
+		if self.sizingStarted then
+			frame:StopMovingOrSizing()
+			DBM.Options.GUIWidth = frame:GetWidth()
+			DBM.Options.GUIHeight = frame:GetHeight()
+			frame.resizingByHandle = nil
+			refreshCurrentView(frame)
+		end
+		self.sizingStarted = nil
+		self.startCursorX = nil
+		self.startCursorY = nil
 	end)
 
 	local normal = handle:CreateTexture(nil, "OVERLAY")
@@ -226,13 +257,21 @@ frameWebsiteButton:SetScript("OnClick", function()
 	DBM:ShowUpdateReminder(nil, nil, CL.COPY_URL_DIALOG)
 end)
 
-local bossMods = CreateFrame("Frame", "$parentBossMods", frame)
-bossMods.name = L.OTabBosses
-frame:CreateTab(bossMods)
-
 local DBMOptions = CreateFrame("Frame", "$parentDBMOptions", frame)
-DBMOptions.name = L.OTabOptions
+DBMOptions.name = OPTIONS or L.OTabOptions
 frame:CreateTab(DBMOptions)
+
+local raidMods = CreateFrame("Frame", "$parentRaidMods", frame)
+raidMods.name = L.OTabRaids or "Raids"
+frame:CreateTab(raidMods)
+
+local dungeonMods = CreateFrame("Frame", "$parentDungeonMods", frame)
+dungeonMods.name = L.OTabDungeons or "Donjons"
+frame:CreateTab(dungeonMods)
+
+local otherMods = CreateFrame("Frame", "$parentOtherMods", frame)
+otherMods.name = L.OTabOther or L.TabCategory_OTHER or "Autres"
+frame:CreateTab(otherMods)
 
 local hack = OptionsList_OnLoad
 function OptionsList_OnLoad(self, ...)
@@ -242,7 +281,7 @@ function OptionsList_OnLoad(self, ...)
 end
 
 local frameList = CreateFrame("Frame", "$parentList", frame, "OptionsFrameListTemplate")
-frameList:SetWidth(205)
+frameList:SetWidth(240)
 frameList:SetPoint("TOPLEFT", 22, -40)
 frameList:SetPoint("BOTTOMLEFT", frameWebsite, "TOPLEFT", 0, 5)
 frameList:SetScript("OnShow", function()

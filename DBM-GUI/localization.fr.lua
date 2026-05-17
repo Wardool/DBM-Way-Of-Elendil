@@ -13,8 +13,9 @@ L.Website							= "Rendez-nous visite sur discord à |cFF73C2FBhttps://discord.g
 L.WebsiteButton						= "Site web"
 
 L.OTabBosses						= "Bosses"--Deprecated and will be deleted once tabs no longer use this
-L.OTabRaids							= "Raid"--Raids & PVP
-L.OTabDungeons						= "Groupe/Solo"--1-5 person content (Dungeons, MoP Scenarios, World Events, Brawlers, Proving Grounds, Visions, Torghast, etc)
+L.OTabRaids							= "Raids"--Raids & PVP
+L.OTabDungeons						= "Donjons"--1-5 person content
+L.OTabOther							= "Autres"
 L.OTabPlugins						= "Core Plugins"
 L.OTabOptions						= "Options principales"
 L.OTabAbout							= "À propos"
@@ -358,6 +359,12 @@ L.SpecialWarningColorLabel			= "Couleur de l'annonce spéciale"
 L.CVoiceOne							= "Décompte vocal 1"
 L.CVoiceTwo							= "Décompte vocal 2"
 L.CVoiceThree						= "Décompte vocal 3"
+L.DropdownAlertColor				= "Couleur d'alerte"
+L.DropdownCountVoice				= "Voix décompte"
+L.DropdownAnnounceSound			    = "Son d'annonce "
+L.DropdownTimerColor				= "Couleur barre"
+L.DropdownWarningColor				= "Couleur alerte"
+L.DropdownSpecWarningColor			= "Couleur annonce spéciale"
 
 -- Panel: Timers
 L.Panel_Appearance					= "Apparence des barres"
@@ -380,7 +387,7 @@ L.BarIconRight						= "Icône à droite"
 L.ExpandUpwards						= "Étendre vers le haut"
 L.FillUpBars						= "Remplir"
 L.ClickThrough						= "Désactiver les interactions souris (clic au travers)"
-L.Bar_Decimal						= "Afficher la décimale en dessous de : %d"
+L.Bar_Decimal						= "Afficher la décimale à partir de : %d"
 L.Bar_Alpha							= "Alpha : %0.1f"
 L.Bar_EnlargeTime					= "Barres agrandies à partir de : %d"
 L.BarSpark							= "Barre clignotante"

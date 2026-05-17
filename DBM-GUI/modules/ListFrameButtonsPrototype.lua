@@ -77,5 +77,9 @@ function DBM_GUI:CreateNewFauxScrollFrameList()
 end
 
 -- TODO: Should this go somewhere else?
-_G["DBM_GUI_Bosses"] = DBM_GUI:CreateNewFauxScrollFrameList()
 _G["DBM_GUI_Options"] = DBM_GUI:CreateNewFauxScrollFrameList()
+_G["DBM_GUI_Raids"] = DBM_GUI:CreateNewFauxScrollFrameList()
+_G["DBM_GUI_Dungeons"] = DBM_GUI:CreateNewFauxScrollFrameList()
+_G["DBM_GUI_Other"] = DBM_GUI:CreateNewFauxScrollFrameList()
+-- Compatibility alias for old external references.
+_G["DBM_GUI_Bosses"] = _G["DBM_GUI_Raids"]
