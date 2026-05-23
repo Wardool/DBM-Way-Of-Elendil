@@ -64,9 +64,9 @@ local function currentFullDate()
 end
 
 DBM = {
-	Revision = parseCurseDate("20260517130458"),
+	Revision = parseCurseDate("20260523102156"),
 	DisplayVersion = "10.1.13 - WoE Edition", -- the string that is shown as version
-	ReleaseRevision = releaseDate(2026, 05, 17) -- YY/MM/DD the date of the latest stable version that is available, optionally pass hours, minutes, and seconds for multiple releases in one day
+	ReleaseRevision = releaseDate(2026, 05, 23) -- YY/MM/DD the date of the latest stable version that is available, optionally pass hours, minutes, and seconds for multiple releases in one day
 }
 
 local fakeBWVersion = 7558
@@ -1859,6 +1859,10 @@ do
 		if firstLoad then
 			tsort(callOnLoad, function(v1, v2) return v1[2] < v2[2] end)
 			for _, v in ipairs(callOnLoad) do v[1]() end
+			local optionsFrame = _G["DBM_GUI_OptionsFrame"]
+			if optionsFrame and optionsFrame:IsShown() and optionsFrame.tab then
+				optionsFrame:UpdateMenuFrame()
+			end
 		end
 	end
 
