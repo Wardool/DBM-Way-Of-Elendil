@@ -4,6 +4,7 @@ local L		= mod:GetLocalizedStrings()
 mod:SetRevision("20251101181236")
 mod:SetCreatureID(37813)
 mod:SetEncounterID(848)
+mod:SetModelID("creature/saurfang/saurfang.m2")
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)
 mod:SetMinSyncRevision(20251101181236)
 
