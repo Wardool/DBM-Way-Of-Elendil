@@ -5,11 +5,12 @@ local CL = DBM_CORE_L
 
 L.MainFrame 						= CL.DEADLY_BOSS_MODS -- NO TRANSLATE
 
-L.DBMWarmane						= CL.DBM .. "-Warmane by Zidras"
+L.DBMWarmane						= CL.DBM
 L.TranslationByPrefix				= "Retail backport by "
 L.TranslationBy						= "Barsoom, Bunny67, Zidras"
-L.Website							= "Visit us on discord at |cFF73C2FBhttps://discord.gg/CyVWDWS|r"
+L.Website							= ""
 L.WebsiteButton						= "Website"
+L.Search							= "Search"
 
 L.OTabBosses						= "Boss Options"--Deprecated and will be deleted once tabs no longer use this
 L.OTabRaids							= "Raids"--Raids & PVP

@@ -6,18 +6,19 @@ local CL = DBM_CORE_L
 
 L.MainFrame 						= CL.DEADLY_BOSS_MODS -- NO TRANSLATE
 
-L.DBMWarmane						= CL.DBM .. "-Warmane par Zidras"
+L.DBMWarmane						= CL.DBM
 L.TranslationByPrefix				= "Retail rétroportage par "
 L.TranslationBy						= "Barsoom, Bunny67, Zidras"
-L.Website							= "Rendez-nous visite sur discord à |cFF73C2FBhttps://discord.gg/CyVWDWS|r"
+L.Website							= ""
 L.WebsiteButton						= "Site web"
+L.Search							= "Recherche"
 
 L.OTabBosses						= "Bosses"--Deprecated and will be deleted once tabs no longer use this
 L.OTabRaids							= "Raids"--Raids & PVP
 L.OTabDungeons						= "Donjons"--1-5 person content
 L.OTabOther							= "Autres"
 L.OTabPlugins						= "Core Plugins"
-L.OTabOptions						= "Options principales"
+L.OTabOptions						= "Options"
 L.OTabAbout							= "À propos"
 
 L.TabCategory_OTHER					= "Autres modules"
@@ -239,7 +240,7 @@ L.SpecialWarnHeader4				= "Type 4: Définir les options pour les annonces spéci
 L.SpecialWarnHeader5				= "Type 5: Définir les options pour les annonces dont la note contient votre nom de joueur"
 
 -- Panel: Generalwarnings
-L.Tab_GeneralMessages				= "Messages dans la fenêtre de discussion"
+L.Tab_GeneralMessages				= "Messages DBM"
 L.CoreMessages						= "Options des messages de DBM"
 L.ShowPizzaMessage					= "Afficher les messages d'annonce de décomptes dans la fenêtre de discussion"
 L.ShowAllVersions					= "Afficher les versions boss mod de tous les membres du groupe dans la fenêtre de discussion lors d'une vérification des versions. (Si désactivé, continu d'effectuer un résumé obsolète/à jour)"

@@ -1,24 +1,161 @@
 local L = DBM_GUI_L
 
-local select, ipairs, type, mfloor, mmax, mmin, strfind = select, pairs, type, math.floor, math.max, math.min, string.find
+local select, ipairs, type, mfloor, mmax, mmin, strfind, strlower, strgsub = select, pairs, type, math.floor, math.max, math.min, string.find, string.lower, string.gsub
 local CreateFrame, GameFontHighlightSmall, GameFontNormalSmall, GameFontNormal = CreateFrame, GameFontHighlightSmall, GameFontNormalSmall, GameFontNormal
 local DBM, DBM_GUI = DBM, DBM_GUI
 
 local frame = CreateFrame("Frame", "DBM_GUI_OptionsFrame", UIParent)
+
+local function normalizeSearchText(text)
+	if type(text) ~= "string" then
+		return ""
+	end
+	text = strgsub(text, "|c%x%x%x%x%x%x%x%x", "")
+	text = strgsub(text, "|r", "")
+	text = strgsub(text, "|H.-|h(.-)|h", "%1")
+	text = strgsub(text, "|h", "")
+	text = strgsub(text, "|T.-|t", " ")
+	text = strgsub(text, "<.->", " ")
+	text = strgsub(text, "&amp;", "&")
+	text = strgsub(text, "&lt;", "<")
+	text = strgsub(text, "&gt;", ">")
+	text = strgsub(text, "%s+", " ")
+	text = strgsub(text, "^%s+", "")
+	text = strgsub(text, "%s+$", "")
+	return strlower(text)
+end
+
+local function widgetCollectedText(widget)
+	local out = {}
+	local function addText(t)
+		if type(t) == "string" and t ~= "" then
+			out[#out + 1] = t
+		end
+	end
+	addText(widget.displayName)
+	addText(widget.text)
+	if widget.textObj and widget.textObj.GetText then
+		local ok, text = pcall(widget.textObj.GetText, widget.textObj)
+		if ok then addText(text) end
+	end
+	if widget.GetText and widget.GetObjectType then
+		local objType = widget:GetObjectType()
+		if objType == "FontString" or objType == "SimpleHTML" or objType == "EditBox" then
+			local ok, text = pcall(widget.GetText, widget)
+			if ok then addText(text) end
+		end
+	end
+	if widget.GetName then
+		local name = widget:GetName()
+		if name then
+			local title = _G[name .. "Title"]
+			if title and title.GetText then
+				local ok, text = pcall(title.GetText, title)
+				if ok then addText(text) end
+			end
+		end
+	end
+	return normalizeSearchText(table.concat(out, " "))
+end
+
+local function widgetOrChildrenMatch(widget, query)
+	if query == "" then
+		return false
+	end
+	if strfind(widgetCollectedText(widget), query, 1, true) then
+		return true
+	end
+	if widget.GetRegions then
+		for _, region in ipairs({ widget:GetRegions() }) do
+			if type(region) == "table" and strfind(widgetCollectedText(region), query, 1, true) then
+				return true
+			end
+		end
+	end
+	if widget.GetChildren then
+		for _, child in ipairs({ widget:GetChildren() }) do
+			if widgetOrChildrenMatch(child, query) then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+local function setHighlightTexture(widget, show)
+	if not widget then
+		return
+	end
+	if show then
+		if not widget.dbmSearchHighlight and widget.CreateTexture then
+			local hl = widget:CreateTexture(nil, "BACKGROUND")
+			hl:SetTexture("Interface\\QuestFrame\\UI-QuestLogTitleHighlight")
+			hl:SetBlendMode("ADD")
+			hl:SetVertexColor(1.0, 0.85, 0.2, 0.45)
+			hl:SetPoint("TOPLEFT", widget, "TOPLEFT", 0, 0)
+			hl:SetPoint("BOTTOMRIGHT", widget, "BOTTOMRIGHT", 0, 0)
+			widget.dbmSearchHighlight = hl
+		end
+		if widget.dbmSearchHighlight then
+			widget.dbmSearchHighlight:Show()
+		end
+	else
+		if widget.dbmSearchHighlight then
+			widget.dbmSearchHighlight:Hide()
+		end
+	end
+end
+
+function frame:ApplySearchHighlights(panelFrame)
+	if not panelFrame or not panelFrame.GetChildren then
+		return
+	end
+	local query = normalizeSearchText(self.searchText or "")
+	for _, child in ipairs({ panelFrame:GetChildren() }) do
+		if child and child.mytype then
+			local matched = query ~= "" and widgetOrChildrenMatch(child, query) or false
+			if child.mytype == "area" or child.mytype == "ability" then
+				if matched then
+					child:SetBackdropBorderColor(1.0, 0.85, 0.2, 1)
+				else
+					child:SetBackdropBorderColor(0.4, 0.4, 0.4)
+				end
+			else
+				setHighlightTexture(child, matched)
+			end
+		end
+	end
+end
 
 function frame:UpdateMenuFrame()
 	local listFrame = _G["DBM_GUI_OptionsFrameList"]
 	if not listFrame.buttons then
 		return
 	end
-	local displayedElements = self.tab and DBM_GUI.tabs[self.tab]:GetVisibleTabs() or {}
+	local displayedElements = {}
+	if self.tab then
+		local listData = DBM_GUI.tabs[self.tab]
+		if self.searchText and self.searchText ~= "" and listData.GetFilteredTabs then
+			displayedElements = listData:GetFilteredTabs(self.searchText)
+		else
+			displayedElements = listData:GetVisibleTabs()
+		end
+	end
 	local bigList = mfloor((listFrame:GetHeight() - 8) / 18)
+	local scrollBar = _G[listFrame:GetName() .. "ListScrollBar"]
+	local maxOffset = mmax((#displayedElements - bigList), 0) * 18
+	local currentOffset = (listFrame.offset or 0) * 18
+	if currentOffset > maxOffset then
+		listFrame.offset = mfloor(maxOffset / 18)
+		scrollBar:SetValue(maxOffset)
+	end
 	if #displayedElements > bigList then
 		_G[listFrame:GetName() .. "List"]:Show()
-		_G[listFrame:GetName() .. "ListScrollBar"]:SetMinMaxValues(0, (#displayedElements - bigList) * 18)
+		scrollBar:SetMinMaxValues(0, maxOffset)
 	else
 		_G[listFrame:GetName() .. "List"]:Hide()
-		_G[listFrame:GetName() .. "ListScrollBar"]:SetValue(0)
+		scrollBar:SetValue(0)
+		listFrame.offset = 0
 	end
 	for i = 1, #listFrame.buttons do
 		local button = listFrame.buttons[i]
@@ -260,6 +397,7 @@ function frame:DisplayFrame(frame)
 			end
 		end
 	end
+	self:ApplySearchHighlights(frame)
 end
 
 function frame:DeselectTab(i)
@@ -296,7 +434,7 @@ function frame:CreateTab(tab)
 	buttonText:Show()
 	button:Show()
 	if i == 1 then
-		button:SetPoint("TOPLEFT", self:GetName(), 20, -18)
+		button:SetPoint("TOPLEFT", self:GetName(), 20, -58)
 	else
 		button:SetPoint("TOPLEFT", "DBM_GUI_OptionsFrameTab" .. (i - 1), "TOPRIGHT", -15, 0)
 	end

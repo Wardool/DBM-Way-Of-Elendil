@@ -31,11 +31,11 @@ frame:SetMaxResize(UIParent:GetWidth(), UIParent:GetHeight())
 frame:Hide()
 frame.backdropInfo = {
 	bgFile		= "Interface\\DialogFrame\\UI-DialogBox-Background-Dark", -- 131071
-	edgeFile	= "Interface\\DialogFrame\\UI-DialogBox-Border", -- 131072
+	edgeFile	= "Interface\\Tooltips\\UI-Tooltip-Border", -- 131072
 	tile		= true,
-	tileSize	= 32,
-	edgeSize	= 32,
-	insets		= { left = 11, right = 12, top = 12, bottom = 11 }
+	--tileSize	= 32,
+	edgeSize	= 16,
+	insets		= { left = 4, right = 4, top = 4, bottom = 4 }
 }
 
 frame:SetBackdrop(frame.backdropInfo)
@@ -87,20 +87,20 @@ local function createFrameSizer(window, position)
 	local left, right, top, bottom, xOffset1, yOffset1, xOffset2, yOffset2
 	if position == "BOTTOMLEFT" then
 		left, right, top, bottom = 1, 0, 0, 1
-		xOffset1, yOffset1 = 6, 6
+		xOffset1, yOffset1 = 0, 0
 		xOffset2, yOffset2 = 0, 0
 	elseif position == "BOTTOMRIGHT" then
 		left, right, top, bottom = 0, 1, 0, 1
-		xOffset1, yOffset1 = 0, 6
-		xOffset2, yOffset2 = -6, 0
+		xOffset1, yOffset1 = 0, 0
+		xOffset2, yOffset2 = 0, 0
 	elseif position == "TOPLEFT" then
 		left, right, top, bottom = 1, 0, 1, 0
-		xOffset1, yOffset1 = 6, 0
-		xOffset2, yOffset2 = 0, -6
+		xOffset1, yOffset1 = 4, 0
+		xOffset2, yOffset2 = 0, -4
 	elseif position == "TOPRIGHT" then
 		left, right, top, bottom = 0, 1, 1, 0
 		xOffset1, yOffset1 = 0, 0
-		xOffset2, yOffset2 = -6, -6
+		xOffset2, yOffset2 = -4, -4
 	end
 
 	local handle = CreateFrame("Button", nil, window)
@@ -184,20 +184,17 @@ createFrameSizer(frame, "BOTTOMRIGHT")
 
 local frameHeader = frame:CreateTexture("$parentHeader", "ARTWORK")
 frameHeader:SetPoint("TOP", 0, 12)
-frameHeader:SetTexture("Interface\\DialogFrame\\UI-DialogBox-Header")
+frameHeader:SetTexture(nil)
 frameHeader:SetSize(300, 68)
 
-local frameHeaderText = frame:CreateFontString("$parentHeaderText", "ARTWORK", "GameFontNormal")
-frameHeaderText:SetPoint("TOP", frameHeader, 0, -14)
-frameHeaderText:SetText(L.MainFrame)
+local frameHeaderText = frame:CreateFontString("$parentHeaderText", "OVERLAY", "GameFontNormal")
+frameHeaderText:SetPoint("TOP", frameHeader, 0, -18)
+local releaseDateFormatted = (DBM:ShowRealDate(DBM.Revision) or ""):gsub(" ", " - ", 1)
+frameHeaderText:SetText(L.MainFrame .. " - " .. DBM.DisplayVersion .. " (" .. releaseDateFormatted .. ")")
 
 local frameRevision = frame:CreateFontString("$parentRevision", "ARTWORK", "GameFontDisableSmall")
 frameRevision:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 20, 18)
-if DBM.NewerVersion then
-	frameRevision:SetText(L.DBMWarmane.. " " .. DBM.DisplayVersion.. " (" .. DBM:ShowRealDate(DBM.Revision) .. "). |cffff0000Version " .. DBM.NewerVersion .. " is available.|r")
-else
-	frameRevision:SetText(L.DBMWarmane.. " " .. DBM.DisplayVersion.. " (" .. DBM:ShowRealDate(DBM.Revision) .. ")")
-end
+frameRevision:SetText("")
 
 do
 	local count = 0
@@ -217,7 +214,7 @@ do
 end
 
 local frameTranslation = frame:CreateFontString("$parentTranslation", "ARTWORK", "GameFontDisableSmall")
-frameTranslation:SetPoint("LEFT", frameRevision, "RIGHT", 20, 0)
+frameTranslation:SetPoint("LEFT", frameRevision, "RIGHT", 18, 5)
 if L.TranslationBy then
 	frameTranslation:SetText(L.TranslationByPrefix .. L.TranslationBy)
 end
@@ -243,22 +240,22 @@ frameWebsite:SetPoint("BOTTOMLEFT", frameRevision, "TOPLEFT", 0, 15)
 frameWebsite:SetPoint("RIGHT", frameOkay, "RIGHT")
 frameWebsite:SetText(L.Website)
 
-local frameWebsiteButtonA = CreateFrame("Button", nil, frame)
-frameWebsiteButtonA:SetAllPoints(frameWebsite)
-frameWebsiteButtonA:SetScript("OnMouseUp", function()
-	DBM:ShowUpdateReminder(nil, nil, CL.COPY_URL_DIALOG, "https://discord.gg/CyVWDWS")
-end)
+-- local frameWebsiteButtonA = CreateFrame("Button", nil, frame)
+-- frameWebsiteButtonA:SetAllPoints(frameWebsite)
+-- frameWebsiteButtonA:SetScript("OnMouseUp", function()
+-- 	DBM:ShowUpdateReminder(nil, nil, CL.COPY_URL_DIALOG, "https://discord.gg/CyVWDWS")
+-- end)
 
-local frameWebsiteButton = CreateFrame("Button", "$parentWebsiteButton", frame, "UIPanelButtonTemplate")
-frameWebsiteButton:SetSize(96, 22)
-frameWebsiteButton:SetPoint("BOTTOMRIGHT", frameOkay, "BOTTOMLEFT", -20, 0)
-frameWebsiteButton:SetText(L.WebsiteButton)
-frameWebsiteButton:SetScript("OnClick", function()
-	DBM:ShowUpdateReminder(nil, nil, CL.COPY_URL_DIALOG)
-end)
+-- local frameWebsiteButton = CreateFrame("Button", "$parentWebsiteButton", frame, "UIPanelButtonTemplate")
+-- frameWebsiteButton:SetSize(96, 22)
+-- frameWebsiteButton:SetPoint("BOTTOMRIGHT", frameOkay, "BOTTOMLEFT", -20, 0)
+-- frameWebsiteButton:SetText(L.WebsiteButton)
+-- frameWebsiteButton:SetScript("OnClick", function()
+-- 	DBM:ShowUpdateReminder(nil, nil, CL.COPY_URL_DIALOG)
+-- end)
 
 local DBMOptions = CreateFrame("Frame", "$parentDBMOptions", frame)
-DBMOptions.name = OPTIONS or L.OTabOptions
+DBMOptions.name = _G.OPTIONS or L.OTabOptions
 frame:CreateTab(DBMOptions)
 
 local raidMods = CreateFrame("Frame", "$parentRaidMods", frame)
@@ -273,6 +270,119 @@ local otherMods = CreateFrame("Frame", "$parentOtherMods", frame)
 otherMods.name = L.OTabOther or L.TabCategory_OTHER or "Autres"
 frame:CreateTab(otherMods)
 
+local frameSearch = CreateFrame("EditBox", "$parentSearchBox", frame, "InputBoxTemplate")
+frameSearch:SetAutoFocus(false)
+frameSearch:SetSize(200, 20)
+frameSearch:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -36, -48)
+frameSearch:SetFontObject(GameFontNormalSmall)
+frameSearch:SetTextInsets(16, 20, 0, 0)
+do
+	local left = _G[frameSearch:GetName() .. "Left"]
+	local middle = _G[frameSearch:GetName() .. "Middle"]
+	local right = _G[frameSearch:GetName() .. "Right"]
+	if left and middle and right then
+		left:SetTexture("Interface\\AddOns\\DBM-GUI\\textures\\CommonSearch.blp")
+		left:SetTexCoord(0.886719, 0.949219, 0.335938, 0.648438)
+		left:SetSize(8, 20)
+		left:ClearAllPoints()
+		left:SetPoint("LEFT", frameSearch, "LEFT", -5, 0)
+
+		right:SetTexture("Interface\\AddOns\\DBM-GUI\\textures\\CommonSearch.blp")
+		right:SetTexCoord(0.00390625, 0.0664062, 0.664062, 0.976562)
+		right:SetSize(8, 20)
+		right:ClearAllPoints()
+		right:SetPoint("RIGHT", frameSearch, "RIGHT", 0, 0)
+
+		middle:SetTexture("Interface\\AddOns\\DBM-GUI\\textures\\CommonSearch.blp")
+		middle:SetTexCoord(0.00390625, 0.878906, 0.335938, 0.648438)
+		middle:SetSize(10, 20)
+		middle:ClearAllPoints()
+		middle:SetPoint("LEFT", left, "RIGHT")
+		middle:SetPoint("RIGHT", right, "LEFT")
+	end
+end
+local searchIcon = frameSearch:CreateTexture(frameSearch:GetName() .. "SearchIcon", "OVERLAY")
+searchIcon:SetTexture("Interface\\AddOns\\DBM-GUI\\textures\\CommonSearch.blp")
+searchIcon:SetSize(10, 10)
+searchIcon:SetPoint("LEFT", 1, -1)
+searchIcon:SetTexCoord(0.0742188, 0.167969, 0.664062, 0.851562)
+searchIcon:SetVertexColor(0.6, 0.6, 0.6)
+frameSearch.searchIcon = searchIcon
+
+local clearButton = CreateFrame("Button", frameSearch:GetName() .. "ClearButton", frameSearch)
+clearButton:SetSize(17, 17)
+clearButton:SetPoint("RIGHT", -3, 0)
+clearButton:Hide()
+frameSearch.clearButton = clearButton
+
+local clearTexture = clearButton:CreateTexture(nil, "ARTWORK")
+clearTexture:SetTexture("Interface\\AddOns\\DBM-GUI\\textures\\CommonSearch.blp")
+clearTexture:SetAlpha(0.5)
+clearTexture:SetSize(10, 10)
+clearTexture:SetPoint("TOPLEFT", 3, -3)
+clearTexture:SetTexCoord(0.175781, 0.253906, 0.664062, 0.820312)
+clearButton.texture = clearTexture
+
+local function updateSearchBoxVisualState(self)
+	if (not self:HasFocus()) and self:GetText() == "" then
+		self.searchIcon:SetVertexColor(0.6, 0.6, 0.6)
+		self.clearButton:Hide()
+	else
+		self.searchIcon:SetVertexColor(1.0, 1.0, 1.0)
+		self.clearButton:Show()
+	end
+end
+
+clearButton:SetScript("OnEnter", function(self)
+	self.texture:SetAlpha(1.0)
+end)
+clearButton:SetScript("OnLeave", function(self)
+	self.texture:SetAlpha(0.5)
+end)
+clearButton:SetScript("OnMouseDown", function(self)
+	if self:IsEnabled() then
+		self.texture:SetPoint("TOPLEFT", self, "TOPLEFT", 4, -4)
+	end
+end)
+clearButton:SetScript("OnMouseUp", function(self)
+	self.texture:SetPoint("TOPLEFT", self, "TOPLEFT", 3, -3)
+end)
+clearButton:SetScript("OnClick", function(self)
+	PlaySound("igMainMenuOptionCheckBoxOn")
+	self:GetParent():SetText("")
+	self:GetParent():ClearFocus()
+end)
+
+frameSearch:SetScript("OnEscapePressed", function(self)
+	self:SetText("")
+	self:ClearFocus()
+end)
+frameSearch:SetScript("OnEnterPressed", function(self)
+	self:ClearFocus()
+end)
+frameSearch:SetScript("OnEditFocusLost", function(self)
+	updateSearchBoxVisualState(self)
+end)
+frameSearch:SetScript("OnEditFocusGained", function(self)
+	updateSearchBoxVisualState(self)
+end)
+frameSearch:SetScript("OnTextChanged", function(self)
+	frame.searchText = self:GetText()
+	local listFrame = _G["DBM_GUI_OptionsFrameList"]
+	local scrollBar = _G[listFrame:GetName() .. "ListScrollBar"]
+	listFrame.offset = 0
+	scrollBar:SetValue(0)
+	frame:UpdateMenuFrame()
+	if DBM_GUI.currentViewing and frame.ApplySearchHighlights then
+		frame:ApplySearchHighlights(DBM_GUI.currentViewing)
+	end
+	updateSearchBoxVisualState(self)
+end)
+local frameSearchLabel = frame:CreateFontString("$parentSearchLabel", "ARTWORK", "GameFontDisableSmall")
+frameSearchLabel:SetPoint("RIGHT", frameSearch, "LEFT", -6, 0)
+frameSearchLabel:SetText(L.Search or "Search")
+updateSearchBoxVisualState(frameSearch)
+
 local hack = OptionsList_OnLoad
 function OptionsList_OnLoad(self, ...)
 	if self:GetName() ~= frame:GetName() .. "List" then
@@ -281,8 +391,8 @@ function OptionsList_OnLoad(self, ...)
 end
 
 local frameList = CreateFrame("Frame", "$parentList", frame, "OptionsFrameListTemplate")
-frameList:SetWidth(240)
-frameList:SetPoint("TOPLEFT", 22, -40)
+frameList:SetWidth(260)
+frameList:SetPoint("TOPLEFT", 22, -80)
 frameList:SetPoint("BOTTOMLEFT", frameWebsite, "TOPLEFT", 0, 5)
 frameList:SetScript("OnShow", function()
 	frame:UpdateMenuFrame()
@@ -293,7 +403,7 @@ frameList.buttons = {}
 for i = 1, math.floor(UIParent:GetHeight() / 18) do
 	local button = CreateFrame("Button", "$parentButton" .. i, frameList)
 	button:SetHeight(18)
-	button.text = button:CreateFontString("$parentText", "ARTWORK", "GameFontNormalSmall")
+	button.text = button:CreateFontString("$parentText", "ARTWORK", "GameFontNormal")
 	button:RegisterForClicks("LeftButtonUp")
 	button:SetScript("OnClick", function(self)
 		frame:ClearSelection()

@@ -405,7 +405,7 @@ do
 						DBM:PlayCountSound(1, value == 3 and DBM.Options.CountdownVoice3 or value == 2 and DBM.Options.CountdownVoice2 or DBM.Options.CountdownVoice)
 					end
 				end, 22, 25, button, L.DropdownCountVoice or "Count voice")
-				frame:SetPoint("LEFT", button, "RIGHT", -20, 2)
+				frame:SetPoint("LEFT", button, "RIGHT", -16, 2)
 				frame2:SetPoint("LEFT", frame, "RIGHT", 18, 0)
 				textPad = 37
 			elseif isAnnounce then
@@ -413,7 +413,7 @@ do
 					mod.Options[modvar .. "AColor"] = value
 				end, 22, 25, button, L.DropdownWarningColor or "Warning color")
 				frame:ClearAllPoints()
-				frame:SetPoint("LEFT", button, "RIGHT", -20, 2)
+				frame:SetPoint("LEFT", button, "RIGHT", -16, 2)
 				textPad = 37
 			else
 				frame = self:CreateDropdown(nil, sounds, mod, modvar .. "SWSound", function(value)
@@ -424,7 +424,7 @@ do
 					mod.Options[modvar .. "SWColor"] = value
 				end, 22, 25, button, L.DropdownSpecWarningColor or "Special warning color")
 				frame:ClearAllPoints()
-				frame:SetPoint("LEFT", button, "RIGHT", -20, 2)
+				frame:SetPoint("LEFT", button, "RIGHT", -16, 2)
 				frame2:SetPoint("LEFT", frame, "RIGHT", 18, 0)
 				textPad = 37
 				-- Per-spell flash toggle for this special warning line only.
