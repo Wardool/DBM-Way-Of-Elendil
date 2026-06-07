@@ -153,9 +153,7 @@ function ListFrameButtonsPrototype:GetFilteredTabs(searchText)
 
 	local childrenByParent = {}
 	local roots = {}
-	local entryByID = {}
 	for _, entry in ipairs(self.buttons) do
-		entryByID[entry.frame.ID] = entry
 		if entry.parentID then
 			if not childrenByParent[entry.parentID] then
 				childrenByParent[entry.parentID] = {}

@@ -106,6 +106,30 @@ local function setHighlightTexture(widget, show)
 	end
 end
 
+local function setAreaBackgroundHighlight(widget, show)
+	if not widget then
+		return
+	end
+	if show then
+		if not widget.dbmSearchAreaHighlight and widget.CreateTexture then
+			local hl = widget:CreateTexture(nil, "ARTWORK")
+			hl:SetTexture("Interface\\Buttons\\WHITE8x8")
+			hl:SetVertexColor(1.0, 0.82, 0.0, 0.22)
+			hl:SetBlendMode("ADD")
+			hl:SetPoint("TOPLEFT", widget, "TOPLEFT", 2, -2)
+			hl:SetPoint("BOTTOMRIGHT", widget, "BOTTOMRIGHT", -2, 2)
+			widget.dbmSearchAreaHighlight = hl
+		end
+		if widget.dbmSearchAreaHighlight then
+			widget.dbmSearchAreaHighlight:Show()
+		end
+	else
+		if widget.dbmSearchAreaHighlight then
+			widget.dbmSearchAreaHighlight:Hide()
+		end
+	end
+end
+
 function frame:ApplySearchHighlights(panelFrame)
 	if not panelFrame or not panelFrame.GetChildren then
 		return
@@ -116,8 +140,10 @@ function frame:ApplySearchHighlights(panelFrame)
 			local matched = query ~= "" and widgetOrChildrenMatch(child, query) or false
 			if child.mytype == "area" or child.mytype == "ability" then
 				if matched then
+					setAreaBackgroundHighlight(child, true)
 					child:SetBackdropBorderColor(1.0, 0.85, 0.2, 1)
 				else
+					setAreaBackgroundHighlight(child, false)
 					child:SetBackdropBorderColor(0.4, 0.4, 0.4)
 				end
 			else
