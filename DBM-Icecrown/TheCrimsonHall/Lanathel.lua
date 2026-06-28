@@ -1,12 +1,12 @@
 local mod	= DBM:NewMod("Lanathel", "DBM-Icecrown", 3)
 local L		= mod:GetLocalizedStrings()
 
-mod:SetRevision("20250929220131")
+mod:SetRevision("20260628231606")
 mod:SetCreatureID(37955)
 mod:SetEncounterID(853)
 mod:SetModelID("creature/bloodqueen/bloodqueen.m2")
 mod:SetUsedIcons(1, 2, 3, 4, 7)
-mod:SetMinSyncRevision(20220630221430)
+mod:SetMinSyncRevision(20260628231606)
 
 mod:RegisterCombat("combat")
 
@@ -14,8 +14,8 @@ mod:RegisterEventsInCombat(
 	"SPELL_AURA_APPLIED 71340 71510 70838 70877 71474 70867 70879 71473 71525 71530 71531 71532 71533 70923 71772",
 	"SPELL_AURA_REMOVED 71340 71510 70838 70877 71474",
 	"SPELL_CAST_SUCCESS 73070",
-	"SPELL_DAMAGE 71726 71727 71728 71729 71277 72638 72639 72640 72637",
-	"SPELL_MISSED 71726 71727 71728 71729 71277 72638 72639 72640 72637",
+	"SPELL_DAMAGE 71726 71727 71728 71729 71277 72638 72639 72640 72637 72635",
+	"SPELL_MISSED 71726 71727 71728 71729 71277 72638 72639 72640 72637 72635",
 	-- "SPELL_PERIODIC_DAMAGE",
 	-- "SPELL_PERIODIC_MISSED",
 	"CHAT_MSG_RAID_BOSS_EMOTE"
@@ -247,7 +247,7 @@ end
 function mod:SPELL_DAMAGE(sourceGUID, _, _, destGUID, destName, _, spellId, spellName)
 	if (spellId == 71726 or spellId == 71727 or spellId == 71728 or spellId == 71729) and self:GetCIDFromGUID(sourceGUID) == 37955 then	-- Vampiric Bite (first bite only, hers)
 		warnVampiricBite:Show(destName)
-	elseif (spellId == 71277 or spellId == 72638 or spellId == 72639 or spellId == 72640 or spellId == 72637) and destGUID == UnitGUID("player") and self:AntiSpam() then		--Swarming Shadows (spell damage, you're standing in it.)
+	elseif (spellId == 71277 or spellId == 72638 or spellId == 72639 or spellId == 72640 or spellId == 72637 or spellId == 72635) and destGUID == UnitGUID("player") and self:AntiSpam() then		--Swarming Shadows (spell damage, you're standing in it.)
 		specWarnGTFO:Show(spellName)
 		specWarnGTFO:Play("watchfeet")
 	end
