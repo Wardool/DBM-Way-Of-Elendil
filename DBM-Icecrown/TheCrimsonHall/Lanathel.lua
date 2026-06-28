@@ -61,7 +61,6 @@ mod:AddSetIconOption("SetIconOnDarkFallen", 71340, true, 0, {1, 2, 3})
 
 local essence = DBM:GetSpellInfoNew(70867)
 local pactTargets = {}
-local swarmingFallbackTarget
 local playerClass = select(2, UnitClass("player"))
 mod.vb.pactIcons = 1
 
@@ -83,7 +82,6 @@ local function warnUseDodgeSpell()
 end
 
 function mod:SwarmingShadowsTarget(targetname)
-	targetname = targetname or swarmingFallbackTarget
 	if not targetname then
 		return
 	end
@@ -100,7 +98,6 @@ function mod:SwarmingShadowsTarget(targetname)
 	if self.Options.SwarmingShadowsIcon then
 		self:SetIcon(targetname, 4, 6)
 	end
-	swarmingFallbackTarget = nil
 end
 
 local function warnPactTargets(self)
@@ -265,12 +262,12 @@ mod.SPELL_MISSED = mod.SPELL_DAMAGE
 -- end
 -- mod.SPELL_PERIODIC_MISSED = mod.SPELL_PERIODIC_DAMAGE
 
-function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg, _, _, _, target)
-	if msg:match(L.SwarmingShadows) and target then
-		swarmingFallbackTarget = DBM:GetUnitFullName(target)
+function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
+	local targetname = msg:match(L.SwarmingShadows)
+	if targetname then
 		timerNextSwarmingShadows:Start()
 		warnSwarmingShadowsSoon:Schedule(25.5)
 		warnSwarmingShadowsSoon:ScheduleVoice(25.5, "flamessoon")
-		self:ScheduleMethod(0.01, "BossTargetScanner", self.creatureId, "SwarmingShadowsTarget", 0.02, 8)
+		self:SwarmingShadowsTarget(targetname)
 	end
 end
