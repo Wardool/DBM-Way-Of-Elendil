@@ -379,7 +379,7 @@ local function StartNumbers_OnFinished(self)
 	timer.time = timer.time - 1
 
 	if timer.time > 0 then
-		if timer.time < TIMER_DATA[timer.type].largeMarker and not self.anchorCenter then
+		if timer.time < TIMER_DATA[timer.type].largeMarker and not timer.anchorCenter then
 			TT:SwitchToLargeDisplay(timer)
 		end
 
@@ -723,12 +723,49 @@ function TT:FreeTimerTrackerTimer(timer)
 	timer.type = nil
 	timer.isFree = true
 	timer.barShowing = false
+	timer.anchorCenter = false
 	timer:SetScript("OnUpdate", nil)
 	timer.FadeBarOut:Stop()
 	timer.FadeBarIn:Stop()
 	timer.StartNumbers:Stop()
+	timer.StartGlowNumbers:Stop()
 	timer.GoTextureAnim:Stop()
+	timer.GoTextureGlowAnim:Stop()
 	timer.StatusBar:Hide()
+	timer.GoFrame:SetAlpha(0)
+	timer.GoGlowFrame:SetAlpha(0)
+	timer.DigitFrame:SetAlpha(0)
+	timer.DigitGlowFrame:SetAlpha(0)
+	timer:Hide()
+end
+
+function TT:CancelPlayerCountdown()
+	local timerTrackerRunning = false
+	if not self.timerList then
+		return timerTrackerRunning
+	end
+	for _, timer in pairs(self.timerList) do
+		if not timer.isFree then
+			if timer.type == TIMER_TYPE_PLAYER_COUNTDOWN then
+				self:FreeTimerTrackerTimer(timer)
+			else
+				timerTrackerRunning = true
+			end
+		end
+	end
+	return timerTrackerRunning
+end
+
+function TT:StartPlayerCountdown(timeSeconds, hideStatusBar)
+	self:OnEvent("START_TIMER", TIMER_TYPE_PLAYER_COUNTDOWN, timeSeconds, timeSeconds)
+	if hideStatusBar and self.timerList then
+		for _, timer in pairs(self.timerList) do
+			if timer.type == TIMER_TYPE_PLAYER_COUNTDOWN and not timer.isFree then
+				timer.StatusBar:Hide()
+				break
+			end
+		end
+	end
 end
 
 function TT:OnEvent(event, ...)

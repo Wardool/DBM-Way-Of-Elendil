@@ -49,12 +49,23 @@ setmetatable(PanelPrototype, {
 	__index = DBM_GUI
 })
 
+local abilityTestContextByFrame = setmetatable({}, {__mode = "k"})
+
 function PanelPrototype:GetLastObj()
 	return self.lastobject
 end
 
 function PanelPrototype:SetLastObj(obj)
 	self.lastobject = obj
+end
+
+function PanelPrototype:SetAbilityTestContext(mod, spellKey)
+	if self and self.frame then
+		abilityTestContextByFrame[self.frame] = {
+			mod = mod,
+			spellKey = spellKey
+		}
+	end
 end
 
 function PanelPrototype:CreateCreatureModelFrame(width, height, creatureid, scale)
@@ -623,7 +634,73 @@ local function CreateTextureMarkup(file, fileWidth, fileHeight, width, height, l
 	)
 end
 
-function PanelPrototype:CreateAbility(titleText, icon)
+local function refreshCurrentViewingPanel()
+	local optionsFrame = _G["DBM_GUI_OptionsFrame"]
+	if DBM_GUI and DBM_GUI.currentViewing and optionsFrame and optionsFrame:IsShown() then
+		optionsFrame:DisplayFrame(DBM_GUI.currentViewing)
+	end
+end
+
+local function spellKeyMatchesObject(spellKey, objectSpellId)
+	if spellKey == nil or objectSpellId == nil then
+		return false
+	end
+	if spellKey == objectSpellId then
+		return true
+	end
+	if type(spellKey) == "string" then
+		local numericKey = tonumber(spellKey)
+		if numericKey and numericKey == objectSpellId then
+			return true
+		end
+		local encounterId = tonumber(spellKey:match("^[Ee][Jj](%d+)$"))
+		if encounterId and objectSpellId == -encounterId then
+			return true
+		end
+	elseif type(spellKey) == "number" and type(objectSpellId) == "string" then
+		local numericObjectSpell = tonumber(objectSpellId)
+		if numericObjectSpell and spellKey == numericObjectSpell then
+			return true
+		end
+	end
+	return false
+end
+
+local function triggerAbilityTestObjects(mod, spellKey)
+	if not mod or spellKey == nil then
+		return false
+	end
+	local foundObject = false
+	local testedTimer = false
+	for _, listName in ipairs({"timers", "specwarns", "announces"}) do
+		local list = mod[listName]
+		if type(list) == "table" then
+			for _, object in ipairs(list) do
+				if spellKeyMatchesObject(spellKey, object and object.spellId) then
+					if listName == "timers" then
+						if not testedTimer and object.Start then
+							object:Start(10, 1)
+							testedTimer = true
+							foundObject = true
+						end
+					elseif object.Show then
+						object:Show(1)
+						foundObject = true
+					end
+				end
+			end
+		end
+	end
+	return foundObject
+end
+
+local function fitButtonWidth(button, minimumWidth)
+	local fontString = button:GetFontString()
+	local textWidth = fontString and fontString:GetStringWidth() or 0
+	button:SetWidth(math.max(minimumWidth, textWidth + 16))
+end
+
+function PanelPrototype:CreateAbility(titleText, icon, renameSpellId)
 	local area = CreateFrame("Frame", "DBM_GUI_Option_" .. self:GetNewID(), self.frame, "OptionsBoxTemplate")
 	area.mytype = "ability"
 	area.hidden = not DBM.Options.AutoExpandSpellGroups
@@ -644,6 +721,64 @@ function PanelPrototype:CreateAbility(titleText, icon)
 	title:ClearAllPoints()
 	title:SetPoint("BOTTOMLEFT", area, "TOPLEFT", 20, 0)
 	title:SetFontObject("GameFontWhite")
+	if renameSpellId and renameSpellId > 5 then
+		local renameButton = CreateFrame("Button", area:GetName() .. "Rename", area, "UIPanelButtonTemplate")
+		renameButton:SetHeight(18)
+		renameButton:SetText(L.RenameSpellButton or "Rename")
+		fitButtonWidth(renameButton, 58)
+		renameButton:SetPoint("LEFT", title, "RIGHT", 8, 0)
+
+		local resetButton = CreateFrame("Button", area:GetName() .. "RenameReset", area, "UIPanelButtonTemplate")
+		resetButton:SetHeight(18)
+		resetButton:SetText(L.Reset)
+		fitButtonWidth(resetButton, 46)
+		resetButton:SetPoint("LEFT", renameButton, "RIGHT", 4, 0)
+
+		local testButton = CreateFrame("Button", area:GetName() .. "SpellTest", area, "UIPanelButtonTemplate")
+		testButton:SetHeight(18)
+		testButton:SetText(L.Test or "Test")
+		fitButtonWidth(testButton, 42)
+		testButton:SetPoint("LEFT", resetButton, "RIGHT", 4, 0)
+		testButton:SetScript("OnClick", function()
+			local context = abilityTestContextByFrame[area]
+			if not triggerAbilityTestObjects(context and context.mod, context and context.spellKey) then
+				DBM:AddMsg((L.Test or "Test") .. ": no warning/timer object found for spell key " .. tostring(context and context.spellKey))
+			end
+		end)
+
+		local function updateRenameUI()
+			local defaultText = DBM:GetSpellInfo(renameSpellId) or tostring(renameSpellId)
+			local effectiveText = DBM:GetRename(renameSpellId, defaultText) or defaultText
+			if icon then
+				title:SetText(CreateTextureMarkup(icon, 0, 0, 16, 16, 0, 0, 0, 0, 0, 0) .. effectiveText)
+			else
+				title:SetText(effectiveText)
+			end
+			if DBM.Options and type(DBM.Options.SpellRenames) == "table" and DBM.Options.SpellRenames[renameSpellId] then
+				resetButton:Enable()
+			else
+				resetButton:Disable()
+			end
+		end
+
+		renameButton:SetScript("OnClick", function()
+			local defaultText = DBM:GetSpellInfo(renameSpellId) or tostring(renameSpellId)
+			local currentText = DBM:GetRename(renameSpellId, defaultText) or ""
+			DBM:ShowTextEditor((L.RenameSpellHeader or "Set custom name for %s"):format(defaultText), currentText, function(text)
+				DBM:SetRename(renameSpellId, text)
+				updateRenameUI()
+				refreshCurrentViewingPanel()
+			end)
+		end)
+
+		resetButton:SetScript("OnClick", function()
+			DBM:SetRename(renameSpellId, nil)
+			updateRenameUI()
+			refreshCurrentViewingPanel()
+		end)
+		resetButton:SetScript("OnShow", updateRenameUI)
+		updateRenameUI()
+	end
 	-- Button
 	local button = CreateFrame("Button", area:GetName() .. "Button", area, "OptionsListButtonTemplate")
 	button:ClearAllPoints()

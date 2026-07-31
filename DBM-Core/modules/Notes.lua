@@ -71,10 +71,16 @@ local function CreateOurFrame()
 	button:SetHighlightTexture(button:CreateTexture(nil, nil, "UIPanelButtonHighlightTexture"))
 	button:SetText(OKAY)
 	button:SetScript("OnClick", function(self)
-		frame.mod.Options[frame.modvar .. "SWNote"] = editBox:GetText() or ""
+		local text = editBox:GetText() or ""
+		if frame.customApply then
+			frame.customApply(text)
+		elseif frame.mod and frame.modvar then
+			frame.mod.Options[frame.modvar .. "SWNote"] = text
+		end
 		frame.mod = nil
 		frame.modvar = nil
 		frame.abilityName = nil
+		frame.customApply = nil
 		frame:Hide()
 	end)
 	local button2 = CreateFrame("Button", nil, frame)
@@ -91,6 +97,7 @@ local function CreateOurFrame()
 		frame.mod = nil
 		frame.modvar = nil
 		frame.abilityName = nil
+		frame.customApply = nil
 		frame:Hide()
 	end)
 	button3 = CreateFrame("Button", nil, frame)
@@ -137,6 +144,7 @@ function DBM:ShowNoteEditor(mod, modvar, abilityName, syncText, sender)
 	frame.mod = mod
 	frame.modvar = modvar
 	frame.abilityName = abilityName
+	frame.customApply = nil
 	if syncText then
 		button3:Hide()--Don't show share button in shared notes
 		fontstring:SetText(L.NOTESHAREDHEADER:format(sender, abilityName))
@@ -150,4 +158,19 @@ function DBM:ShowNoteEditor(mod, modvar, abilityName, syncText, sender)
 			editBox:SetText("")
 		end
 	end
+end
+
+function DBM:ShowTextEditor(headerText, initialText, onAccept)
+	if not frame then
+		CreateOurFrame()
+	end
+	frame:Show()
+	frame.mod = nil
+	frame.modvar = nil
+	frame.abilityName = nil
+	frame.customApply = onAccept
+	button3:Hide()
+	fontstring:SetText(headerText or "")
+	editBox:SetText(initialText or "")
+	editBox:SetFocus()
 end

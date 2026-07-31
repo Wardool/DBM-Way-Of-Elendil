@@ -422,10 +422,12 @@ function DBM_GUI:CreateBossModPanel(mod)
 				panel:CreateLine(options)
 			else
 				local title, desc, _, icon
+				local renameSpellId
 				if tonumber(spellID) then
 					local _title = DBM:GetSpellInfo(spellID)
 					if _title then
-						title, desc, icon = _title, tonumber(spellID), select(3, GetSpellInfo(spellID))
+						title, desc, icon = DBM:GetRename(spellID, _title), tonumber(spellID), select(3, GetSpellInfo(spellID))
+						renameSpellId = tonumber(spellID)
 					else--Not a valid spellid (Such as a ptr/beta mod loaded on live
 						title, desc, icon = spellID, L.NoDescription, "Interface\\Icons\\Spell_Nature_WispSplode"
 					end
@@ -437,7 +439,8 @@ function DBM_GUI:CreateBossModPanel(mod)
 				else
 					title = spellID
 				end
-				local catpanel = panel:CreateAbility(title, icon)
+				local catpanel = panel:CreateAbility(title, icon, renameSpellId)
+				catpanel:SetAbilityTestContext(mod, spellID)
 				if desc then
 					catpanel:CreateSpellDesc(desc)
 				end

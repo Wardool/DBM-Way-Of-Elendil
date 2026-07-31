@@ -38,6 +38,9 @@ L.Button_LoadMod					= "Load AddOn"
 L.Mod_Enabled						= "Enable boss mod"
 L.Mod_Reset							= "Load default options"
 L.Reset								= "Reset"
+L.RenameSpellButton					= "Rename"
+L.RenameSpellHeader					= "Set custom name for %s"
+L.Test								= "Test"
 L.Import							= "Import"
 
 L.Enable							= ENABLE

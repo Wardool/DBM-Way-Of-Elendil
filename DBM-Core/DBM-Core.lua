@@ -230,8 +230,8 @@ DBM.DefaultOptions = {
 	HideTooltips = false,
 	DisableSFX = false,
 	EnableModels = true,
-	GUIWidth = 800,
-	GUIHeight = 600,
+	GUIWidth = 1000,
+	GUIHeight = 800,
 	GroupOptionsBySpell = true,
 	GroupOptionsExcludeIcon = false,
 	AutoExpandSpellGroups = false,
@@ -396,6 +396,7 @@ DBM.DefaultOptions = {
 	AITimer = true,
 	ShortTimerText = true,
 	ChatFrame = "DEFAULT_CHAT_FRAME",
+	SpellRenames = false,
 	CoreSavedRevision = 1,
 	SilentMode = false,
 	ReportRecount = false,
@@ -1612,6 +1613,7 @@ function DBM:CreateProfile(name)
 	DBM_AllSavedOptions[usedProfile] = DBM_AllSavedOptions[usedProfile] or {}
 	self:AddDefaultOptions(DBM_AllSavedOptions[usedProfile], self.DefaultOptions)
 	self.Options = DBM_AllSavedOptions[usedProfile]
+	self:RefreshSpellRenames()
 	-- rearrange position
 	DBT:CreateProfile("DBM")
 	self:RepositionFrames()
@@ -1627,6 +1629,7 @@ function DBM:ApplyProfile(name)
 	DBM_UsedProfile = usedProfile
 	self:AddDefaultOptions(DBM_AllSavedOptions[usedProfile], self.DefaultOptions)
 	self.Options = DBM_AllSavedOptions[usedProfile]
+	self:RefreshSpellRenames()
 	-- rearrange position
 	DBT:ApplyProfile("DBM")
 	self:RepositionFrames()
@@ -1644,6 +1647,7 @@ function DBM:CopyProfile(name)
 	DBM_AllSavedOptions[usedProfile] = DBM_AllSavedOptions[name]
 	self:AddDefaultOptions(DBM_AllSavedOptions[usedProfile], self.DefaultOptions)
 	self.Options = DBM_AllSavedOptions[usedProfile]
+	self:RefreshSpellRenames()
 	-- rearrange position
 	DBT:CopyProfile(name, "DBM", true)
 	self:RepositionFrames()
@@ -1666,6 +1670,8 @@ function DBM:DeleteProfile(name)
 	if not self.Options then
 		-- the default profile got lost somehow (maybe WoW crashed and the saved variables file got corrupted)
 		self:CreateProfile("Default")
+	else
+		self:RefreshSpellRenames()
 	end
 	-- rearrange position
 	DBT:DeleteProfile(name, "DBM")
@@ -2851,9 +2857,10 @@ do
 			DBM_AllSavedOptions[usedProfile] = DBM_SavedOptions
 		end
 		self.Options = DBM_AllSavedOptions[usedProfile] or {}
-		self:Enable()
-		self:AddDefaultOptions(self.Options, self.DefaultOptions)
-		DBM_AllSavedOptions[usedProfile] = self.Options
+	self:Enable()
+	self:AddDefaultOptions(self.Options, self.DefaultOptions)
+	self:RefreshSpellRenames()
+	DBM_AllSavedOptions[usedProfile] = self.Options
 
 		-- force enable dual profile (change default)
 		--[[ Custom edit: disabled override, since having this as true requires user to know how mod profiles work and wonder why the mod profile they had previously configured is not "working"
@@ -3608,21 +3615,16 @@ do
 				dummyMod.geartext = dummyMod:NewSpecialWarning("  %s  ", nil, nil, nil, 3)
 				dummyMod.timer = dummyMod:NewTimer(20, "%s", "Interface\\Icons\\Ability_Warrior_OffensiveStance", nil, nil, 0, nil, nil, DBM.Options.DontPlayPTCountdown and 0 or 4, threshold, nil, nil, nil, nil, nil, nil, "pull")
 			end
+			if sender ~= playerName then
+				DBM:Unschedule(SendChatMessage) -- cancel locally scheduled pull announcements when another player replaces the previous one
+			end
 			--Cancel any existing pull timers before creating new ones, we don't want double countdowns or mismatching blizz countdown text (cause you can't call another one if one is in progress)
 			if not DBM.Options.DontShowPT2 then--and DBT:GetBar(L.TIMER_PULL)
 				dummyMod.timer:Stop()
 			end
 			local timerTrackerRunning = false
 			if not DBM.Options.DontShowPTCountdownText and TT then
-				for _, tttimer in pairs(TT.timerList) do
-					if not tttimer.isFree then--Timer event running
-						if tttimer.type == 3 then--Its a pull timer event, this is one we cancel before starting a new pull timer
-							TT:FreeTimerTrackerTimer(tttimer)
-						else--Verify that a TimerTracker event NOT started by DBM isn't running, if it is, prevent executing new TimerTracker events below
-							timerTrackerRunning = true
-						end
-					end
-				end
+				timerTrackerRunning = TT:CancelPlayerCountdown()
 			end
 			dummyMod.text:Cancel()
 			if timer == 0 then return end--"/dbm pull 0" will strictly be used to cancel the pull timer (which is why we let above part of code run but not below)
@@ -3633,19 +3635,8 @@ do
 			end
 			if not DBM.Options.DontShowPTCountdownText and TT then
 				if not timerTrackerRunning then--if a TimerTracker event is running not started by DBM, block creating one of our own (object gets buggy if it has 2+ events running)
-					--Start A TimerTracker timer using the new countdown type 3 type (ie what C_PartyInfo.DoCountdown triggers, but without sending it to entire group)
-					TT:OnEvent("START_TIMER", 3, timer, timer)
-					--Find the timer object DBM just created and hack our own changes into it.
-					for _, tttimer in pairs(TT.timerList) do
-						if tttimer.type == 3 and not tttimer.isFree then
-							--We don't want the PVP bar, we only want timer text
-							if timer > 10 then
-								--b.startNumbers:Play()
-								tttimer.StatusBar:Hide()
-							end
-							break
-						end
-					end
+					--Start a TimerTracker player countdown and optionally hide its bar.
+					TT:StartPlayerCountdown(timer, timer > 10)
 				end
 			end
 			if not DBM.Options.DontShowPTText then
@@ -5121,13 +5112,8 @@ do
 				if dummyMod then--stop pull timer
 					dummyMod.text:Cancel()
 					dummyMod.timer:Stop()
-					if not self.Options.DontShowPTCountdownText then
-						for _, tttimer in pairs(TT.timerList) do
-							if tttimer.type == 3 and not tttimer.isFree then
-								TT:FreeTimerTrackerTimer(tttimer)
-								break
-							end
-						end
+					if not self.Options.DontShowPTCountdownText and TT then
+						TT:CancelPlayerCountdown()
 					end
 					DBM:Unschedule(SendChatMessage) -- unschedule chat spam on pull
 				end
@@ -5990,6 +5976,173 @@ function DBM:GetSpellInfo(spellId)
 		return nil
 	else--Good request, return now
 		return name, rank, icon, cost, isFunnel, powerType, castingTime, minRange, maxRange
+	end
+end
+
+do
+	local legacyAltSpellNamesBySpellId = {}
+	local defaultSpellRenamesBySpellId = {}
+	local effectiveSpellRenamesBySpellId = {}
+	local spellRenameCacheDirty = true
+	DBM.spellRenameRevision = DBM.spellRenameRevision or 0
+
+	local function trimSpellRenameText(text)
+		text = text:gsub("^%s+", "")
+		text = text:gsub("%s+$", "")
+		return text
+	end
+
+	local function sanitizeSpellRenameText(text)
+		if type(text) ~= "string" then
+			return nil
+		end
+		text = trimSpellRenameText(text)
+		-- Remove the old short-text suffix used by legacy timer definitions.
+		text = text:gsub("%s*%(%s*%%s%s*%)%s*$", "")
+		text = trimSpellRenameText(text)
+		return text ~= "" and text or nil
+	end
+
+	local function normalizeSpellRenameKey(spellId)
+		if type(spellId) == "number" then
+			return spellId
+		elseif type(spellId) ~= "string" then
+			return nil
+		end
+		local numericKey = tonumber(spellId)
+		if numericKey then
+			return numericKey
+		end
+		local encounterId = tonumber(spellId:match("^[Ee][Jj](%d+)$"))
+		return encounterId and -encounterId or nil
+	end
+
+	local function isValidSpellRenameKey(spellId)
+		return type(spellId) == "number" and (spellId > 5 or spellId < 0)
+	end
+
+	local function getSpellRenameOverrides()
+		if type(DBM.Options) ~= "table" then
+			return nil
+		end
+		if type(DBM.Options.SpellRenames) ~= "table" then
+			DBM.Options.SpellRenames = {}
+		end
+		return DBM.Options.SpellRenames
+	end
+
+	local function rebuildSpellRenameCache()
+		twipe(effectiveSpellRenamesBySpellId)
+		for spellId, rename in pairs(legacyAltSpellNamesBySpellId) do
+			effectiveSpellRenamesBySpellId[spellId] = rename
+		end
+		for spellId, rename in pairs(defaultSpellRenamesBySpellId) do
+			effectiveSpellRenamesBySpellId[spellId] = rename
+		end
+		local overrides = getSpellRenameOverrides()
+		if overrides then
+			for spellId, rename in pairs(overrides) do
+				local normalizedSpellId = normalizeSpellRenameKey(spellId)
+				local sanitizedRename = sanitizeSpellRenameText(rename)
+				if isValidSpellRenameKey(normalizedSpellId) and sanitizedRename then
+					effectiveSpellRenamesBySpellId[normalizedSpellId] = sanitizedRename
+				end
+			end
+		end
+		spellRenameCacheDirty = false
+	end
+
+	local function refreshSpellRenameCache(incrementRevision)
+		spellRenameCacheDirty = true
+		rebuildSpellRenameCache()
+		if incrementRevision then
+			DBM.spellRenameRevision = (DBM.spellRenameRevision or 0) + 1
+		end
+	end
+
+	function DBM:GetSpellRenameRevision()
+		return DBM.spellRenameRevision or 0
+	end
+	bossModPrototype.GetSpellRenameRevision = DBM.GetSpellRenameRevision
+
+	function DBM:SanitizeSpellRename(text)
+		return sanitizeSpellRenameText(text)
+	end
+	bossModPrototype.SanitizeSpellRename = DBM.SanitizeSpellRename
+
+	function DBM:AddRename(spellId, renameString)
+		spellId = normalizeSpellRenameKey(spellId)
+		renameString = sanitizeSpellRenameText(renameString)
+		if not isValidSpellRenameKey(spellId) or not renameString then
+			return
+		end
+		if not defaultSpellRenamesBySpellId[spellId] then
+			defaultSpellRenamesBySpellId[spellId] = renameString
+			refreshSpellRenameCache(true)
+		end
+	end
+	bossModPrototype.AddRename = DBM.AddRename
+
+	function DBM:SetRename(spellId, renameString)
+		spellId = normalizeSpellRenameKey(spellId)
+		if not isValidSpellRenameKey(spellId) then
+			return
+		end
+		local overrides = getSpellRenameOverrides()
+		if not overrides then
+			return
+		end
+		renameString = sanitizeSpellRenameText(renameString)
+		if renameString then
+			overrides[spellId] = renameString
+		else
+			overrides[spellId] = nil
+		end
+		refreshSpellRenameCache(true)
+	end
+	bossModPrototype.SetRename = DBM.SetRename
+
+	function DBM:GetRename(spellId, fallbackName)
+		spellId = normalizeSpellRenameKey(spellId)
+		if not isValidSpellRenameKey(spellId) then
+			return fallbackName
+		end
+		if spellRenameCacheDirty then
+			rebuildSpellRenameCache()
+		end
+		return effectiveSpellRenamesBySpellId[spellId] or fallbackName
+	end
+	bossModPrototype.GetRename = DBM.GetRename
+
+	function DBM:GetRenameDefault(spellId)
+		spellId = normalizeSpellRenameKey(spellId)
+		return isValidSpellRenameKey(spellId) and defaultSpellRenamesBySpellId[spellId] or nil
+	end
+	bossModPrototype.GetRenameDefault = DBM.GetRenameDefault
+
+	function DBM:RefreshSpellRenames()
+		refreshSpellRenameCache(false)
+	end
+	bossModPrototype.RefreshSpellRenames = DBM.RefreshSpellRenames
+
+	function DBM:NormalizeSpellRenameKey(spellId)
+		spellId = normalizeSpellRenameKey(spellId)
+		return isValidSpellRenameKey(spellId) and spellId or nil
+	end
+	bossModPrototype.NormalizeSpellRenameKey = DBM.NormalizeSpellRenameKey
+
+	-- Compatibility API used by external addons such as Plater.
+	function DBM:RegisterAltSpellName(spellId, altName)
+		spellId = normalizeSpellRenameKey(spellId)
+		altName = sanitizeSpellRenameText(altName)
+		if isValidSpellRenameKey(spellId) and altName and not legacyAltSpellNamesBySpellId[spellId] then
+			legacyAltSpellNamesBySpellId[spellId] = altName
+			refreshSpellRenameCache(false)
+		end
+	end
+
+	function DBM:GetAltSpellName(spellId)
+		return DBM:GetRename(spellId)
 	end
 end
 
@@ -8181,12 +8334,13 @@ do
 	local cachedColorFunctions = setmetatable({}, {__mode = "kv"})
 
 	local function setText(announceType, spellId, castTime, preWarnTime, customName, originalSpellID)
-		local spellName
+		local spellName, baseSpellName
 		if customName then
-			spellName = customName
+			baseSpellName = customName
 		else
-			spellName = (spellId or 0) >= 6 and DBM:GetSpellInfo(spellId) or CL.UNKNOWN
+			baseSpellName = (spellId or 0) >= 6 and DBM:GetSpellInfo(spellId) or CL.UNKNOWN
 		end
+		spellName = DBM:GetRename(originalSpellID or spellId, baseSpellName)
 		local text
 		if announceType == "cast" then
 			local spellHaste = select(7, DBM:GetSpellInfo(53142)) / 10000 -- 53142 = Dalaran Portal, should have 10000 ms cast time
@@ -8209,9 +8363,10 @@ do
 	end
 
 	function announcePrototype:SetText(customName)
-		local text, spellName = setText(self.announceType, self.spellId, self.castTime, self.preWarnTime, customName)
+		local text, spellName = setText(self.announceType, self.alternateSpellId or self.spellId, self.castTime, self.preWarnTime, customName, self.spellId)
 		self.text = text
 		self.spellName = spellName
+		self.renameRevision = DBM:GetSpellRenameRevision()
 	end
 
 	-- TODO: this function is an abomination, it needs to be rewritten. Also: check if these work-arounds are still necessary
@@ -8219,6 +8374,9 @@ do
 		if not self.option or self.mod.Options[self.option] then
 			if DBM.Options.DontShowBossAnnounces then return end	-- don't show the announces if the spam filter option is set
 			if DBM.Options.DontShowTargetAnnouncements and (self.announceType == "target" or self.announceType == "targetdistance" or self.announceType == "targetcount" or self.announceType == "targetcountdistance") and not self.noFilter then return end--don't show announces that are generic target announces
+			if self.announceType and self.renameRevision ~= DBM:GetSpellRenameRevision() then
+				self:SetText()
+			end
 			local argTable = {...}
 			local announceColor = self.color
 			local colorId = self.option and self.mod.Options[self.option.."AColor"] or nil
@@ -8446,6 +8604,13 @@ do
 			soundOption = 0--No Sound
 		end
 		local text, spellName = setText(announceType, alternateSpellId or spellId, castTime, preWarnTime, nil, spellId)
+		if alternateSpellId then
+			local alternateSpellName = DBM:GetSpellInfo(alternateSpellId)
+			if alternateSpellName then
+				DBM:RegisterAltSpellName(spellId, alternateSpellName)
+				DBM:AddRename(spellId, alternateSpellName)
+			end
+		end
 		icon = icon or spellId
 		local obj = setmetatable( -- todo: fix duplicate code
 			{
@@ -8460,6 +8625,8 @@ do
 				type = announceType,
 				spellId = spellId,
 				spellName = spellName,
+				alternateSpellId = alternateSpellId,
+				renameRevision = DBM:GetSpellRenameRevision(),
 				noFilter = noFilter,
 				castTime = castTime,
 				preWarnTime = preWarnTime,
@@ -9201,13 +9368,14 @@ do
 		["reflect"] = "target",
 	}
 
-	local function setText(announceType, spellId, stacks, customName)
+	local function setText(announceType, spellId, stacks, customName, originalSpellID)
 		local text, spellName
 		if customName then
 			spellName = customName
 		else
 			spellName = (spellId or 0) >= 6 and DBM:GetSpellInfo(spellId) or CL.UNKNOWN
 		end
+		spellName = DBM:GetRename(originalSpellID or spellId, spellName)
 		if announceType == "prewarn" then
 			if type(stacks) == "string" then
 				text = L.AUTO_SPEC_WARN_TEXTS[announceType]:format(spellName, stacks)
@@ -9226,9 +9394,10 @@ do
 	end
 
 	function specialWarningPrototype:SetText(customName)
-		local text, spellName = setText(self.announceType, self.spellId, self.stacks, customName)
+		local text, spellName = setText(self.announceType, self.alternateSpellId or self.spellId, self.stacks, customName, self.spellId)
 		self.text = text
 		self.spellName = spellName
+		self.renameRevision = DBM:GetSpellRenameRevision()
 	end
 
 	local function canVoiceReplace(self, soundId)
@@ -9266,6 +9435,9 @@ do
 	function specialWarningPrototype:Show(...)
 		--Check if option for this warning is even enabled
 		if (not self.option or self.mod.Options[self.option]) and not moving and frame then
+			if self.announceType and self.renameRevision ~= DBM:GetSpellRenameRevision() then
+				self:SetText()
+			end
 			--Now, check if all special warning filters are enabled to save cpu and abort immediately if true.
 			if DBM.Options.DontPlaySpecialWarningSound and DBM.Options.DontShowSpecialWarningFlash and DBM.Options.DontShowSpecialWarningText then return end
 			--Next, we check if trash mod warning and if so check the filter trash warning filter for trivial difficulties
@@ -9605,7 +9777,14 @@ do
 			end
 			optionName = nil
 		end
-		local text, spellName = setText(announceType, alternateSpellId or spellId, stacks)
+		local text, spellName = setText(announceType, alternateSpellId or spellId, stacks, nil, spellId)
+		if alternateSpellId then
+			local alternateSpellName = DBM:GetSpellInfo(alternateSpellId)
+			if alternateSpellName then
+				DBM:RegisterAltSpellName(spellId, alternateSpellName)
+				DBM:AddRename(spellId, alternateSpellName)
+			end
+		end
 		local obj = setmetatable( -- todo: fix duplicate code
 			{
 				text = text,
@@ -9620,6 +9799,8 @@ do
 				type = announceType,
 				spellId = spellId,
 				spellName = spellName,
+				alternateSpellId = alternateSpellId,
+				renameRevision = DBM:GetSpellRenameRevision(),
 				stacks = stacks,
 				icon = select(3, GetSpellInfo(spellId))
 			},
@@ -10331,7 +10512,7 @@ do
 			msg = pformat(self.mod:GetLocalizedTimerText(self.type, self.spellId, self.name), ...)
 		else
 			if type(self.text) == "number" then--spellId passed in timer text, it's a timer with short text
-				msg = pformat(self.mod:GetLocalizedTimerText(self.type, self.text, self.name), ...)
+				msg = pformat(self.mod:GetLocalizedTimerText(self.type, self.spellId or self.text, self.name), ...)
 			else
 				msg = pformat(self.text, ...)
 			end
@@ -10914,8 +11095,17 @@ do
 			if DBM.Options.ShortTimerText and type(timerText) == "number" then
 				timerTextValue = timerText
 				spellName = DBM:GetSpellInfo(timerText or 0)--Override Cached spell Name
+				DBM:RegisterAltSpellName(spellId, spellName)
+				DBM:AddRename(spellId, spellName)
 			else
-				timerTextValue = self.localization.timers[timerText] or timerText--Check timers table first, otherwise accept it as literal timer text
+				timerTextValue = self.localization.timers[timerText]
+				if spellId and not timerTextValue and type(timerText) == "string" then
+					local trimmedText = DBM:SanitizeSpellRename(timerText)
+					if trimmedText then
+						DBM:RegisterAltSpellName(spellId, trimmedText)
+						DBM:AddRename(spellId, trimmedText)
+					end
+				end
 			end
 		end
 		local id = "Timer" .. (spellId or 0) .. timerType .. (optionVersion or "")
@@ -11152,6 +11342,9 @@ do
 			if spellName then
 				self.name = spellName
 			end
+		end
+		if spellId then
+			spellName = DBM:GetRename(spellId, spellName)
 		end
 		if L.AUTO_TIMER_TEXTS[timerType.."short"] and DBT.Options.StripCDText then
 			return pformat(L.AUTO_TIMER_TEXTS[timerType.."short"], spellName)
