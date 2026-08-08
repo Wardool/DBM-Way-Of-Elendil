@@ -802,8 +802,9 @@ function barPrototype:Pause()
 	self.flashing = nil
 	self.ftimer = nil
 	self:Update(0)
+	local keepEnlarged = DBT.Options.BarStyle == "NoAnim" and self.enlarged
 	self.paused = true
-	self:ResetAnimations() -- Forces paused bar into small bars so they don't clutter huge bars anchor
+	self:ResetAnimations(keepEnlarged)
 	DBT:UpdateBars(true)
 end
 
@@ -862,14 +863,21 @@ function barPrototype:SetVariance()
 	local varianceTex = _G[frame_name.."BarVariance"]
 	local varianceTexBorder = _G[frame_name.."BarVarianceBorder"]
 	if DBT.Options.VarianceEnabled and self.hasVariance then
-		local varianceWidth = self.frame:GetWidth() * (self.varianceDuration / self.totalTime)
+		local isEnlarged = self.enlarged
+		local varianceScaleTime = self.totalTime
+		local enlargeEnabled = DBT.Options.HugeBarsEnabled
+		local enlargeHack = self.dummyEnlarge or self.colorType == 7 and DBT.Options.Bar7ForceLarge and enlargeEnabled
+		if isEnlarged and enlargeEnabled and not self.small and not self.huge and not enlargeHack and DBT.Options.BarStyle == "NoAnim" then
+			local enlargeRebaseTime = (DBT.Options.EnlargeBarTime or 11) + self.varianceDuration
+			varianceScaleTime = type(self.totalTime) == "number" and self.totalTime < enlargeRebaseTime and self.totalTime or enlargeRebaseTime
+		end
+		local varianceWidth = type(varianceScaleTime) == "number" and varianceScaleTime > 0 and self.frame:GetWidth() * (self.varianceDuration / varianceScaleTime) or 0
 		varianceTex:SetWidth(varianceWidth)
 
 		-- change SetPoints based on fillUpBars
 		local bar = _G[frame_name.."Bar"]
 		varianceTex:ClearAllPoints()
 		varianceTexBorder:ClearAllPoints()
-		local isEnlarged = self.enlarged and not self.paused
 		local fillUpBars = isEnlarged and DBT.Options.FillUpLargeBars or not isEnlarged and DBT.Options.FillUpBars
 
 		if fillUpBars then
@@ -937,6 +945,8 @@ function barPrototype:Update(elapsed)
 	local timerValue = self.timer
 	local timerLowestValueFromVariance = self.hasVariance and self.varianceDuration and timerValue - self.varianceDuration or timerValue
 	local totaltimeValue = self.totalTime
+	local timerProgress = type(totaltimeValue) == "number" and totaltimeValue > 0 and timerValue / totaltimeValue or 0
+	timerProgress = timerProgress < 0 and 0 or timerProgress > 1 and 1 or timerProgress
 	local barOptions = DBT.Options
 	local currentStyle = barOptions.BarStyle
 	local sparkEnabled = barOptions.Spark
@@ -946,7 +956,7 @@ function barPrototype:Update(elapsed)
 	local enlargeEnabled = DBT.Options.HugeBarsEnabled
 	local enlargeHack = self.dummyEnlarge or colorCount == 7 and barOptions.Bar7ForceLarge and enlargeEnabled
 	local enlargeTime = barOptions.EnlargeBarTime or 11
-	local isEnlarged = self.enlarged and not paused
+	local isEnlarged = self.enlarged
 	local fillUpBars = isEnlarged and barOptions.FillUpLargeBars or not isEnlarged and barOptions.FillUpBars
 	local ExpandUpwards = isEnlarged and barOptions.ExpandUpwardsLarge or not isEnlarged and barOptions.ExpandUpwards
 	local varianceEnabled = barOptions.VarianceEnabled
@@ -962,9 +972,9 @@ function barPrototype:Update(elapsed)
 				g = isEnlarged and barOptions["EndColor"..colorVar.."G"] or barOptions["StartColor"..colorVar.."G"]
 				b = isEnlarged and barOptions["EndColor"..colorVar.."B"] or barOptions["StartColor"..colorVar.."B"]
 			else
-				r = barOptions["StartColor"..colorVar.."R"] + (barOptions["EndColor"..colorVar.."R"] - barOptions["StartColor"..colorVar.."R"]) * (1 - timerValue/totaltimeValue)
-				g = barOptions["StartColor"..colorVar.."G"] + (barOptions["EndColor"..colorVar.."G"] - barOptions["StartColor"..colorVar.."G"]) * (1 - timerValue/totaltimeValue)
-				b = barOptions["StartColor"..colorVar.."B"] + (barOptions["EndColor"..colorVar.."B"] - barOptions["StartColor"..colorVar.."B"]) * (1 - timerValue/totaltimeValue)
+				r = barOptions["StartColor"..colorVar.."R"] + (barOptions["EndColor"..colorVar.."R"] - barOptions["StartColor"..colorVar.."R"]) * (1 - timerProgress)
+				g = barOptions["StartColor"..colorVar.."G"] + (barOptions["EndColor"..colorVar.."G"] - barOptions["StartColor"..colorVar.."G"]) * (1 - timerProgress)
+				b = barOptions["StartColor"..colorVar.."B"] + (barOptions["EndColor"..colorVar.."B"] - barOptions["StartColor"..colorVar.."B"]) * (1 - timerProgress)
 			end
 		else
 			if barOptions.NoBarFade then
@@ -972,9 +982,9 @@ function barPrototype:Update(elapsed)
 				g = isEnlarged and barOptions.EndColorG or barOptions.StartColorG
 				b = isEnlarged and barOptions.EndColorB or barOptions.StartColorB
 			else
-				r = barOptions.StartColorR + (barOptions.EndColorR - barOptions.StartColorR) * (1 - timerValue/totaltimeValue)
-				g = barOptions.StartColorG + (barOptions.EndColorG - barOptions.StartColorG) * (1 - timerValue/totaltimeValue)
-				b = barOptions.StartColorB + (barOptions.EndColorB - barOptions.StartColorB) * (1 - timerValue/totaltimeValue)
+				r = barOptions.StartColorR + (barOptions.EndColorR - barOptions.StartColorR) * (1 - timerProgress)
+				g = barOptions.StartColorG + (barOptions.EndColorG - barOptions.StartColorG) * (1 - timerProgress)
+				b = barOptions.StartColorB + (barOptions.EndColorB - barOptions.StartColorB) * (1 - timerProgress)
 			end
 		end
 		if not enlargeEnabled and timerValue > enlargeTime then
@@ -988,20 +998,17 @@ function barPrototype:Update(elapsed)
 	if timerValue <= 0 and not (barOptions.KeepBars and self.keep) and not (varianceBehaviorNeg and self.varianceDuration and (timerValue < -self.varianceDuration)) then
 		return self:Cancel()
 	else
-		if fillUpBars then
-			if currentStyle == "NoAnim" and timerValue <= enlargeTime and not enlargeHack and not self.varianceDuration then
-				-- Simple/NoAnim Bar mimics BW in creating a new bar on large bar anchor instead of just moving the small bar
-				bar:SetValue(1 - timerValue/(totaltimeValue < enlargeTime and totaltimeValue or enlargeTime))
-			else
-				bar:SetValue(1 - timerValue/totaltimeValue)
-			end
+		if currentStyle == "NoAnim" and isEnlarged and enlargeEnabled and not self.small and not self.huge and not enlargeHack then
+			-- Simple/NoAnim Bar mimics BW in creating a new bar on large bar anchor instead of just moving the small bar
+			local enlargeRebaseTime = enlargeTime + (varianceEnabled and self.hasVariance and self.varianceDuration or 0)
+			local visualDuration = type(totaltimeValue) == "number" and totaltimeValue < enlargeRebaseTime and totaltimeValue or enlargeRebaseTime
+			local visualValue = visualDuration > 0 and timerValue / visualDuration or 0
+			visualValue = visualValue < 0 and 0 or visualValue > 1 and 1 or visualValue
+			bar:SetValue(fillUpBars and 1 - visualValue or visualValue)
+		elseif fillUpBars then
+			bar:SetValue(1 - timerProgress)
 		else
-			if currentStyle == "NoAnim" and timerValue <= enlargeTime and not enlargeHack and not self.varianceDuration then
-				-- Simple/NoAnim Bar mimics BW in creating a new bar on large bar anchor instead of just moving the small bar
-				bar:SetValue(timerValue/(totaltimeValue < enlargeTime and totaltimeValue or enlargeTime))
-			else
-				bar:SetValue(timerValue/totaltimeValue)
-			end
+			bar:SetValue(timerProgress)
 		end
 		timer:SetText(stringFromTimer(timerCorrectedNegative))
 	end
