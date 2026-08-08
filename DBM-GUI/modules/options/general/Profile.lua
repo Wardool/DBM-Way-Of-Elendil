@@ -78,7 +78,7 @@ local function actuallyImport(importTable)
 		LibStub("LibDBIcon-1.0"):Show("DBM")
 	end
 	DBT:SetOption("Skin", DBT.Options.Skin) -- Forces a hard update on bars.
-	DBM:AddMsg("Profile imported.")
+	DBM:AddMsg(L.ProfileImported)
 end
 
 local importExportProfilesArea = profilePanel:CreateArea(L.Area_ImportExportProfile)
@@ -106,6 +106,15 @@ local localeTable = {
 }
 local importProfile = importExportProfilesArea:CreateButton(L.ButtonImportProfile, 120, 20, function()
 	DBM_GUI:CreateImportProfile(function(importTable)
+		if type(importTable.DBM) ~= "table" or type(importTable.DBT) ~= "table" or type(importTable.minimap) ~= "table" then
+			DBM:AddMsg(L.ImportProfileFailed)
+			return false
+		end
+		for option, optionValue in pairs(DBM.Options) do
+			if importTable.DBM[option] == nil then
+				importTable.DBM[option] = optionValue
+			end
+		end
 		local errors = {}
 		-- Check if voice pack missing
 		local activeVP = importTable.DBM.ChosenVoicePack2
@@ -139,10 +148,12 @@ local importProfile = importExportProfilesArea:CreateButton(L.ButtonImportProfil
 					actuallyImport(importTable)
 				end
 			end
+			return popup ~= nil
 		else
 			actuallyImport(importTable)
+			return true
 		end
-	end)
+	end, L.ImportProfileFailed)
 end)
 importProfile.myheight = 0
 importProfile:SetPoint("LEFT", exportProfile, "RIGHT", 2, 0)

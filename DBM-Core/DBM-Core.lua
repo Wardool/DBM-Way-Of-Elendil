@@ -2407,17 +2407,24 @@ function DBM:AddDefaultOptions(t1, t2)
 	end
 end
 
+function DBM:GetProfileID()
+	if not currentSpecID or not currentSpecGroup or (currentSpecName or "") == playerClass then
+		self:SetCurrentSpecInfo()
+	end
+	local fullname = self.Options.PerCharacterSettings and playerName.."-"..playerRealm or "Global"
+	local profileNum = playerLevel > 9 and DBM_UseDualProfile and currentSpecGroup or 0
+	return fullname, profileNum, currentSpecName
+end
+
 function DBM:LoadModOptions(modId, inCombat, first, profileName, profileID)
 	local oldSavedVarsName = modId:gsub("-", "").."_SavedVars"
 	local savedVarsName = modId:gsub("-", "").."_AllSavedVars"
 	local savedStatsName = modId:gsub("-", "").."_SavedStats"
-	local fullname = profileName or self.Options.PerCharacterSettings and playerName.."-"..playerRealm or "Global"
+	local defaultFullname, defaultProfileNum = self:GetProfileID()
+	local fullname = profileName or defaultFullname
 	currentModProfileScope = fullname
 	self:Debug("using profile namespace " .. fullname, 3)
-	if not currentSpecID or not currentSpecGroup or (currentSpecName or "") == playerClass then
-		self:SetCurrentSpecInfo()
-	end
-	local profileNum = profileID or playerLevel > 9 and DBM_UseDualProfile and currentSpecGroup or 0
+	local profileNum = profileID or defaultProfileNum
 	if not _G[savedVarsName] then _G[savedVarsName] = {} end
 	local savedOptions = _G[savedVarsName][fullname] or {}
 	local savedStats = _G[savedStatsName] or {}
@@ -2566,16 +2573,12 @@ end
 function DBM:LoadAllModDefaultOption(modId)
 	-- modId is string like "DBM-Highmaul"
 	if not modId or not self.ModLists[modId] then return end
-	-- prevent error
-	if not currentSpecID or not currentSpecGroup or (currentSpecName or "") == playerClass then
-		self:SetCurrentSpecInfo()
-	end
 	-- variable init
 	local savedVarsName = modId:gsub("-", "").."_AllSavedVars"
-	local fullname = self.Options.PerCharacterSettings and playerName.."-"..playerRealm or "Global"
-	local profileNum = playerLevel > 9 and DBM_UseDualProfile and currentSpecGroup or 0
+	local fullname, profileNum = self:GetProfileID()
 	-- prevent nil table error
 	if not _G[savedVarsName] then _G[savedVarsName] = {} end
+	if not _G[savedVarsName][fullname] then _G[savedVarsName][fullname] = {} end
 	for _, id in ipairs(self.ModLists[modId]) do
 		-- prevent nil table error
 		if not _G[savedVarsName][fullname][id] then _G[savedVarsName][fullname][id] = {} end
@@ -2606,14 +2609,9 @@ end
 function DBM:LoadModDefaultOption(mod)
 	-- mod must be table
 	if not mod then return end
-	-- prevent error
-	if not currentSpecID or not currentSpecGroup or (currentSpecName or "") == playerClass then
-		self:SetCurrentSpecInfo()
-	end
 	-- variable init
 	local savedVarsName = (mod.modId):gsub("-", "").."_AllSavedVars"
-	local fullname = self.Options.PerCharacterSettings and playerName.."-"..playerRealm or "Global"
-	local profileNum = playerLevel > 9 and DBM_UseDualProfile and currentSpecGroup or 0
+	local fullname, profileNum = self:GetProfileID()
 	-- prevent nil table error
 	if not _G[savedVarsName] then _G[savedVarsName] = {} end
 	if not _G[savedVarsName][fullname] then _G[savedVarsName][fullname] = {} end
@@ -2643,14 +2641,9 @@ end
 function DBM:CopyAllModOption(modId, sourceName, sourceProfile)
 	-- modId is string like "DBM-Highmaul"
 	if not modId or not sourceName or not sourceProfile or not DBM.ModLists[modId] then return end
-	-- prevent error
-	if not currentSpecID or not currentSpecGroup or (currentSpecName or "") == playerClass then
-		self:SetCurrentSpecInfo()
-	end
 	-- variable init
 	local savedVarsName = modId:gsub("-", "").."_AllSavedVars"
-	local targetName = self.Options.PerCharacterSettings and playerName.."-"..playerRealm or "Global"
-	local targetProfile = playerLevel > 9 and DBM_UseDualProfile and currentSpecGroup or 0
+	local targetName, targetProfile = self:GetProfileID()
 	-- do not copy setting itself
 	if targetName == sourceName and targetProfile == sourceProfile then
 		self:AddMsg(L.MPROFILE_COPY_SELF_ERROR)
@@ -2658,6 +2651,7 @@ function DBM:CopyAllModOption(modId, sourceName, sourceProfile)
 	end
 	-- prevent nil table error
 	if not _G[savedVarsName] then _G[savedVarsName] = {} end
+	if not _G[savedVarsName][targetName] then _G[savedVarsName][targetName] = {} end
 	-- check source is exist
 	if not _G[savedVarsName][sourceName] then
 		self:AddMsg(L.MPROFILE_COPY_S_ERROR)
@@ -2703,14 +2697,9 @@ end
 function DBM:CopyAllModTypeOption(modId, sourceName, sourceProfile, Type)
 	-- modId is string like "DBM-Highmaul"
 	if not modId or not sourceName or not sourceProfile or not self.ModLists[modId] or not Type then return end
-	-- prevent error
-	if not currentSpecID or not currentSpecGroup or (currentSpecName or "") == playerClass then
-		self:SetCurrentSpecInfo()
-	end
 	-- variable init
 	local savedVarsName = modId:gsub("-", "").."_AllSavedVars"
-	local targetName = self.Options.PerCharacterSettings and playerName.."-"..playerRealm or "Global"
-	local targetProfile = playerLevel > 9 and DBM_UseDualProfile and currentSpecGroup or 0
+	local targetName, targetProfile = self:GetProfileID()
 	-- do not copy setting itself
 	if targetName == sourceName and targetProfile == sourceProfile then
 		self:AddMsg(L.MPROFILE_COPYS_SELF_ERROR)
@@ -2718,6 +2707,7 @@ function DBM:CopyAllModTypeOption(modId, sourceName, sourceProfile, Type)
 	end
 	-- prevent nil table error
 	if not _G[savedVarsName] then _G[savedVarsName] = {} end
+	if not _G[savedVarsName][targetName] then _G[savedVarsName][targetName] = {} end
 	-- check source is exist
 	if not _G[savedVarsName][sourceName] then
 		self:AddMsg(L.MPROFILE_COPYS_S_ERROR)
@@ -2735,6 +2725,7 @@ function DBM:CopyAllModTypeOption(modId, sourceName, sourceProfile, Type)
 		end
 		-- prevent nil table error
 		if not _G[savedVarsName][targetName][id] then _G[savedVarsName][targetName][id] = {} end
+		if not _G[savedVarsName][targetName][id][targetProfile] then _G[savedVarsName][targetName][id][targetProfile] = {} end
 		-- copy table
 		for option, optionValue in pairs(_G[savedVarsName][sourceName][id][sourceProfile]) do
 			if option:find(Type) then
@@ -2760,14 +2751,9 @@ end
 function DBM:DeleteAllModOption(modId, name, profile)
 	-- modId is string like "DBM-Highmaul"
 	if not modId or not name or not profile or not self.ModLists[modId] then return end
-	-- prevent error
-	if not currentSpecID or not currentSpecGroup or (currentSpecName or "") == playerClass then
-		self:SetCurrentSpecInfo()
-	end
 	-- variable init
 	local savedVarsName = modId:gsub("-", "").."_AllSavedVars"
-	local fullname = self.Options.PerCharacterSettings and playerName.."-"..playerRealm or "Global"
-	local profileNum = playerLevel > 9 and DBM_UseDualProfile and currentSpecGroup or 0
+	local fullname, profileNum = self:GetProfileID()
 	-- cannot delete current profile.
 	if fullname == name and profileNum == profile then
 		self:AddMsg(L.MPROFILE_DELETE_SELF_ERROR)

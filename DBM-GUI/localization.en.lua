@@ -42,6 +42,14 @@ L.RenameSpellButton					= "Rename"
 L.RenameSpellHeader					= "Set custom name for %s"
 L.Test								= "Test"
 L.Import							= "Import"
+L.ButtonExportMod					= "Export mod"
+L.ButtonImportMod					= "Import mod"
+L.ModImportSuccess					= "Settings imported for %s."
+L.ModImportFailed					= "Failed to import settings for %s. The data may be invalid, corrupted, or from an unsupported format."
+L.ModExportFailed					= "Failed to export settings for %s."
+L.ImportProfileFailed				= "Failed to import profile string. The data may be invalid, corrupted, or from an unsupported format."
+L.ExportProfileFailed				= "Failed to export profile."
+L.ProfileImported					= "Profile imported."
 
 L.Enable							= ENABLE
 L.Disable							= DISABLE
