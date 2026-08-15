@@ -265,6 +265,7 @@ mod.SPELL_MISSED = mod.SPELL_DAMAGE
 function mod:CHAT_MSG_RAID_BOSS_EMOTE(msg)
 	local targetname = msg:match(L.SwarmingShadows)
 	if targetname then
+		targetname = targetname:gsub("\194\160", ""):gsub("%s+$", "")
 		timerNextSwarmingShadows:Start()
 		warnSwarmingShadowsSoon:Schedule(25.5)
 		warnSwarmingShadowsSoon:ScheduleVoice(25.5, "flamessoon")
