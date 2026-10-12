@@ -3,7 +3,7 @@ local L		= mod:GetLocalizedStrings()
 
 local UnitGUID = UnitGUID
 
-mod:SetRevision("20260425140425")
+mod:SetRevision("20261011000000")
 mod:SetModelID(37007)
 mod:SetUsedIcons(1, 2, 3, 4, 5, 6, 7, 8)
 mod.isTrashMod = true
@@ -11,6 +11,7 @@ mod:SetMinSyncRevision(20260425140425)
 
 mod:RegisterEvents(
 	"SPELL_CAST_START 71022 71088 71123 71942",
+	"SPELL_CAST_SUCCESS 70299",
 	"SPELL_AURA_APPLIED 69483 72865 71127 70451 70432 70645 71785 71298 70475 70739 70740",
 	"SPELL_AURA_APPLIED_DOSE 71127",
 	"SPELL_AURA_REMOVED 70451 70432 70645 71785 71298",
@@ -82,12 +83,32 @@ mod:AddSetIconOption("SetIconOnDarkReckoning", 69483, true, 0, {8})
 mod:AddSetIconOption("SetIconOnDeathPlague", 72865, true, 7, {1, 2, 3, 4, 5, 6, 7, 8})
 --Crimson Hall
 mod:AddSetIconOption("BloodMirrorIcon", 70451, false, 0, {2})
+mod:AddSetIconOption("SetIconOnEssenceSiphon", 70299, true, 0, {8})
 
 local valkyrHeraldGUID = {}
 local eventProfessorStarted = false
 mod.vb.nerubarAlive = 16 -- 8 each wave
 mod.vb.frostwardenAlive = 6
 local dragondeath = 0
+
+local function markEssenceSiphon(self, guid, expires)
+	if not self.Options.SetIconOnEssenceSiphon or DBM:GetRaidRank() == 0 or GetTime() > expires then return end
+	local unitId = self:GetUnitIdFromGUID(guid)
+	if unitId then
+		if not UnitIsDead(unitId) then
+			self:SetIcon(unitId, 8)
+		end
+	elseif GetTime() < expires then
+		self:Schedule(0.2, markEssenceSiphon, self, guid, expires)
+	end
+end
+
+function mod:SPELL_CAST_SUCCESS(args)
+	if args.spellId == 70299 and args.sourceGUID then
+		self:Unschedule(markEssenceSiphon, self, args.sourceGUID)
+		markEssenceSiphon(self, args.sourceGUID, GetTime() + 3)
+	end
+end
 
 function mod:SPELL_CAST_START(args)
 	local spellId = args.spellId
@@ -199,6 +220,7 @@ mod.SPELL_MISSED = mod.SPELL_DAMAGE
 
 function mod:UNIT_DIED(args)
 	local destGUID = args.destGUID
+	self:Unschedule(markEssenceSiphon, self, destGUID)
 	local cid = self:GetCIDFromGUID(destGUID)
 	if cid == 37025 then
 		warnDecimateSoon:Cancel()
