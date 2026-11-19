@@ -122,13 +122,19 @@ end
 -----------------------
 -- Create the Frame  --
 -----------------------
+function bossHealth:UpdatePosition()
+	if not anchor then return end
+	anchor:ClearAllPoints()
+	anchor:SetPoint(DBM.Options.HPFramePoint, UIParent, DBM.Options.HPFramePoint, DBM.Options.HPFrameX, DBM.Options.HPFrameY)
+end
+
 local function createFrame(self)
 	anchor = CreateFrame("Frame", nil, UIParent)
 	anchor:SetWidth(60)
 	anchor:SetHeight(10)
 	anchor:SetMovable(1)
 	anchor:EnableMouse(1)
-	anchor:SetPoint(DBM.Options.HPFramePoint, UIParent, DBM.Options.HPFramePoint, DBM.Options.HPFrameX, DBM.Options.HPFrameY)
+	self:UpdatePosition()
 	header = anchor:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
 	header:SetPoint("BOTTOM", anchor, "BOTTOM")
 	--anchor:SetScript("OnUpdate", updateFrame)
@@ -409,8 +415,8 @@ function bossHealth:RenameBoss(cId, newName)
 end
 
 function bossHealth:UpdateSettings()
-	if not anchor then createFrame(bossHealth) end
-	anchor:SetPoint(DBM.Options.HPFramePoint, UIParent, DBM.Options.HPFramePoint, DBM.Options.HPFrameX, DBM.Options.HPFrameY)
+	if not anchor then createFrame(self) end
+	self:UpdatePosition()
 	for i, v in ipairs(bars) do
 		updateBarStyle(v, i)
 	end

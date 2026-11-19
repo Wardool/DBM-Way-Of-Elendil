@@ -321,6 +321,8 @@ DBM.DefaultOptions = {
 	-- global boss mod settings (overrides mod-specific settings for some options)
 	DontShowBossAnnounces = false,
 	DontShowTargetAnnouncements = false,
+	DontShowAnnounceCounts = false,
+	DontShowAnnounceDistances = false,
 	DontShowSpecialWarningText = false,
 	DontShowSpecialWarningFlash = false,
 --	DontDoSpecialWarningVibrate = false,
@@ -1684,6 +1686,7 @@ function DBM:RepositionFrames()
 	self:UpdateWarningOptions()
 	self:UpdateSpecialWarningOptions()
 	self.Arrow:LoadPosition()
+	self.BossHealth:UpdatePosition()
 	local rangeCheck = _G["DBMRangeCheck"]
 	if rangeCheck then
 		rangeCheck:ClearAllPoints()
@@ -8355,6 +8358,42 @@ do
 		self.renameRevision = DBM:GetSpellRenameRevision()
 	end
 
+	local countAnnounceRemap = {
+		incomingcount = "incoming",
+		sooncount = "soon",
+		count = "spell",
+		targetcount = "target",
+		targetcountdistance = "targetdistance"
+	}
+
+	local function getAnnounceDisplayText(self, argTable)
+		local announceType = self.announceType
+		local displayType = announceType
+		local displayArgs = argTable
+		if DBM.Options.DontShowAnnounceCounts and countAnnounceRemap[displayType] then
+			displayType = countAnnounceRemap[displayType]
+			if announceType == "targetcount" then
+				displayArgs = {argTable[2]}
+			elseif announceType == "targetcountdistance" then
+				displayArgs = {argTable[2], argTable[3]}
+			end
+		end
+		if DBM.Options.DontShowAnnounceDistances then
+			if displayType == "targetdistance" then
+				displayType = "target"
+				displayArgs = {displayArgs[1]}
+			elseif displayType == "targetcountdistance" then
+				displayType = "targetcount"
+				displayArgs = {displayArgs[1], displayArgs[2]}
+			end
+		end
+		if displayType ~= announceType then
+			local displayText = L.AUTO_ANNOUNCE_TEXTS[displayType]:format(self.spellName)
+			return pformat(displayText, unpack(displayArgs))
+		end
+		return pformat(self.text, unpack(displayArgs))
+	end
+
 	-- TODO: this function is an abomination, it needs to be rewritten. Also: check if these work-arounds are still necessary
 	function announcePrototype:Show(...) -- todo: reduce amount of unneeded strings
 		if not self.option or self.mod.Options[self.option] then
@@ -8388,7 +8427,7 @@ do
 					end
 				end
 			end
-			local message = pformat(self.text, unpack(argTable))
+			local message = getAnnounceDisplayText(self, argTable)
 			local text = ("%s%s%s|r%s"):format(
 				(DBM.Options.WarningIconLeft and self.icon and textureCode:format(self.icon)) or "",
 				colorCode,
@@ -9418,6 +9457,37 @@ do
 		["gtfo"] = "gtfo",
 	}
 
+	local countSpecialWarningRemap = {
+		sooncount = "soon",
+		interruptcount = "interrupt",
+		youcount = "you",
+		youposcount = "youpos",
+		targetcount = "target",
+		dodgecount = "dodge",
+		moveawaycount = "moveaway",
+		soakcount = "soak",
+		runcount = "run",
+		count = "spell",
+		switchcount = "switch",
+		addscount = "adds"
+	}
+
+	local function getSpecialWarningDisplayText(self, argTable)
+		local displayType = DBM.Options.DontShowAnnounceCounts and countSpecialWarningRemap[self.announceType]
+		if not displayType then
+			return pformat(self.text, unpack(argTable))
+		end
+		if DBM.Options.SpamSpecInformationalOnly and specInstructionalRemapTable[displayType] then
+			displayType = specInstructionalRemapTable[displayType]
+		end
+		local displayArgs = argTable
+		if self.announceType == "youposcount" or self.announceType == "targetcount" then
+			displayArgs = {argTable[2]}
+		end
+		local displayText = L.AUTO_SPEC_WARN_TEXTS[displayType]:format(self.spellName)
+		return pformat(displayText, unpack(displayArgs))
+	end
+
 	function specialWarningPrototype:Show(...)
 		--Check if option for this warning is even enabled
 		if (not self.option or self.mod.Options[self.option]) and not moving and frame then
@@ -9467,7 +9537,7 @@ do
 					end
 				end
 			end
-			local message = pformat(self.text, unpack(argTable))
+			local message = getSpecialWarningDisplayText(self, argTable)
 			local text = ("%s%s%s"):format(
 				(DBM.Options.SpecialWarningIcon and self.icon and textureCode:format(self.icon)) or "",
 				message,

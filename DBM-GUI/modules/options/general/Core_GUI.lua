@@ -60,9 +60,12 @@ end)
 
 local moveme = generaloptions:CreateButton(L.Button_MoveBars, 120, 30)
 moveme:SetPoint("LEFT", bmtestmode, "RIGHT", 2, 0)
-moveme:SetScript("OnClick", function()
-	DBT:ShowMovableBar()
-end)
+moveme:SetScript("OnClick", DBM_GUI.ShowPlacementGrid)
+
+local placement = generaloptions:CreateButton(L.PlacementGrid, 140, 30)
+placement.myheight = 0
+placement:SetPoint("LEFT", moveme, "RIGHT", 2, 0)
+placement:SetScript("OnClick", DBM_GUI.ShowPlacementGrid)
 
 local latencySlider = generaloptions:CreateSlider(L.Latency_Text, 50, 750, 5, 210)
 latencySlider:SetPoint("BOTTOMLEFT", bmrange, "BOTTOMLEFT", 10, -70)

@@ -21,6 +21,7 @@ modules\MainFrame.lua
 modules\MainFrameSkin.lua
 modules\ListFrameButtonsPrototype.lua
 modules\PanelPrototype.lua
+modules\PlacementGrid.lua
 modules\options\general\General.lua
 modules\options\general\Core_GUI.lua
 modules\options\general\ExtraFeatures.lua

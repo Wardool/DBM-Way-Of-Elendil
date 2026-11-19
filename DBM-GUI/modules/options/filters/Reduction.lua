@@ -4,6 +4,8 @@ local reducPanel = DBM_GUI.Cat_Filters:CreateNewPanel(L.Panel_ReducedInformation
 
 local spamAnnounces = reducPanel:CreateArea(L.Area_SpamFilter_Anounces)
 spamAnnounces:CreateCheckButton(L.SpamBlockNoShowTgtAnnounce, true, nil, "DontShowTargetAnnouncements")
+spamAnnounces:CreateCheckButton(L.SpamBlockNoAnnounceCount, true, nil, "DontShowAnnounceCounts")
+spamAnnounces:CreateCheckButton(L.SpamBlockNoAnnounceDistance, true, nil, "DontShowAnnounceDistances")
 spamAnnounces:CreateCheckButton(L.SpamBlockNoTrivialSpecWarnSound, true, nil, "DontPlayTrivialSpecialWarningSound")
 
 local spamArea = reducPanel:CreateArea(L.Area_SpamFilter)

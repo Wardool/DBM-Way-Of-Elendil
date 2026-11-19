@@ -163,13 +163,7 @@ local movemebutton = general:CreateButton(L.MoveMe, 100, 16)
 movemebutton:SetPoint("TOPRIGHT", general.frame, "TOPRIGHT", -2, -4)
 movemebutton:SetNormalFontObject(GameFontNormalSmall)
 movemebutton:SetHighlightFontObject(GameFontNormalSmall)
-movemebutton:SetScript("OnClick", function()
-	if DBM.InfoFrame:IsShown() then
-		DBM.InfoFrame:Hide()
-	else
-		DBM.InfoFrame:Show(5, "test")
-	end
-end)
+movemebutton:SetScript("OnClick", DBM_GUI.ShowPlacementGrid)
 
 local resetbutton = general:CreateButton(L.SpecWarn_ResetMe, 120, 16)
 resetbutton:SetPoint("BOTTOMRIGHT", general.frame, "BOTTOMRIGHT", -2, 4)

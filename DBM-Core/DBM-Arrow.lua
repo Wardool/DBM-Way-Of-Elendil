@@ -277,6 +277,7 @@ function arrowFrame:Move()
 end
 
 function arrowFrame:LoadPosition()
+	frame:ClearAllPoints()
 	frame:SetPoint(DBM.Options.ArrowPoint, DBM.Options.ArrowPosX, DBM.Options.ArrowPosY)
 end
 
